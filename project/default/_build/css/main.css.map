@@ -1,0 +1,1 @@
+{"version":3,"sources":["main.css"],"names":[],"mappings":"AACA,KACI,eAAiB,CACpB,AAED,uBACE,YAAa,AACb,gBAAkB,CACnB","file":"main.css","sourcesContent":["\nbody {\r\n    overflow: hidden;\n}\r\n\n.el-menu-vertical-demo {\n  width: 200px;\n  min-height: 100vh;\n}\n"]}
