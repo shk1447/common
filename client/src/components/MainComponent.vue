@@ -19,29 +19,21 @@
       <el-menu-item index="1-4-1">item one</el-menu-item>
     </el-submenu>
   </el-submenu>
-  <el-menu-item index="2">
-    <i class="el-icon-menu"></i>
-    <span slot="title">Navigator Two</span>
-  </el-menu-item>
-  <el-menu-item index="3" disabled>
-    <i class="el-icon-document"></i>
-    <span slot="title">Navigator Three</span>
-  </el-menu-item>
-  <el-menu-item index="4">
-    <i class="el-icon-setting"></i>
-    <span slot="title">Navigator Four</span>
-  </el-menu-item>
+
 </el-menu>
 
 
 </template>
 
 <script>
-
+import api from '../api/request_api.js'
+import { setTimeout } from 'timers';
 export default {
     data () {
         return {
-            isCollapse: true
+            isCollapse: true,
+            code_list:[],
+            data_list:{}
         }
     },
     components:{
@@ -67,32 +59,46 @@ export default {
     mounted() {
         var me = this;
         me.$loading({});
-        
-        setTimeout(function() {
+        api.get(location.origin + '/stock/code').then(function(code_list) {
+            console.log(code_list);
+            me.code_list = code_list;
             me.$loading({}).close();
-            me.$message({
-                message:'test',
-                type:'info'
-            });
+            // function get_data(i) {
+            //     var code = me.code_list[i];
+            //     api.get(location.origin + '/stock/data?code=' + code).then(function(stock_data) {
+            //         me.data_list[code] = stock_data;
+            //         i++;
+            //         if(i < code_list.length) get_data(i);
+            //         else me.$loading({}).close();
+            //     })
+            // }
+            // get_data(0);
+        }) 
+        // setTimeout(function() {
+        //     me.$loading({}).close();
+        //     me.$message({
+        //         message:'test',
+        //         type:'info'
+        //     });
             
-            me.$confirm("확인창", "확인하시겠습니까?", {
-                confirmButtonText: 'OK', cancelButtonText: 'Cancel', type: 'warning'
-            }).then(() => {
-                me.$notify({
-                    message: 'copied',
-                    type: 'success'
-                });
-                me.$alert('This is a message', 'Title', {
-                    confirmButtonText: 'OK',
-                    callback: action => {
-                        me.$message({
-                        type: 'info',
-                        message: `action: ${ action }`
-                        });
-                    }
-                });
-            });
-        },1000)
+        //     me.$confirm("확인창", "확인하시겠습니까?", {
+        //         confirmButtonText: 'OK', cancelButtonText: 'Cancel', type: 'warning'
+        //     }).then(() => {
+        //         me.$notify({
+        //             message: 'copied',
+        //             type: 'success'
+        //         });
+        //         me.$alert('This is a message', 'Title', {
+        //             confirmButtonText: 'OK',
+        //             callback: action => {
+        //                 me.$message({
+        //                 type: 'info',
+        //                 message: `action: ${ action }`
+        //                 });
+        //             }
+        //         });
+        //     });
+        // },1000)
         console.log('mounted')
     },
     beforeUpdate() {

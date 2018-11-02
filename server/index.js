@@ -54,7 +54,9 @@ module.exports = function(config) {
         knex:khan.database,
         tablename:"tb_sessions"
     })
-
+    function ha_mode() {
+        socket.tcp_socket(parseInt(config.tcp_port),config.cluster);
+    }
     ClusterServer = {
         name: 'ClusterServer',
         
@@ -69,6 +71,7 @@ module.exports = function(config) {
             function eachWorker(callback) { for (var id in cluster.workers) { callback(cluster.workers[id]); } }
             
             if (cluster.isMaster) {
+                ha_mode();
                 for (i = 0; i < me.cpus; i += 1) {
                     var worker = cluster.fork();
 
@@ -93,7 +96,7 @@ module.exports = function(config) {
                     });
                 })
 
-                server.listen(port, function(){
+                server.listen(port,'0.0.0.0', function(){
                     khan.logger.info(me.name + ' starting worker thread #' + cluster.worker.id);
                 }).on('error', function(err){
                     khan.logger.error(err.message);

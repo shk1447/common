@@ -12,7 +12,7 @@ export default function() {
 
     return {
         socket : function() {
-            return this.socket;
+            return socket;
         },
         subscribe : function(event, callback) {
             console.log(event);

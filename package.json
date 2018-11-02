@@ -9,7 +9,9 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "axios": "^0.18.0",
     "body-parser": "^1.18.3",
+    "cheerio": "^1.0.0-rc.2",
     "cluster": "^0.7.7",
     "commander": "^2.19.0",
     "compression": "^1.7.3",
@@ -38,6 +40,8 @@
   },
   "devDependencies": {
     "babel-loader": "^8.0.4",
-    "rimraf": "^2.6.2"
+    "ora": "^3.0.0",
+    "rimraf": "^2.6.2",
+    "webpack": "^4.23.1"
   }
 }

@@ -4,8 +4,8 @@
       "name":"default",
       "path":""
     },
-    "cluster": true,
-    "port": 1447,
+    "port": 1000,
+    "tcp_port":2000,
     "session_time":30,
     "database": {
       "type": "mysql",

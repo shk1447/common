@@ -1,30 +1,30 @@
 import axios from 'axios';
 
-module.exports = {
+export default  {
     post : function(url, body) {
-        axios.post(url, body).then(function(response) {
-            console.log(response);
+        return axios.post(url, body).then(function(response) {
+            return response.data
         }).catch(function(err) {
             throw err;
         })
     },
     get : function(url) {
-        axios.get(url).then(function(response) {
-            console.log(response);
+        return axios.get(url).then(function(response) {
+            return response.data
         }).catch(function(err) {
             throw err;
         })
     },
     put : function(url, body) {
-        axios.put(url, body).then(function(response) {
-            console.log(response);
+        return axios.put(url, body).then(function(response) {
+            return response.data
         }).catch(function(err) {
             throw err;
         })
     },
     delete : function(url, body) {
-        axios.delete(url, body).then(function(response) {
-            console.log(response);
+        return axios.delete(url, body).then(function(response) {
+            return response.data
         }).catch(function(err) {
             throw err;
         })
