@@ -1,0 +1,35 @@
+{
+    "https":false,
+    "project": {
+      "name":"default",
+      "path":""
+    },
+    "cluster": {
+      "host":"127.0.0.1",
+      "port":4000
+    },
+    "port": 7000,
+    "tcp_port":8000,
+    "session_time":30,
+    "database": {
+      "type": "mysql",
+      "oracledb": {
+        "host": "localhost",
+        "user": "renobit_v1",
+        "password": "renobit_v1",
+        "database": "xe"
+      },
+      "mysql": {
+        "host": "127.0.0.1",
+        "user": "root",
+        "password": "soul1087",
+        "database": "PrivateDB"
+      },
+      "pg": {
+        "host": "127.0.0.1",
+        "user": "postgres",
+        "password": "soul1087",
+        "database": "renobit"
+      }
+    }
+  }

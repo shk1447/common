@@ -59,46 +59,46 @@ export default {
     mounted() {
         var me = this;
         me.$loading({});
-        api.get(location.origin + '/stock/code').then(function(code_list) {
-            console.log(code_list);
-            me.code_list = code_list;
-            me.$loading({}).close();
-            // function get_data(i) {
-            //     var code = me.code_list[i];
-            //     api.get(location.origin + '/stock/data?code=' + code).then(function(stock_data) {
-            //         me.data_list[code] = stock_data;
-            //         i++;
-            //         if(i < code_list.length) get_data(i);
-            //         else me.$loading({}).close();
-            //     })
-            // }
-            // get_data(0);
-        }) 
-        // setTimeout(function() {
+        // api.get(location.origin + '/stock/code').then(function(code_list) {
+        //     console.log(code_list);
+        //     me.code_list = code_list;
         //     me.$loading({}).close();
-        //     me.$message({
-        //         message:'test',
-        //         type:'info'
-        //     });
+        //     function get_data(i) {
+        //         var code = me.code_list[i];
+        //         api.get(location.origin + '/stock/data?code=' + code).then(function(stock_data) {
+        //             me.data_list[code] = stock_data;
+        //             i++;
+        //             if(i < code_list.length) get_data(i);
+        //             else me.$loading({}).close();
+        //         })
+        //     }
+        //     get_data(0);
+        // }) 
+        setTimeout(function() {
+            me.$loading({}).close();
+            me.$message({
+                message:'test',
+                type:'info'
+            });
             
-        //     me.$confirm("확인창", "확인하시겠습니까?", {
-        //         confirmButtonText: 'OK', cancelButtonText: 'Cancel', type: 'warning'
-        //     }).then(() => {
-        //         me.$notify({
-        //             message: 'copied',
-        //             type: 'success'
-        //         });
-        //         me.$alert('This is a message', 'Title', {
-        //             confirmButtonText: 'OK',
-        //             callback: action => {
-        //                 me.$message({
-        //                 type: 'info',
-        //                 message: `action: ${ action }`
-        //                 });
-        //             }
-        //         });
-        //     });
-        // },1000)
+            me.$confirm("확인창", "확인하시겠습니까?", {
+                confirmButtonText: 'OK', cancelButtonText: 'Cancel', type: 'warning'
+            }).then(() => {
+                me.$notify({
+                    message: 'copied',
+                    type: 'success'
+                });
+                me.$alert('This is a message', 'Title', {
+                    confirmButtonText: 'OK',
+                    callback: action => {
+                        me.$message({
+                        type: 'info',
+                        message: `action: ${ action }`
+                        });
+                    }
+                });
+            });
+        },1000)
         console.log('mounted')
     },
     beforeUpdate() {
