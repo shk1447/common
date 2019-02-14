@@ -17,8 +17,11 @@ import $ from "jquery";
 window.$ = $;
 
 import router from './router';
-import event_api  from './api/event_api.js';
-Vue.prototype.$socket = event_api();
+//import event_api  from './api/event_api.js';
+//Vue.prototype.$socket = event_api();
+
+import core from './core';
+
 
 new Vue({
   el: '#app',
