@@ -1,13 +1,14 @@
 const d3 = require('d3');
 
 common.view = (function() {
-    var gridSize = 20;
-    var space_width = 1920;
-    var space_height = 1080;
+    var space_width = 1280;
+    var space_height = 720;
     var outer, vis;
-    var lasso = null;
-    var mouse_position = null;
-    var data_callback = null;
+    var x, y, xAxis, yAxis, gX, gY;
+
+    var activeNodes = [];
+    var activeLinks = [];
+    
 
     function canvasDoubleClick(e) {
 
@@ -27,8 +28,8 @@ common.view = (function() {
 
     function zoomed() {
         vis.attr("transform", d3.event.transform);
-        // gX.call(xAxis.scale(d3.event.transform.rescaleX(x)));
-        // gY.call(yAxis.scale(d3.event.transform.rescaleY(y)));
+        gX.call(xAxis.scale(d3.event.transform.rescaleX(x)));
+        gY.call(yAxis.scale(d3.event.transform.rescaleY(y)));
     }
 
     function dragstarted(d) {
@@ -44,38 +45,55 @@ common.view = (function() {
         d3.select(this).classed("dragging", false);
     }
 
+    function getRandomColor() {
+        var letters = '0123456789ABCDEF';
+        var color = '#';
+        for (var i = 0; i < 6; i++) {
+          color += letters[Math.floor(Math.random() * 16)];
+        }
+        return color;
+    }
+
     return {
         init: function(id, callback) {
             this.data_callback = callback;
 
-            var zoom = d3.zoom().scaleExtent([1,10]).on("zoom", zoomed);
+            var zoom = d3.zoom().scaleExtent([1,40]).translateExtent([[0,0],[space_width,space_height]]).on("zoom", zoomed);
             // var drag = d3.drag().on("dragstart")
 
             outer = d3.select("#" + id)
                         .append("svg:svg")
                         .attr("width", space_width)
                         .attr("height", space_height)
-                        .attr("pointer-events", "all")
-                        .style("cursor", "crosshair")
+                        // .attr("pointer-events", "all")
+                        // .style("cursor", "crosshair")
                         .call(zoom)
             
-            var x = d3.scaleLinear()
+            x = d3.scaleLinear()
                 .domain([-1, space_width + 1])
                 .range([-1, space_width + 1]);
 
-            var y = d3.scaleLinear()
+            y = d3.scaleLinear()
                 .domain([-1, space_height + 1])
                 .range([-1, space_height + 1]);
 
-            // var xAxis = d3.axisBottom(x)
-            //     .ticks((width + 2) / (height + 2) * 10)
-            //     .tickSize(height)
-            //     .tickPadding(8 - height);
+            xAxis = d3.axisBottom(x)
+                .ticks((space_width + 2) / (space_height + 2) * 10)
+                .tickSize(space_height)
+                .tickPadding(8 - space_height);
 
-            // var yAxis = d3.axisRight(y)
-            //     .ticks(10)
-            //     .tickSize(width)
-            //     .tickPadding(8 - width);
+            yAxis = d3.axisRight(y)
+                .ticks(10)
+                .tickSize(space_width)
+                .tickPadding(8 - space_width);
+            
+            gX = outer.append("g")
+                .attr("class", "axis axis--x")
+                .call(xAxis);
+
+            gY = outer.append("g")
+                .attr("class", "axis axis--y")
+                .call(yAxis);
                         
             vis = outer.append("svg:g")
                        .append("svg:g")
@@ -85,24 +103,27 @@ common.view = (function() {
                        .on("mouseup", canvasMouseUp)
                        .on("contextmenu", canvasContextMenu);
 
-            var gridScale = d3.scaleLinear().range([0, space_width]).domain([0, space_width]);
-            var grid = vis.append("g");
+            // var circles = d3.range(20).map(function() {
+            //     return {
+            //         x: Math.round(Math.random() * (space_width - 32 * 2) + 32),
+            //         y: Math.round(Math.random() * (space_height - 32 * 2) + 32)
+            //     };
+            // });
 
-            grid.selectAll("line.horizontal").data(gridScale.ticks(space_width / gridSize)).enter()
-                .append("line").attr("class", "horizontal")
-                .attr("x1",0).attr("x2",space_width)
-                .attr("y1", function(d) { return gridScale(d); })
-                .attr("y2", function(d) { return gridScale(d); })
-                .attr("fill", "none").attr("shape-rendering", "crispEdges")
-                .attr("stroke", "#eee").attr("stroke-width", "1px");
+            // vis.selectAll("circle")
+            // .data(circles)
+            // .enter().append("circle")
+            //   .attr("cx", function(d) { return d.x; })
+            //   .attr("cy", function(d) { return d.y; })
+            //   .attr("r", 32)
+            //   .style("fill", function(d, i) { return getRandomColor() })
+            //   .call(d3.drag()
+            //       .on("start", dragstarted)
+            //       .on("drag", dragged)
+            //       .on("end", dragended));
+        },
+        redraw : function() {
 
-            grid.selectAll("line.vertical").data(gridScale.ticks(space_width / gridSize)).enter()
-                .append("line").attr("class", "vertical")
-                .attr("y1", 0).attr("y2", space_width)
-                .attr("x1", function(d) { return gridScale(d) })
-                .attr("x2", function(d) { return gridScale(d) })
-                .attr("fill", "none").attr("shape-rendering", "crispEdges")
-                .attr("stroke", "#eee").attr("stroke-width", "1px");
         }
     }
 })()

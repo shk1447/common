@@ -66,4 +66,17 @@ export default {
     stroke-dasharray: 0 0;
 }
 
+.axis path {
+  display: none;
+}
+
+.axis line {
+  stroke-opacity: 0.1;
+  shape-rendering: crispEdges;
+}
+
+.active {
+  stroke: #000;
+  stroke-width: 2px;
+}
 </style>
