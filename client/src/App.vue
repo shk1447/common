@@ -1,7 +1,5 @@
 <template>
-  <div id="app-main">
     <router-view/>
-  </div>
 </template>
 
 <script>
@@ -28,5 +26,6 @@ export default {
 <style lang="css">
 body {
     overflow: hidden;
+    margin: 0px;
 }
 </style>

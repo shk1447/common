@@ -1,17 +1,17 @@
 const d3 = require('d3');
 
 common.view = (function() {
-    var space_width = 1280;
-    var space_height = 720;
+    var width;
+    var height;
     var outer, vis;
     var x, y, xAxis, yAxis, gX, gY;
+    var node_size = 50;
 
     var activeNodes = [];
     var activeLinks = [];
-    
 
-    function canvasDoubleClick(e) {
-
+    function dblZoom() {
+        addNodes({id:'test',x:d3.event.offsetX,y:d3.event.offsetY});
     };
     function canvasMouseDown(e) {
 
@@ -35,14 +35,17 @@ common.view = (function() {
     function dragstarted(d) {
         d3.event.sourceEvent.stopPropagation();
         d3.select(this).classed("dragging", true);
+        redraw();
     }
     
     function dragged(d) {
         d3.select(this).attr("cx", d.x = d3.event.x).attr("cy", d.y = d3.event.y);
+        redraw();
     }
     
     function dragended(d) {
         d3.select(this).classed("dragging", false);
+        redraw();
     }
 
     function getRandomColor() {
@@ -54,38 +57,103 @@ common.view = (function() {
         return color;
     }
 
+    function onNodeDetail(a,b,c,d,e) {
+        var test = d3.select(c[b]);
+        test.style('stroke', 'black')
+        console.log(test);
+        console.log('click : ', a,b,c,d,e);
+    }
+
+    function addNodes(node) {
+        activeNodes.push(node);
+        redraw();
+    }
+
+    function redraw() {
+        var node = vis.selectAll(".nodegroup").data(activeNodes, function(d) { return d.id });
+        node.exit().remove();
+
+        var nodeEnter = node.enter().insert("svg:g")
+            .attr("class", "node nodegroup");
+        
+        // 신규
+        nodeEnter.each(function(d,i) {
+            var node = d3.select(this);
+            node.attr("id",d.id)
+                .attr("transform", function(d) { return "translate(" + (d.x) + "," + (d.y) + ")"; })
+                .call(d3.drag()
+                    .on('start', dragstarted)
+                    .on('drag', dragged)
+                    .on('end', dragended))
+            node.w = node_size;
+            node.h = node_size;
+
+            node.append("circle")
+                .attr("class", "node")
+                .attr("r", 32)
+                .attr("fill",function(d) { return 'red' })
+                .attr("stroke", "black");
+
+            node.append("circle")
+                .attr("class", "inLink")
+                .attr("cx", 32)
+                .attr("r", 8)
+                .attr("fill", function(d) { return 'gray' })
+                .attr("stroke", "black")
+
+            node.append("circle")
+                .attr("class", "outLink")
+                .attr("cx", -32)
+                .attr("r", 8)
+                .attr("fill", function(d) { return 'gray' })
+                .attr("stroke", "black")
+        });
+
+        // 갱신
+        node.each(function(d,i) {
+            var thisNode = d3.select(this);
+            thisNode.attr("transform", function(d) { return "translate(" + (d.x) + "," + (d.y) + ")"; });
+        })
+    }
+
     return {
         init: function(id, callback) {
             this.data_callback = callback;
+            var container_div = document.getElementById(id);
+            width = container_div.clientWidth;
+            height = container_div.clientHeight;
 
-            var zoom = d3.zoom().scaleExtent([1,40]).translateExtent([[0,0],[space_width,space_height]]).on("zoom", zoomed);
+            var zoom = d3.zoom().scaleExtent([1,40]).translateExtent([[0,0],[width,height]]).on("zoom", zoomed)
             // var drag = d3.drag().on("dragstart")
 
             outer = d3.select("#" + id)
                         .append("svg:svg")
-                        .attr("width", space_width)
-                        .attr("height", space_height)
+                        .attr("width", width)
+                        .attr("height", height)
+                        .attr('viewBox', '0 0 ' + width + ' ' + height)
+                        .attr('preserveAspectRatio', 'xMinYMin')
                         // .attr("pointer-events", "all")
                         // .style("cursor", "crosshair")
                         .call(zoom)
+                        .on('dblclick.zoom', dblZoom)
             
             x = d3.scaleLinear()
-                .domain([-1, space_width + 1])
-                .range([-1, space_width + 1]);
+                .domain([-1, width + 1])
+                .range([-1, width + 1]);
 
             y = d3.scaleLinear()
-                .domain([-1, space_height + 1])
-                .range([-1, space_height + 1]);
+                .domain([-1, height + 1])
+                .range([-1, height + 1]);
 
             xAxis = d3.axisBottom(x)
-                .ticks((space_width + 2) / (space_height + 2) * 10)
-                .tickSize(space_height)
-                .tickPadding(8 - space_height);
+                .ticks((width + 2) / (height + 2) * 10)
+                .tickSize(height)
+                .tickPadding(8 - height);
 
             yAxis = d3.axisRight(y)
                 .ticks(10)
-                .tickSize(space_width)
-                .tickPadding(8 - space_width);
+                .tickSize(width)
+                .tickPadding(8 - width);
             
             gX = outer.append("g")
                 .attr("class", "axis axis--x")
@@ -94,36 +162,12 @@ common.view = (function() {
             gY = outer.append("g")
                 .attr("class", "axis axis--y")
                 .call(yAxis);
-                        
-            vis = outer.append("svg:g")
-                       .append("svg:g")
-                       .on("dblclick", canvasDoubleClick)
-                       .on("mousemove", canvasMouseMove)
-                       .on("mousedown", canvasMouseDown)
-                       .on("mouseup", canvasMouseUp)
-                       .on("contextmenu", canvasContextMenu);
 
-            // var circles = d3.range(20).map(function() {
-            //     return {
-            //         x: Math.round(Math.random() * (space_width - 32 * 2) + 32),
-            //         y: Math.round(Math.random() * (space_height - 32 * 2) + 32)
-            //     };
-            // });
+            vis = outer.append("svg:g");
 
-            // vis.selectAll("circle")
-            // .data(circles)
-            // .enter().append("circle")
-            //   .attr("cx", function(d) { return d.x; })
-            //   .attr("cy", function(d) { return d.y; })
-            //   .attr("r", 32)
-            //   .style("fill", function(d, i) { return getRandomColor() })
-            //   .call(d3.drag()
-            //       .on("start", dragstarted)
-            //       .on("drag", dragged)
-            //       .on("end", dragended));
+            redraw();
         },
-        redraw : function() {
-
-        }
+        redraw : redraw,
+        addNodes : addNodes
     }
 })()

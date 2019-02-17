@@ -1,9 +1,19 @@
 <template>
-
-<div id="main-container">
-  <viewer-component></viewer-component>
+<div id="app-main">
+    <div id="menu-bar">
+        <el-menu :default-active="activeIndex" mode="horizontal">
+            <el-menu-item index="1">Topology</el-menu-item>
+            <el-menu-item index="2">Dashboard</el-menu-item>
+        </el-menu>
+    </div>
+    <div id="main-container">
+        <viewer-component></viewer-component>
+    </div>
+    <div id="left-panel">
+    </div>
+    <div id="right-panel">
+    </div>
 </div>
-
 </template>
 
 <script>
@@ -15,7 +25,8 @@ export default {
         return {
             isCollapse: true,
             code_list:[],
-            data_list:{}
+            data_list:{},
+            activeIndex:'1'
         }
     },
     components:{
@@ -83,5 +94,41 @@ export default {
 }
 </script>
 <style>
+#app-main {
+    position: absolute;
+    top:0px;
+    left: 0px;
+    width:100vw;
+    height:100vh;
+}
+
+#menu-bar {
+    position: absolute;
+    width:100vw;
+    height:60px;
+}
+
+#main-container {
+    position: absolute;
+    top:60px;
+    width:100vw;
+    height:calc(100vh - 60px);
+}
+
+#right-panel {
+    position: absolute;
+    top:60px;
+    left:100vw;
+    width:20vw;
+    height:calc(100vh - 60px);
+}
+
+#left-panel {
+    position: absolute;
+    top:60px;
+    left:-20vw;
+    width:20vw;
+    height:calc(100vh - 60px);
+}
   
 </style>
