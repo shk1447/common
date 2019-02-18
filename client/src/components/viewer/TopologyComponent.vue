@@ -15,9 +15,7 @@ export default {
         
     },
     methods: {
-        actionCallback: function(data) {
-            console.log(data);
-        }
+        
     },
     beforeCreate(){
 
@@ -31,7 +29,7 @@ export default {
     mounted() {
         var me = this;
         console.log('mounted');
-        common.view.init('workspace', me.actionCallback);
+        common.view.init('workspace');
     },
     beforeUpdate() {
 

@@ -66,6 +66,13 @@ export default {
     mounted() {
         var me = this;
         me.$loading({});
+
+        common.events.on("test", function(d) {
+            me.$message({
+                message:d,
+                type:'info'
+            })  
+        })
         setTimeout(function() {
             me.$loading({}).close();
             me.$message({

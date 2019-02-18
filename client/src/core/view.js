@@ -3,7 +3,7 @@ const d3 = require('d3');
 common.view = (function() {
     var width;
     var height;
-    var outer, vis, outer_background, dragGroup;
+    var outer, vis, outer_background, drag_group, link_group, node_types;
     var x, y, xAxis, yAxis, gX, gY;
     var node_size = 32;
     var outer_transform = {
@@ -11,7 +11,7 @@ common.view = (function() {
         y:0,
         k:1
     };
-    var lineCurveScale = 0.75;
+    var lineCurveScale = 1;
 
     var temp_link = {source:null,target:null};
     var activeNodes = [];
@@ -27,27 +27,18 @@ common.view = (function() {
     }
 
     function canvasMouseMove() {
-        if(temp_link.source) {
-            var mouse_x = (d3.event.offsetX - outer_transform.x ) / outer_transform.k;
-            var mouse_y = (d3.event.offsetY - outer_transform.y ) / outer_transform.k;
+        var start_point = temp_link.source ? temp_link.source : temp_link.target;
+        var mouse_x = (d3.event.offsetX - outer_transform.x ) / outer_transform.k;
+        var mouse_y = (d3.event.offsetY - outer_transform.y ) / outer_transform.k;
+        if(start_point) {
+            var x1 = temp_link.source ? (start_point.x + node_size) : mouse_x;
+            var y1 = temp_link.source ? start_point.y : mouse_y;
+            var x2 = temp_link.source ? mouse_x : (start_point.x - node_size) ;
+            var y2 = temp_link.source ? mouse_y : start_point.y;
             if(drag_line) {
-                drag_line.attr("d", function() {
-                    var x1 = temp_link.source.x + node_size;
-                    var y1 = temp_link.source.y;
-                    var x2 = mouse_x;
-                    var y2 = mouse_y;
-    
-                    return generateLinkPath(x1, y1, x2, y2, 1);
-                })
+                drag_line.attr("d", generateLinkPath(x1, y1, x2, y2, 1))
             } else {
-                drag_line = dragGroup.append("svg:path").attr("class", "drag_line").attr("d", function() {
-                    var x1 = temp_link.source.x + node_size;
-                    var y1 = temp_link.source.y;
-                    var x2 = mouse_x;
-                    var y2 = mouse_y;
-    
-                    return generateLinkPath(x1, y1, x2, y2, 1);
-                })
+                drag_line = drag_group.append("svg:path").attr("class", "drag_line").attr("d", generateLinkPath(x1, y1, x2, y2, 1))
             }
         }
     }
@@ -63,6 +54,7 @@ common.view = (function() {
         vis.attr("transform", d3.event.transform);
         gX.call(xAxis.scale(d3.event.transform.rescaleX(x)));
         gY.call(yAxis.scale(d3.event.transform.rescaleY(y)));
+        console.log(outer_transform.k);
     }
 
     function dragstarted(d) {
@@ -87,19 +79,31 @@ common.view = (function() {
         redraw();
     }
 
+    function nodeClicked(node, node_info) {
+        common.events.emit('test',node_info.id)
+    }
+
     function portMouseDown(port, node, type) {
         d3.event.stopPropagation();
         d3.event.preventDefault();
-        temp_link.source = node;
+        if(type === 'input') {
+            temp_link.target = node;
+        } else {
+            temp_link.source = node;
+        }
     }
 
     function portMouseUp(port, node, type) {
-        temp_link.target = node;
-        activeLinks.push(temp_link);
-        activeLinks = activeLinks;
+        if(type === 'input') {
+            temp_link.target = node;
+        } else {
+            temp_link.source = node;
+        }
+        if(temp_link.source && temp_link.target) {
+            activeLinks.push(temp_link);
+            redraw();
+        }
         temp_link = {source:null,target:null};
-        console.log(activeLinks);
-        redraw();
     }
 
     function portMouseOver(port, node, type) {
@@ -213,6 +217,7 @@ common.view = (function() {
                 .attr("class", "node")
                 .attr("r", node_size)
                 .attr("fill",function(d) { return 'rgb(166, 187, 207)' })
+                .on('click', (function() { var node = d; return function(d,i) { nodeClicked(d3.select(this),node) }})())
 
             node.append("circle")
                 .attr("class", "port")
@@ -220,10 +225,10 @@ common.view = (function() {
                 .attr("r", 8)
                 .attr("fill", function(d) { return '#ddd' })
                 .style("cursor", "crosshair")
-                .on('mousedown', (function() { var node = d; return function(d,i) { portMouseDown(d3.select(this),node,'input') }})() )
-                .on('mouseup', (function() { var node = d; return function(d,i) { portMouseUp(d3.select(this),node,'input') }})() )
-                .on('mouseover', (function() { var node = d; return function(d,i) { portMouseOver(d3.select(this),node,'input') }})() )
-                .on('mouseout', (function() { var node = d; return function(d,i) { portMouseOut(d3.select(this),node,'input') }})() )
+                .on('mousedown', (function() { var node = d; return function(d,i) { portMouseDown(d3.select(this),node,'output') }})() )
+                .on('mouseup', (function() { var node = d; return function(d,i) { portMouseUp(d3.select(this),node,'output') }})() )
+                .on('mouseover', (function() { var node = d; return function(d,i) { portMouseOver(d3.select(this),node,'output') }})() )
+                .on('mouseout', (function() { var node = d; return function(d,i) { portMouseOut(d3.select(this),node,'output') }})() )
 
             node.append("circle")
                 .attr("class", "port")
@@ -235,6 +240,10 @@ common.view = (function() {
                 .on('mouseup', (function() { var node = d; return function(d,i) { portMouseUp(d3.select(this),node,'input') }})() )
                 .on('mouseover', (function() { var node = d; return function(d,i) { portMouseOver(d3.select(this),node,'input') }})() )
                 .on('mouseout', (function() { var node = d; return function(d,i) { portMouseOut(d3.select(this),node,'input') }})() )
+            var text = node.append('svg:text').attr('y', node_size+12).style('stroke', 'none').style("text-anchor", "middle").text(d.id);
+            console.log(text);
+            
+
         });
 
         // 갱신
@@ -244,7 +253,7 @@ common.view = (function() {
             thisNode.attr("transform", function(d) { return "translate(" + (d.x) + "," + (d.y) + ")"; });
         });
 
-        var link = vis.selectAll(".link").data(activeLinks, function(d) { return d.source.id+":"+d.target.id });
+        var link = link_group.selectAll(".link").data(activeLinks, function(d) { return d.source.id+":"+d.target.id });
 
         var linkEnter = link.enter().insert("svg:g")
             .attr("class", "link");
@@ -252,10 +261,10 @@ common.view = (function() {
         linkEnter.each(function(d,i) {
             var l = d3.select(this);
             console.log(d);
-            l.append("svg:path").attr('class', 'link_line link_path')
+            l.append("svg:path").attr('class', 'link_line link_path');
         })
         link.exit().remove();
-        var links = vis.selectAll('.link_path')
+        var links = link_group.selectAll('.link_path')
         links.each(function(d,i) {
             console.log('update link');
             var thisLink = d3.select(this);
@@ -268,15 +277,10 @@ common.view = (function() {
                 return generateLinkPath(d.x1, d.y1, d.x2, d.y2, 1);
             })
         })
-
-        if (d3.event) {
-            d3.event.preventDefault();
-        }
     }
 
     return {
-        init: function(id, callback) {
-            this.data_callback = callback;
+        init: function(id) {
             var container_div = document.getElementById(id);
             width = container_div.clientWidth;
             height = container_div.clientHeight;
@@ -304,7 +308,17 @@ common.view = (function() {
                         .attr("width", width)
                         .attr("height", height)
                         .attr("fill","#fff");
-            dragGroup = vis.append("g");
+
+            node_types = outer.append('g').attr('class', 'node_types')
+                                .attr("transform", function(d) { return "translate(" + (width - 200) + "," + 100 + ")"; })
+            node_types.append('rect').attr('rx', 5).attr('x', 0).attr('y', 0).attr('width', 50).attr('height', 25).attr('fill', 'rgb(166, 187, 207)')
+            node_types.append("svg:text").attr("x", 60).attr('y', 12.5).attr("dy", ".35em").attr("text-anchor","start").text("SERVER");
+
+            node_types.append('rect').attr('rx', 5).attr('x', 0).attr('y', 25).attr('width', 50).attr('height', 25).attr('fill', 'rgb(135, 169, 128)')
+            node_types.append("svg:text").attr("x", 60).attr('y', 37.5).attr("dy", ".35em").attr("text-anchor","start").text("NETWORK");
+
+            drag_group = vis.append("g");
+            link_group = vis.append("g");
 
             x = d3.scaleLinear()
                 .domain([-1, width + 1])
