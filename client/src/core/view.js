@@ -218,6 +218,11 @@ common.view = (function() {
                 .attr("r", node_size)
                 .attr("fill",function(d) { return 'rgb(166, 187, 207)' })
                 .on('click', (function() { var node = d; return function(d,i) { nodeClicked(d3.select(this),node) }})())
+                .on('contextmenu', function() {
+                    common.events.emit('showRightPanel', 'test');
+                    d3.event.stopPropagation();
+                    d3.event.preventDefault();
+                })
 
             node.append("circle")
                 .attr("class", "port")

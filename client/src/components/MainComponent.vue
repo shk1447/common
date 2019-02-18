@@ -20,9 +20,9 @@
         <log-component v-if="activeIndex === '3'"></log-component>
         <alarm-component v-if="activeIndex === '4'"></alarm-component>
     </div>
-    <div id="left-panel">
+    <div id="left-panel" ref="left_panel">
     </div>
-    <div id="right-panel">
+    <div id="right-panel" ref="right_panel">
     </div>
 </div>
 </template>
@@ -66,12 +66,16 @@ export default {
     mounted() {
         var me = this;
         me.$loading({});
-
+        $(me.$refs.right_panel).toggle('slide');
         common.events.on("test", function(d) {
             me.$message({
                 message:d,
                 type:'info'
             })  
+        })
+
+        common.events.on('showRightPanel', function(d) {
+            $(me.$refs.right_panel).toggle('slide');
         })
         setTimeout(function() {
             me.$loading({}).close();
@@ -139,9 +143,10 @@ export default {
 #right-panel {
     position: absolute;
     top:60px;
-    left:100vw;
+    left:calc(100vw-20vw);
     width:20vw;
     height:calc(100vh - 60px);
+    border:1px solid black;
 }
 
 #left-panel {

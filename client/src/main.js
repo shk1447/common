@@ -13,8 +13,10 @@ Vue.use(ElementUI, { locale });
 // Vue.$message = Vue.prototype.$message;
 
 import App from './App';
-import $ from "jquery";
-window.$ = $;
+
+import 'expose-loader?$!expose-loader?jQuery!jquery';
+// import $ from "jquery";
+// window.$ = $;
 
 import router from './router';
 //import event_api  from './api/event_api.js';
