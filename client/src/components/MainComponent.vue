@@ -1,13 +1,24 @@
 <template>
 <div id="app-main">
     <div id="menu-bar">
-        <el-menu :default-active="activeIndex" mode="horizontal">
+        <el-menu :default-active="activeIndex" mode="horizontal" @select="handleSelect">
             <el-menu-item index="1">Topology</el-menu-item>
             <el-menu-item index="2">Dashboard</el-menu-item>
+            <el-menu-item index="3">DevLogs</el-menu-item>
+            <el-menu-item index="4">Alarms</el-menu-item>
+            <el-submenu index="5" style="float: right;">
+                <template slot="title"><i class="el-icon-menu"></i></template>
+                <el-menu-item index="5-1"><i class="el-icon-setting"></i> Settings</el-menu-item>
+                <el-menu-item index="5-2"><i class="el-icon-information"></i> About</el-menu-item>
+                <el-menu-item index="5-3"><i class="el-icon-circle-close"></i> Logout</el-menu-item>
+            </el-submenu>
         </el-menu>
     </div>
     <div id="main-container">
-        <viewer-component></viewer-component>
+        <topology-component v-if="activeIndex === '1'"></topology-component>
+        <dashboard-component v-if="activeIndex === '2'"></dashboard-component>
+        <log-component v-if="activeIndex === '3'"></log-component>
+        <alarm-component v-if="activeIndex === '4'"></alarm-component>
     </div>
     <div id="left-panel">
     </div>
@@ -19,7 +30,10 @@
 <script>
 import api from '../api/request_api.js'
 import { setTimeout } from 'timers';
-import ViewerComponent from './viewer/ViewerComponent.vue'
+import TopologyComponent from './viewer/TopologyComponent.vue'
+import DashboardComponent from './viewer/DashboardComponent.vue'
+import AlarmComponent from './viewer/AlarmComponent.vue'
+import LogComponent from './viewer/LogComponent.vue'
 export default {
     data () {
         return {
@@ -30,14 +44,14 @@ export default {
         }
     },
     components:{
-        "viewer-component" : ViewerComponent
+        "topology-component" : TopologyComponent,
+        "dashboard-component" : DashboardComponent,
+        "log-component" : LogComponent,
+        "alarm-component" : AlarmComponent
     },
     methods: {
-        handleOpen(key, keyPath) {
-            console.log(key, keyPath);
-        },
-        handleClose(key, keyPath) {
-            console.log(key, keyPath);
+        handleSelect(key, keyPath) {
+            this.activeIndex = key;
         }
     },
     beforeCreate(){

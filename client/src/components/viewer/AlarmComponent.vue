@@ -1,5 +1,6 @@
 <template>
     <div id="workspace">
+        Not Yet!
     </div>
 </template>
 
@@ -15,9 +16,6 @@ export default {
         
     },
     methods: {
-        actionCallback: function(data) {
-            console.log(data);
-        }
     },
     beforeCreate(){
 
@@ -29,9 +27,7 @@ export default {
 
     },
     mounted() {
-        var me = this;
         console.log('mounted');
-        common.view.init('workspace', me.actionCallback);
     },
     beforeUpdate() {
 
@@ -53,32 +49,5 @@ export default {
     user-select: none;
     width:100%;
     height:100%;
-}
-
-.lasso {
-    stroke-width: 1px;
-    stroke: #3cace7;
-    fill: rgba(20, 125, 255, 0.1);
-    stroke-dasharray: 10 5;
-}
-
-.lasso_hovered {
-    stroke: gray;
-    fill: rgba(20, 125, 255, 0.2);
-    stroke-dasharray: 0 0;
-}
-
-.axis path {
-  display: none;
-}
-
-.axis line {
-  stroke-opacity: 0.1;
-  shape-rendering: crispEdges;
-}
-
-.active {
-  stroke: #000;
-  stroke-width: 2px;
 }
 </style>
