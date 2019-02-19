@@ -49,6 +49,9 @@ var webpackConfig = merge(baseWebpackConfig, {
     new CopyWebpackPlugin([{
       from: path.resolve(__dirname, '../src/libs'),
       to: path.resolve(root_path, './libs')
+    },{
+      from: path.resolve(__dirname, '../src/vendor'),
+      to: path.resolve(root_path, './vendor')
     }]),
     // generate dist index.html with correct asset hash for caching.
     // you can customize output by editing /index.html
@@ -74,14 +77,11 @@ var webpackConfig = merge(baseWebpackConfig, {
     // split vendor js into its own file
     new webpack.optimize.CommonsChunkPlugin({
       name: 'vendor',
-      minChunks (module) {
-        // any required modules inside node_modules are extracted to vendor
+      minChunks: function (module) {
         return (
           module.resource &&
-          /\.js$/.test(module.resource) &&
-          module.resource.indexOf(
-            path.join(__dirname, '../node_modules')
-          ) === 0
+          /\.(js|css|sass|scss|less|json)$/.test(module.resource) &&
+          (module.resource.indexOf(path.join(__dirname, '../node_modules')) === 0 || module.resource.indexOf('/use-with-node-js/') >= 0)
         )
       }
     }),
