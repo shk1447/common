@@ -7,11 +7,11 @@ import LoginComponent from '../components/login/LoginComponent.vue';
 export default new Router({
       routes: [{
             path: '/',
-            name: 'manager',
-            component: MainComponent
-      },{
-            path: '/login',
             name: 'login',
             component: LoginComponent
+      },{
+            path: '/viewer',
+            name: 'viewer',
+            component: MainComponent
       }]
 })

@@ -2,7 +2,7 @@
     <div class="limiter">
 		<div class="container-login100" style="background:black;">
 			<div class="wrap-login100">
-				<form class="login100-form validate-form" method="post" action="/user/login">
+				<form class="login100-form validate-form" @submit="handleSubmit">
 					<span class="login100-form-logo">
 						<i class="zmdi zmdi-device-hub"></i>
 					</span>
@@ -44,6 +44,10 @@ export default {
         
     },
     methods: {
+        handleSubmit(e) {
+            e.preventDefault();
+            this.$router.push('viewer');
+        }
     },
     beforeCreate(){
 
