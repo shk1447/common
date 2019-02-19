@@ -1,14 +1,14 @@
 <template>
 <div id="app-main">
     <div id="menu-bar">
-        <el-menu :default-active="activeIndex" mode="horizontal" @select="handleSelect">
+        <el-menu :default-active="activeIndex" mode="horizontal" @select="handleSelect"
+            background-color="#333" active-text-color="#fff" text-color="#909399">
             <el-menu-item index="1">Topology</el-menu-item>
             <el-menu-item index="2">Dashboard</el-menu-item>
             <el-menu-item index="3">DevLogs</el-menu-item>
             <el-menu-item index="4">Alarms</el-menu-item>
             <el-submenu index="5" style="float: right;">
                 <template slot="title"><i class="el-icon-menu"></i></template>
-                <el-menu-item index="5-1"><i class="el-icon-setting"></i> Settings</el-menu-item>
                 <el-menu-item index="5-2"><i class="el-icon-information"></i> About</el-menu-item>
                 <el-menu-item index="5-3"><i class="el-icon-circle-close"></i> Logout</el-menu-item>
             </el-submenu>
@@ -61,6 +61,18 @@ export default {
             } else {
                 this.activeIndex = key;
             }
+        },
+        handleNotiify(d) {
+            var me = this;
+            me.$message({
+                message:d,
+                type:'info'
+            })  
+            // me.$notify({
+            //     message: d,
+            //     type: 'success'
+            // });
+            $(me.$refs.right_panel).toggleClass('show');
         }
     },
     beforeCreate(){
@@ -75,13 +87,8 @@ export default {
     mounted() {
         var me = this;
         me.$loading({});
-        $(me.$refs.right_panel).toggle('slide');
-        common.events.on("test", function(d) {
-            me.$message({
-                message:d,
-                type:'info'
-            })  
-        })
+
+        common.events.on("test", me.handleNotiify)
 
         common.events.on('showRightPanel', function(d) {
             $(me.$refs.right_panel).toggle('slide');
@@ -123,6 +130,8 @@ export default {
 
     },
     destroyed() {
+        var me = this;
+        common.events.off('test', me.handleNotiify);
         console.log('destroyed')
     }
 }
@@ -156,19 +165,37 @@ body, html {
 
 #right-panel {
     position: absolute;
+    opacity: .2;
     top:60px;
-    left:calc(100vw-20vw);
     width:20vw;
-    height:calc(100vh - 60px);
-    border:1px solid black;
+    height:calc(100vh - 70px);
+    border-radius: 10px;
+    transform: translateX(100vw);
+    transition: all .75s ease;
+    background: #333;
+    margin-top:10px;
+}
+
+#right-panel.show {
+    transform: translateX(80vw);
+    opacity: 1;
 }
 
 #left-panel {
     position: absolute;
+    opacity: .2;
     top:60px;
-    left:-20vw;
     width:20vw;
-    height:calc(100vh - 60px);
+    height:calc(100vh - 70px);
+    border-radius: 10px;
+    transform: translateX(-20vw);
+    transition: all .75s ease;
+    background: #333;
+}
+
+#left-panel.show {
+    transform: translateX(80vw);
+    opacity: 1;
 }
   
 </style>

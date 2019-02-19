@@ -1,6 +1,6 @@
 <template>
     <div class="limiter">
-		<div class="container-login100" style="background:black;">
+		<div class="container-login100" style="background:#333;">
 			<div class="wrap-login100">
 				<form class="login100-form validate-form" @submit="handleSubmit">
 					<span class="login100-form-logo">

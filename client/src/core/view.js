@@ -188,10 +188,6 @@ common.view = (function() {
         }
     }
 
-    function drawlines() {
-
-    }
-
     function redraw() {
         var node = vis.selectAll(".nodegroup").data(activeNodes, function(d) { return d.id });
 
@@ -247,8 +243,6 @@ common.view = (function() {
                 .on('mouseout', (function() { var node = d; return function(d,i) { portMouseOut(d3.select(this),node,'input') }})() )
             var text = node.append('svg:text').attr('y', node_size+12).style('stroke', 'none').style("text-anchor", "middle").text(d.id);
             console.log(text);
-            
-
         });
 
         // 갱신
@@ -265,9 +259,11 @@ common.view = (function() {
 
         linkEnter.each(function(d,i) {
             var l = d3.select(this);
-            console.log(d);
-            l.append("svg:path").attr('class', 'link_line link_path');
-            l.append("svg:path").attr('class', 'link_anim');
+            l.on("click", function() {
+                console.log(l)
+            })
+            l.append("svg:path").attr('class', 'link_line link_path')
+            l.append("svg:path").attr('class', 'link_anim')
         })
         link.exit().remove();
         var links = link_group.selectAll('.link_path')

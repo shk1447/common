@@ -9,7 +9,7 @@ common.events = (function() {
     function off(evt, func) {
         var handler = handlers[evt];
         if(handler) {
-            for(var i=0; i<handlers.length;i++) {
+            for(var i=0; i<handler.length;i++) {
                 if(handler[i] === func) {
                     handler.splice(i,1);
                     return;
