@@ -1,7 +1,13 @@
 <template>
-    <div id="workspace">
-        Not Yet!
-    </div>
+<div id="workspace" style="
+    text-align: center;
+    display: table;
+">
+    <div style="
+    display: table-cell;
+    vertical-align: middle;
+">Comming Soon!</div>
+</div>
 </template>
 
 <script>

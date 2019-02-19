@@ -1,7 +1,7 @@
 <template>
 <div id="app-main">
     <div id="menu-bar">
-        <el-menu :default-active="activeIndex" mode="horizontal" @select="handleSelect"
+        <el-menu :default-active="activeIndex" mode="horizontal" @select="handleSelect" ref="menu_bar"
             background-color="#333" active-text-color="#fff" text-color="#909399">
             <el-menu-item index="1">Topology</el-menu-item>
             <el-menu-item index="2">Dashboard</el-menu-item>
@@ -57,7 +57,12 @@ export default {
                     confirmButtonText: 'OK', cancelButtonText: 'Cancel', type: 'info'
                 }).then(() => {
                     this.$router.push('/') 
+                }).catch(() => {
+                    me.$refs.menu_bar.activeIndex = me.activeIndex;
                 });
+            } else if ( key === '5-2') {
+                me.$alert('<p>NAME : <strong>FLUID</strong></p><p>VERSION : <strong>1.0.1</strong></p>', 'PRODUCT INFO',{dangerouslyUseHTMLString: true})
+                me.$refs.menu_bar.activeIndex = me.activeIndex;
             } else {
                 this.activeIndex = key;
             }
@@ -96,27 +101,9 @@ export default {
         setTimeout(function() {
             me.$loading({}).close();
             me.$message({
-                message:'test',
+                message:'load complete',
                 type:'info'
             });
-            
-            // me.$confirm("확인창", "확인하시겠습니까?", {
-            //     confirmButtonText: 'OK', cancelButtonText: 'Cancel', type: 'warning'
-            // }).then(() => {
-            //     me.$notify({
-            //         message: 'copied',
-            //         type: 'success'
-            //     });
-            //     me.$alert('This is a message', 'Title', {
-            //         confirmButtonText: 'OK',
-            //         callback: action => {
-            //             me.$message({
-            //             type: 'info',
-            //             message: `action: ${ action }`
-            //             });
-            //         }
-            //     });
-            // });
         },1000)
         console.log('mounted')
     },

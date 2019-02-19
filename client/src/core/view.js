@@ -333,14 +333,6 @@ common.view = (function() {
                         .attr("height", height)
                         .attr("fill","#fff");
 
-            node_types = outer.append('g').attr('class', 'node_types')
-                                .attr("transform", function(d) { return "translate(" + (width - 200) + "," + 100 + ")"; })
-            node_types.append('rect').attr('rx', 5).attr('x', 0).attr('y', 0).attr('width', 50).attr('height', 25).attr('fill', 'rgb(166, 187, 207)')
-            node_types.append("svg:text").attr("x", 60).attr('y', 12.5).attr("dy", ".35em").attr("text-anchor","start").text("SERVER");
-
-            node_types.append('rect').attr('rx', 5).attr('x', 0).attr('y', 25).attr('width', 50).attr('height', 25).attr('fill', 'rgb(135, 169, 128)')
-            node_types.append("svg:text").attr("x", 60).attr('y', 37.5).attr("dy", ".35em").attr("text-anchor","start").text("NETWORK");
-
             drag_group = vis.append("g");
             link_group = vis.append("g");
 
@@ -369,6 +361,17 @@ common.view = (function() {
             gY = outer.append("g")
                 .attr("class", "axis axis--y")
                 .call(yAxis);
+            
+            node_types = outer.append('g').attr('class', 'node_types').attr("transform", function(d) { return "translate(" + 70 + "," + 70 + ")"; })
+
+            node_types.append('rect').attr('rx', 5).attr('x', 0).attr('y', 0).attr('width', 50).attr('height', 25).attr('fill', 'rgb(166, 187, 207)')
+            node_types.append("svg:text").attr("x", 60).attr('y', 12.5).attr("dy", ".35em").attr("text-anchor","start").text("SERVER");
+
+            node_types.append('rect').attr('rx', 5).attr('x', 0).attr('y', 30).attr('width', 50).attr('height', 25).attr('fill', 'rgb(135, 169, 128)')
+            node_types.append("svg:text").attr("x", 60).attr('y', 42.5).attr("dy", ".35em").attr("text-anchor","start").text("NETWORK");
+
+            node_types.append('rect').attr('rx', 5).attr('x', 0).attr('y', 60).attr('width', 50).attr('height', 25).attr('fill', 'rgb(253, 208, 162)')
+            node_types.append("svg:text").attr("x", 60).attr('y', 72.5).attr("dy", ".35em").attr("text-anchor","start").text("VM");
 
             redraw();
         },
