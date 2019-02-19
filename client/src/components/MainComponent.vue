@@ -51,7 +51,16 @@ export default {
     },
     methods: {
         handleSelect(key, keyPath) {
-            this.activeIndex = key;
+            var me = this;
+            if(key === "5-3") {
+                me.$confirm("로그아웃 하시겠습니까?", "로그아웃", {
+                    confirmButtonText: 'OK', cancelButtonText: 'Cancel', type: 'info'
+                }).then(() => {
+                    this.$router.push('/') 
+                });
+            } else {
+                this.activeIndex = key;
+            }
         }
     },
     beforeCreate(){
@@ -119,6 +128,11 @@ export default {
 }
 </script>
 <style>
+
+body, html {
+	font-family: Poppins-Regular, sans-serif;
+}
+
 #app-main {
     position: absolute;
     top:0px;

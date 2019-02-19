@@ -75,14 +75,7 @@ export default {
     }
 }
 </script>
-<style>
-  
-
-
-body, html {
-	height: 100%;
-	font-family: Poppins-Regular, sans-serif;
-}
+<style scoped>
 
 /*---------------------------------------------*/
 a {
@@ -265,7 +258,7 @@ iframe {
 }
 
 .login100-form-title {
-  font-family: Poppins-Medium;
+  font-family: Poppins-Bold;
   font-size: 30px;
   color: #fff;
   line-height: 1.2;

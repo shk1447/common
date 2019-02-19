@@ -24,8 +24,12 @@ export default {
 </script>
 
 <style lang="css">
+
+
 body {
+    font-family: Poppins-Regular, sans-serif;
     overflow: hidden;
     margin: 0px;
 }
+
 </style>
