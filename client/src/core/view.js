@@ -267,6 +267,7 @@ common.view = (function() {
             var l = d3.select(this);
             console.log(d);
             l.append("svg:path").attr('class', 'link_line link_path');
+            l.append("svg:path").attr('class', 'link_anim');
         })
         link.exit().remove();
         var links = link_group.selectAll('.link_path')
@@ -282,6 +283,28 @@ common.view = (function() {
                 return generateLinkPath(d.x1, d.y1, d.x2, d.y2, 1);
             })
         })
+        var anim_links = link_group.selectAll('.link_anim');
+        anim_links.each(function(d,i) {
+            var thisLink = d3.select(this);
+            thisLink.attr("d", function(d) {
+                d.x1 = d.source.x + node_size;
+                d.y1 = d.source.y;
+                d.x2 = d.target.x - node_size;
+                d.y2 = d.target.y;
+
+                return generateLinkPath(d.x1, d.y1, d.x2, d.y2, 1);
+            })
+            var totalLength = thisLink.node().getTotalLength();
+            thisLink.attr("stroke-dasharray", totalLength/8 + " " + totalLength);
+            function repeat() {
+                thisLink.attr('stroke-dashoffset', totalLength + (totalLength/4));
+                thisLink.transition()
+                            .duration(1000)
+                            .attr("stroke-dashoffset", totalLength/8)
+                        .on("end", repeat)
+            }
+            repeat();
+        })
     }
 
     return {
@@ -290,7 +313,7 @@ common.view = (function() {
             width = container_div.clientWidth;
             height = container_div.clientHeight;
 
-            var zoom = d3.zoom().scaleExtent([1,40]).translateExtent([[0,0],[width,height]]).on("zoom", zoomed)
+            var zoom = d3.zoom().scaleExtent([1,50]).translateExtent([[0,0],[width,height]]).on("zoom", zoomed)
             // var drag = d3.drag().on("dragstart")
 
             outer = d3.select("#" + id)

@@ -97,14 +97,21 @@ export default {
 
 .link_line {
     stroke:#888;
-    stroke-width:3;
+    stroke-width:5;
+    fill:none;
+    pointer-events: none;
+}
+
+.link_anim {
+    stroke:rgb(221, 221, 221);
+    stroke-width:5;
     fill:none;
     pointer-events: none;
 }
 
 .drag_line {
     stroke:#ff7f0e;
-    stroke-width:3;
+    stroke-width:5;
     fill:none;
     pointer-events: none;
 }
