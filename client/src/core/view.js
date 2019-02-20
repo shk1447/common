@@ -1,11 +1,12 @@
 const d3 = require('d3');
+require('./d3_extension/keybinding');
 
 common.view = (function() {
     var width;
     var height;
     var outer, vis, outer_background, drag_group, link_group, node_types;
     var x, y, xAxis, yAxis, gX, gY;
-    var node_size = 32;
+    var node_size = 24;
     var outer_transform = {
         x:0,
         y:0,
@@ -13,10 +14,18 @@ common.view = (function() {
     };
     var lineCurveScale = 1;
 
+    var drag_line;
     var temp_link = {source:null,target:null};
     var activeNodes = [];
     var activeLinks = [];
-    var drag_line;
+    var selected_id;
+
+    var node_type = {};
+
+    function canvasMouseDown() {
+        selected_id = "";
+        redraw();
+    }
 
     function canvasMouseUp() {
         temp_link = {source:null,target:null};
@@ -46,7 +55,14 @@ common.view = (function() {
     function canvasDblClick() {
         var x = (d3.event.offsetX - outer_transform.x ) / outer_transform.k;
         var y = (d3.event.offsetY - outer_transform.y ) / outer_transform.k
-        addNodes({id:'test' + (activeNodes.length + 1),x:x,y:y});
+        var node_info = {
+            id:'test' + (activeNodes.length + 1),
+            name:'test' + (activeNodes.length + 1),
+            type:'SPINE_SWITCH',
+            x:x,
+            y:y
+        }
+        addNodes(node_info);
     };
 
     function zoomed() {
@@ -54,7 +70,6 @@ common.view = (function() {
         vis.attr("transform", d3.event.transform);
         gX.call(xAxis.scale(d3.event.transform.rescaleX(x)));
         gY.call(yAxis.scale(d3.event.transform.rescaleY(y)));
-        console.log(outer_transform.k);
     }
 
     function dragstarted(d) {
@@ -80,7 +95,10 @@ common.view = (function() {
     }
 
     function nodeClicked(node, node_info) {
-        common.events.emit('test',node_info.id)
+        //node.classed("selected", !node.classed("selected"))
+        selected_id = node_info.id;
+        redraw();
+        //common.events.emit('test',node_info.id)
     }
 
     function portMouseDown(port, node, type) {
@@ -107,12 +125,10 @@ common.view = (function() {
     }
 
     function portMouseOver(port, node, type) {
-        //console.log(node);
         port.classed("port_hovered",true);
     }
 
     function portMouseOut(port, node, type) {
-        //console.log(node)
         port.classed("port_hovered",false);
     }
 
@@ -199,7 +215,6 @@ common.view = (function() {
         // 신규
         nodeEnter.each(function(d,i) {
             var node = d3.select(this);
-            console.log(node);
             node.attr("id",d.id)
                 .attr("transform", function(d) { return "translate(" + (d.x) + "," + (d.y) + ")"; })
                 .call(d3.drag()
@@ -209,10 +224,10 @@ common.view = (function() {
             node.w = node_size;
             node.h = node_size;
 
-            node.append("circle")
+            d.node = node.append("circle")
                 .attr("class", "node")
                 .attr("r", node_size)
-                .attr("fill",function(d) { return 'rgb(166, 187, 207)' })
+                .attr("fill",function(d) { return node_type[d.type] ? node_type[d.type].color : 'rgb(166, 187, 207)' })
                 .on('click', (function() { var node = d; return function(d,i) { nodeClicked(d3.select(this),node) }})())
                 .on('contextmenu', function() {
                     common.events.emit('showRightPanel', 'test');
@@ -223,7 +238,7 @@ common.view = (function() {
             node.append("circle")
                 .attr("class", "port")
                 .attr("cx", node_size)
-                .attr("r", 8)
+                .attr("r", node_size/4)
                 .attr("fill", function(d) { return '#ddd' })
                 .style("cursor", "crosshair")
                 .on('mousedown', (function() { var node = d; return function(d,i) { portMouseDown(d3.select(this),node,'output') }})() )
@@ -234,15 +249,14 @@ common.view = (function() {
             node.append("circle")
                 .attr("class", "port")
                 .attr("cx", -node_size)
-                .attr("r", 8)
+                .attr("r", node_size/4)
                 .attr("fill", function(d) { return '#ddd' })
                 .style("cursor", "crosshair")
                 .on('mousedown', (function() { var node = d; return function(d,i) { portMouseDown(d3.select(this),node,'input') }})() )
                 .on('mouseup', (function() { var node = d; return function(d,i) { portMouseUp(d3.select(this),node,'input') }})() )
                 .on('mouseover', (function() { var node = d; return function(d,i) { portMouseOver(d3.select(this),node,'input') }})() )
                 .on('mouseout', (function() { var node = d; return function(d,i) { portMouseOut(d3.select(this),node,'input') }})() )
-            var text = node.append('svg:text').attr('y', node_size+12).style('stroke', 'none').style("text-anchor", "middle").text(d.id);
-            console.log(text);
+            var text = node.append('svg:text').attr('y', node_size+12).style('stroke', 'none').style("text-anchor", "middle").text(d.name);
         });
 
         // 갱신
@@ -250,6 +264,9 @@ common.view = (function() {
             var thisNode = d3.select(this);
             
             thisNode.attr("transform", function(d) { return "translate(" + (d.x) + "," + (d.y) + ")"; });
+
+            if(d.id === selected_id) d.node.classed('selected', true)
+            else d.node.classed('selected', false)
         });
 
         var link = link_group.selectAll(".link").data(activeLinks, function(d) { return d.source.id+":"+d.target.id });
@@ -259,17 +276,19 @@ common.view = (function() {
 
         linkEnter.each(function(d,i) {
             var l = d3.select(this);
-            l.on("click", function() {
-                console.log(l)
-            })
-            l.append("svg:path").attr('class', 'link_line link_path')
+            l.append("svg:path").attr("class", "link_background link_path")
+                                .on("click",function(d) {
+                                    selected_id = d.source.id+":"+d.target.id;
+                                    redraw();
+                                })
+            var link = l.append("svg:path").attr('class', 'link_line link_path')
             l.append("svg:path").attr('class', 'link_anim')
         })
         link.exit().remove();
         var links = link_group.selectAll('.link_path')
         links.each(function(d,i) {
-            console.log('update link');
             var thisLink = d3.select(this);
+            var id = d.source.id + ":" + d.target.id;
             thisLink.attr("d", function(d) {
                 d.x1 = d.source.x + node_size;
                 d.y1 = d.source.y;
@@ -278,6 +297,8 @@ common.view = (function() {
 
                 return generateLinkPath(d.x1, d.y1, d.x2, d.y2, 1);
             })
+            if(id === selected_id) thisLink.classed('selected', true)
+            else thisLink.classed('selected', false)
         })
         var anim_links = link_group.selectAll('.link_anim');
         anim_links.each(function(d,i) {
@@ -295,12 +316,59 @@ common.view = (function() {
             function repeat() {
                 thisLink.attr('stroke-dashoffset', totalLength + (totalLength/4));
                 thisLink.transition()
-                            .duration(1000)
+                            .duration(20000/d.speed)
                             .attr("stroke-dashoffset", totalLength/8)
                         .on("end", repeat)
             }
             repeat();
         })
+    }
+
+    function deleteItem() {
+        var node_index = activeNodes.findIndex(function(d) {return d.id === selected_id});
+
+        var remove_index = [];
+        var link_length = activeLinks.length;
+        for(var i = 0; i < link_length; i++) {
+            var d = activeLinks[i];
+            if((d.source.id === selected_id || d.target.id === selected_id)) {
+                remove_index.push(i);
+            }
+        }
+        activeNodes.splice(node_index, 1);
+
+        remove_index.sort(function(a,b){return b-a});
+        remove_index.forEach(function(link_index) {
+            activeLinks.splice(link_index, 1);
+        })
+        redraw();
+    }
+
+    function setNodeType(type) {
+        var type_size = {width:50,height:25};
+        var margin = 5;
+        type.forEach(function(d,i) {
+            var y = (type_size.height*i) + (margin*i);
+            var color = getRandomColor();
+            node_types.append('rect').attr('rx', 5).attr('x', 0).attr('y', y)
+                        .attr('width', type_size.width).attr('height', type_size.height).attr('fill', color)
+            node_types.append("svg:text").attr("x", type_size.width+margin)
+                        .attr('y', y+(type_size.height/2)).attr("dy", ".35em").attr("text-anchor","start").text(d.type);
+
+            node_type[d.type] = {
+                color:color,
+                desc:d.desc
+            }
+        })
+    }
+
+    function getRandomColor() {
+        var letters = '0123456789ABCDEF';
+        var color = '#';
+        for (var i = 0; i < 6; i++) {
+          color += letters[Math.floor(Math.random() * 16)];
+        }
+        return color;
     }
 
     return {
@@ -312,6 +380,18 @@ common.view = (function() {
             var zoom = d3.zoom().scaleExtent([1,50]).translateExtent([[0,0],[width,height]]).on("zoom", zoomed)
             // var drag = d3.drag().on("dragstart")
 
+            function test() {
+                console.log('test');
+            }
+            var keyboard = d3.keybinding()
+                            .on('delete', deleteItem)
+                            .on('←', test)
+                            .on('↑', test)
+                            .on('→', test)
+                            .on('↓', test);
+                                        
+            
+            d3.select('body').call(keyboard);
             outer = d3.select("#" + id)
                         .append("svg:svg")
                         .attr("width", width)
@@ -322,8 +402,10 @@ common.view = (function() {
                         // .style("cursor", "crosshair")
                         .call(zoom)
                         .on('dblclick.zoom', null)
+            
 
             vis = outer.append("svg:g")
+                        .on('mousedown', canvasMouseDown)
                         .on('mousemove', canvasMouseMove)
                         .on('mouseup', canvasMouseUp)
                         .on('dblclick', canvasDblClick)
@@ -361,21 +443,125 @@ common.view = (function() {
             gY = outer.append("g")
                 .attr("class", "axis axis--y")
                 .call(yAxis);
-            
+
             node_types = outer.append('g').attr('class', 'node_types').attr("transform", function(d) { return "translate(" + 70 + "," + 70 + ")"; })
-
-            node_types.append('rect').attr('rx', 5).attr('x', 0).attr('y', 0).attr('width', 50).attr('height', 25).attr('fill', 'rgb(166, 187, 207)')
-            node_types.append("svg:text").attr("x", 60).attr('y', 12.5).attr("dy", ".35em").attr("text-anchor","start").text("SERVER");
-
-            node_types.append('rect').attr('rx', 5).attr('x', 0).attr('y', 30).attr('width', 50).attr('height', 25).attr('fill', 'rgb(135, 169, 128)')
-            node_types.append("svg:text").attr("x", 60).attr('y', 42.5).attr("dy", ".35em").attr("text-anchor","start").text("NETWORK");
-
-            node_types.append('rect').attr('rx', 5).attr('x', 0).attr('y', 60).attr('width', 50).attr('height', 25).attr('fill', 'rgb(253, 208, 162)')
-            node_types.append("svg:text").attr("x", 60).attr('y', 72.5).attr("dy", ".35em").attr("text-anchor","start").text("VM");
 
             redraw();
         },
         redraw : redraw,
-        addNodes : addNodes
+        uninit: function() {
+            width;
+            height;
+            outer, vis, outer_background, drag_group, link_group, node_types;
+            x, y, xAxis, yAxis, gX, gY;
+            node_size = 20;
+            outer_transform = {
+                x:0,
+                y:0,
+                k:1
+            };
+            lineCurveScale = 1;
+
+            drag_line;
+            temp_link = {source:null,target:null};
+            activeNodes = [];
+            activeLinks = [];
+            selected_id;
+
+            node_type = {};
+            redraw();
+        },
+        setNodeType : setNodeType,
+        addNodes : addNodes,
+        setLogicalNode : function(data) {
+            var start_point = {
+                x:300,
+                y:200
+            };
+            var link_list = [];
+            for(var i = 0; i < data.length; i++) {
+                var root_node = data[i];
+                console.log('root', root_node.uuid, root_node.name, root_node.type);
+                var node_info = {
+                    id:root_node.uuid,
+                    name:root_node.name,
+                    type:root_node.type,
+                    x:start_point.x * (i+1),
+                    y:start_point.y * (i+1)
+                }
+                activeNodes.push(node_info);
+                if(root_node.vFabrics) {
+                    for(var j = 0; j < root_node.vFabrics.length; j++) {
+                        var child_node = root_node.vFabrics[j];
+                        activeNodes.push({
+                            id : child_node.uuid,
+                            name : child_node.name,
+                            type : child_node.type,
+                            x : node_info.x + (node_size*2*(j+1)),
+                            y : node_info.y + (node_size*2*(j+1))
+                        });
+                        console.log('fabric',child_node.uuid);
+                        if(child_node.vSwitchs) {
+                            for(var k = 0; k < child_node.vSwitchs.length; k++) {
+                                var child_node2 = child_node.vSwitchs[k];
+                                console.log('switch',child_node2.uuid);
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        setPhysicalNode : function(data) {
+            var start_point = {
+                x:300,
+                y:200
+            }
+            var count = 0;
+            var link_list = [];
+            for(var i = 0; i < data.length; i++) {
+                var root_node = data[i];
+                var node_info_root = {
+                    id:root_node.uuid,
+                    name:root_node.name,
+                    type:root_node.nodeType,
+                    x:start_point.x * (i+1),
+                    y:start_point.y * (i+1)
+                }
+                count++;
+                if(root_node.nodeSubTree) {
+                    for(var j = 0; j < root_node.nodeSubTree.length; j++) {
+                        var child_node = root_node.nodeSubTree[j];
+                        var node_info_child = {
+                            id:child_node.uuid,
+                            name:child_node.name,
+                            type:child_node.nodeType,
+                            x:node_info_root.x + (node_size*2*(j+1)),
+                            y:node_info_root.y + (node_size*2*(j+1))
+                        }
+                        count++;
+                        activeNodes.push(node_info_child);
+                        if(child_node.uplinks) link_list = link_list.concat(child_node.uplinks)
+                    }
+                }
+                activeNodes.push(node_info_root);
+                if(root_node.uplinks) link_list = link_list.concat(child_node.uplinks)
+            }
+            for(var k = 0; k < link_list.length; k++) {
+                var link_info = link_list[k];
+                var source = activeNodes.find(function(d) { return d.id === link_info.topNodeUuid});
+                var target = activeNodes.find(function(d) { return d.id === link_info.bottomNodeUuid});
+                if(source && target) {
+                    activeLinks.push({
+                        source:source,
+                        target:target,
+                        speed: parseFloat(link_info.speed)
+                    })
+                } else {
+                    console.log(source, target);
+                    console.log(link_info);
+                }
+            }
+            redraw();
+        }
     }
 })()

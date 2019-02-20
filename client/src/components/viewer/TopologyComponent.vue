@@ -5,6 +5,8 @@
 
 <script>
 
+import api from '../../api/api.js'
+
 export default {
     data () {
         return {
@@ -21,6 +23,7 @@ export default {
 
     },
     created() {
+        console.log(this.type);
         console.log('created')
     },
     beforeRouteUpdate(to,from){
@@ -30,6 +33,16 @@ export default {
         var me = this;
         console.log('mounted');
         common.view.init('workspace');
+        api.getNodeType().then(function(data) {
+            common.view.setNodeType(data);
+        })
+        // api.getPhysical().then(function(data) {
+        //     common.view.setPhysicalNode(data);
+        // })
+        
+        api.getLogical().then(function(data) {
+            common.view.setLogicalNode(data)
+        })
     },
     beforeUpdate() {
 
@@ -42,6 +55,7 @@ export default {
     },
     destroyed() {
         console.log('destroyed')
+        common.view.uninit();
     }
 }
 </script>
@@ -85,6 +99,11 @@ export default {
     cursor:move;
 }
 
+.node.selected {
+    stroke:#ff7f0e;
+    stroke-width:2;
+}
+
 .port {
     stroke:#999;
     stroke-width: 1px;
@@ -95,11 +114,24 @@ export default {
     fill:#ff7f0e;
 }
 
+.link_background {
+    stroke: #fff;
+    opacity: 0;
+    stroke-width: 20;
+    cursor: crosshair;
+    fill:none;
+}
+
 .link_line {
     stroke:#888;
     stroke-width:5;
     fill:none;
     pointer-events: none;
+}
+
+.link_line.selected {
+    stroke:#ff7f0e;
+    stroke-width:6;
 }
 
 .link_anim {

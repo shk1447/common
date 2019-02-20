@@ -28,7 +28,6 @@
 </template>
 
 <script>
-import api from '../api/request_api.js'
 import { setTimeout } from 'timers';
 import TopologyComponent from './viewer/TopologyComponent.vue'
 import DashboardComponent from './viewer/DashboardComponent.vue'

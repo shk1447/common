@@ -33,27 +33,27 @@ khan = {
 }
 
 module.exports = function(config) {
-    var knex_database = knex({
-        client:config.database.type,
-        connection:{
-            host:config.database[config.database.type].host,
-            user:config.database[config.database.type].user,
-            password:config.database[config.database.type].password,
-            database:config.database[config.database.type].database
-        },
-        pool: {min:0,max:10}
-    });
-    if(config.database.type === "oracledb") {
-        knex_database["fetchAsString"] = [ 'clob' ]
-    }
+    // var knex_database = knex({
+    //     client:config.database.type,
+    //     connection:{
+    //         host:config.database[config.database.type].host,
+    //         user:config.database[config.database.type].user,
+    //         password:config.database[config.database.type].password,
+    //         database:config.database[config.database.type].database
+    //     },
+    //     pool: {min:0,max:10}
+    // });
+    // if(config.database.type === "oracledb") {
+    //     knex_database["fetchAsString"] = [ 'clob' ]
+    // }
 
-    khan.database = knex_database;
+    // khan.database = knex_database;
 
-    // postgresql에서 스토리지 대문자 인식이 안되기에 소문자로 변경합니다.
-    khan.session_store = new KnexSessionStore({
-        knex:khan.database,
-        tablename:"tb_sessions"
-    })
+    // // postgresql에서 스토리지 대문자 인식이 안되기에 소문자로 변경합니다.
+    // khan.session_store = new KnexSessionStore({
+    //     knex:khan.database,
+    //     tablename:"tb_sessions"
+    // })
     function ha_mode() {
         socket.tcp_socket(parseInt(config.tcp_port),config.cluster);
     }
