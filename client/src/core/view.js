@@ -6,8 +6,8 @@ common.view = (function() {
     var width;
     var height;
     var outer, vis, outer_background, drag_group, link_group, node_types;
-    var x, y, xAxis, yAxis, gX, gY;
-    var node_size = 24;
+    var x, y, gX, gY, xAxis, yAxis;
+    var node_size = 28;
     var outer_transform = {
         x:0,
         y:0,
@@ -16,7 +16,7 @@ common.view = (function() {
     var lineCurveScale = 1;
 
     var drag_line;
-    var temp_link = {source:null,target:null};
+    var temp_link = {source:null,target:null,speed:10};
     var activeNodes = [];
     var activeLinks = [];
     var selected_id;
@@ -61,7 +61,8 @@ common.view = (function() {
             name:'test' + (activeNodes.length + 1),
             type:'SPINE_SWITCH',
             x:x,
-            y:y
+            y:y,
+            alarm:true
         }
         addNodes(node_info);
     };
@@ -225,6 +226,51 @@ common.view = (function() {
                     .on('end', dragended))
             node.w = node_size;
             node.h = node_size;
+            
+            if(d.alarm) {
+                var anim_alarm = node.append("circle")
+                                .attr("r", node_size)
+                                .attr("fill", "rgba(255,0,0,0)")
+                                .style("stroke", "red")
+                                .style("stroke-width", 0)
+                var anim_alarm2 = node.append("circle")
+                                .attr("r", node_size)
+                                .attr("fill", "rgba(255,0,0,0)")
+                                .style("stroke", "red")
+                                .style("stroke-width", 0)
+                
+                var anim_alarm3 = node.append("circle")
+                                .attr("r", node_size)
+                                .attr("fill", "rgba(255,0,0,0)")
+                                .style("stroke", "red")
+                                .style("stroke-width", 0)
+
+                function repeat() {
+                    anim_alarm.attr('r', node_size*0.3).attr('opacity', 1).style("stroke-width", 0);
+                    anim_alarm.transition()
+                                .duration(1000)
+                                .attr("r", node_size*1.4)
+                                .attr('opacity', 0)
+                                .style("stroke-width", 2.5)
+                            .on("end", repeat)
+                    anim_alarm2.attr('r', node_size*0.6).attr('opacity', 1).style("stroke-width", 0);
+                    anim_alarm2.transition()
+                                .duration(1000)
+                                .attr("r", node_size*1.4)
+                                .attr('opacity', 0)
+                                .style("stroke-width", 2.5)
+                            .on("end", repeat)
+                    anim_alarm3.attr('r', node_size*0.9).attr('opacity', 1).style("stroke-width", 0);
+                    anim_alarm3.transition()
+                                        .duration(1000)
+                                        .attr("r", node_size*1.4)
+                                        .attr('opacity', 0)
+                                        .style("stroke-width", 2.5)
+                                    .on("end", repeat)
+                }
+                
+                repeat();
+            }
 
             d.node = node.append("circle")
                 .attr("class", "node")
@@ -573,7 +619,7 @@ common.view = (function() {
             height;
             outer, vis, outer_background, drag_group, link_group, node_types;
             x, y, xAxis, yAxis, gX, gY;
-            node_size = 20;
+            node_size = 28;
             outer_transform = {
                 x:0,
                 y:0,
