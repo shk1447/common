@@ -13,6 +13,7 @@ var config = JSON.parse(fs.readFileSync(path.resolve(cmd.conf), 'utf8'));
 
 process.env.mode = cmd.mode;
 process.env.port = config.port;
+process.env.external_url = config.external_url;
 process.env.project = config.project.name;
 process.env.database = config.database.type;
 process.env.root_path = config.project.path !== "" ? path.resolve(config.project.path, './project/' + process.env.project + '/_build')

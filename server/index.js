@@ -126,7 +126,7 @@ module.exports = function(config) {
         },
         saveUninitialized: false,
         resave: false,
-        store:khan.session_store,
+        //store:khan.session_store,
         rolling:true
     }));
 

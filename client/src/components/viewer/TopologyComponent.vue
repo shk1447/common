@@ -23,7 +23,6 @@ export default {
 
     },
     created() {
-        console.log(this.type);
         console.log('created')
     },
     beforeRouteUpdate(to,from){
@@ -33,14 +32,14 @@ export default {
         var me = this;
         console.log('mounted');
         common.view.init('workspace');
-        api.getNodeType().then(function(data) {
+        api.getSampleNodeType().then(function(data) {
             common.view.setNodeType(data);
         })
-        // api.getPhysical().then(function(data) {
+        // api.getSamplePhysical().then(function(data) {
         //     common.view.setPhysicalNode(data);
         // })
         
-        api.getLogical().then(function(data) {
+        api.getSampleLogical().then(function(data) {
             common.view.setLogicalNode(data)
         })
     },
@@ -59,7 +58,7 @@ export default {
     }
 }
 </script>
-<style>
+<style scope>
   
 #workspace {
     user-select: none;

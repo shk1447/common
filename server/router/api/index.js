@@ -1,7 +1,7 @@
 
 const sample = require('./sample.js');
-const stock = require('./stock.js');
+const network = require('./network.js');
 module.exports = {
     sample:sample,
-    stock:stock
+    network:network
 }

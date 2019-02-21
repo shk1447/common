@@ -1,4 +1,5 @@
 const d3 = require('d3');
+const randomColor = require('randomcolor') ;
 require('./d3_extension/keybinding');
 
 common.view = (function() {
@@ -118,6 +119,7 @@ common.view = (function() {
             temp_link.source = node;
         }
         if(temp_link.source && temp_link.target) {
+            temp_link.speed = Math.random()*100;
             activeLinks.push(temp_link);
             redraw();
         }
@@ -326,49 +328,45 @@ common.view = (function() {
 
     function deleteItem() {
         var node_index = activeNodes.findIndex(function(d) {return d.id === selected_id});
-
-        var remove_index = [];
-        var link_length = activeLinks.length;
-        for(var i = 0; i < link_length; i++) {
-            var d = activeLinks[i];
-            if((d.source.id === selected_id || d.target.id === selected_id)) {
-                remove_index.push(i);
+        if(node_index >= 0) {
+            var remove_index = [];
+            var link_length = activeLinks.length;
+            for(var i = 0; i < link_length; i++) {
+                var d = activeLinks[i];
+                if((d.source.id === selected_id || d.target.id === selected_id)) {
+                    remove_index.push(i);
+                }
             }
-        }
-        activeNodes.splice(node_index, 1);
+            activeNodes.splice(node_index, 1);
 
-        remove_index.sort(function(a,b){return b-a});
-        remove_index.forEach(function(link_index) {
-            activeLinks.splice(link_index, 1);
-        })
-        redraw();
+            remove_index.sort(function(a,b){return b-a});
+            remove_index.forEach(function(link_index) {
+                activeLinks.splice(link_index, 1);
+            })
+            redraw();
+        }
     }
 
     function setNodeType(type) {
         var type_size = {width:50,height:25};
         var margin = 5;
+        var color_array = randomColor({
+            count: type.length,
+            hue: 'blue'
+        })
         type.forEach(function(d,i) {
             var y = (type_size.height*i) + (margin*i);
-            var color = getRandomColor();
             node_types.append('rect').attr('rx', 5).attr('x', 0).attr('y', y)
-                        .attr('width', type_size.width).attr('height', type_size.height).attr('fill', color)
+                        .attr('width', type_size.width).attr('height', type_size.height).attr('fill', color_array[i])
+                        .style("stroke", "#333")
             node_types.append("svg:text").attr("x", type_size.width+margin)
                         .attr('y', y+(type_size.height/2)).attr("dy", ".35em").attr("text-anchor","start").text(d.type);
 
             node_type[d.type] = {
-                color:color,
+                color:color_array[i],
                 desc:d.desc
             }
         })
-    }
-
-    function getRandomColor() {
-        var letters = '0123456789ABCDEF';
-        var color = '#';
-        for (var i = 0; i < 6; i++) {
-          color += letters[Math.floor(Math.random() * 16)];
-        }
-        return color;
     }
 
     return {
@@ -449,28 +447,6 @@ common.view = (function() {
             redraw();
         },
         redraw : redraw,
-        uninit: function() {
-            width;
-            height;
-            outer, vis, outer_background, drag_group, link_group, node_types;
-            x, y, xAxis, yAxis, gX, gY;
-            node_size = 20;
-            outer_transform = {
-                x:0,
-                y:0,
-                k:1
-            };
-            lineCurveScale = 1;
-
-            drag_line;
-            temp_link = {source:null,target:null};
-            activeNodes = [];
-            activeLinks = [];
-            selected_id;
-
-            node_type = {};
-            redraw();
-        },
         setNodeType : setNodeType,
         addNodes : addNodes,
         setLogicalNode : function(data) {
@@ -493,23 +469,49 @@ common.view = (function() {
                 if(root_node.vFabrics) {
                     for(var j = 0; j < root_node.vFabrics.length; j++) {
                         var child_node = root_node.vFabrics[j];
-                        activeNodes.push({
+                        var child_network = {
                             id : child_node.uuid,
                             name : child_node.name,
                             type : child_node.type,
                             x : node_info.x + (node_size*2*(j+1)),
                             y : node_info.y + (node_size*2*(j+1))
-                        });
+                        }
+                        activeNodes.push(child_network);
+                        activeLinks.push({source:node_info,target:child_network,speed:25})
                         console.log('fabric',child_node.uuid);
                         if(child_node.vSwitchs) {
                             for(var k = 0; k < child_node.vSwitchs.length; k++) {
                                 var child_node2 = child_node.vSwitchs[k];
-                                console.log('switch',child_node2.uuid);
+                                activeNodes.push({
+                                    id : child_node2.uuid,
+                                    name : child_node2.name,
+                                    type : child_node2.type,
+                                    x : node_info.x + (node_size*2*(j+1)*(k+1)),
+                                    y : node_info.y + (node_size*2*(j+1)*(k+1))
+                                });
+                                if(child_node2.upLink) console.log(child_node2.upLink);
                             }
                         }
                     }
                 }
             }
+
+            for(var k = 0; k < link_list.length; k++) {
+                var link_info = link_list[k];
+                var source = activeNodes.find(function(d) { return d.id === link_info.topNodeUuid});
+                var target = activeNodes.find(function(d) { return d.id === link_info.bottomNodeUuid});
+                if(source && target) {
+                    activeLinks.push({
+                        source:source,
+                        target:target,
+                        speed: parseFloat(link_info.speed)
+                    })
+                } else {
+                    console.log(source, target);
+                    console.log(link_info);
+                }
+            }
+            redraw();
         },
         setPhysicalNode : function(data) {
             var start_point = {
@@ -518,6 +520,7 @@ common.view = (function() {
             }
             var count = 0;
             var link_list = [];
+            var valid_list = [];
             for(var i = 0; i < data.length; i++) {
                 var root_node = data[i];
                 var node_info_root = {
@@ -539,11 +542,13 @@ common.view = (function() {
                             y:node_info_root.y + (node_size*2*(j+1))
                         }
                         count++;
-                        activeNodes.push(node_info_child);
+                        if(!valid_list.includes(node_info_child.id)) activeNodes.push(node_info_child);
                         if(child_node.uplinks) link_list = link_list.concat(child_node.uplinks)
+                        valid_list.push(node_info_child.id)
                     }
                 }
-                activeNodes.push(node_info_root);
+                if(!valid_list.includes(node_info_root.id)) activeNodes.push(node_info_root);
+                valid_list.push(node_info_root.id)
                 if(root_node.uplinks) link_list = link_list.concat(child_node.uplinks)
             }
             for(var k = 0; k < link_list.length; k++) {
@@ -561,6 +566,28 @@ common.view = (function() {
                     console.log(link_info);
                 }
             }
+            redraw();
+        },
+        uninit: function() {
+            width;
+            height;
+            outer, vis, outer_background, drag_group, link_group, node_types;
+            x, y, xAxis, yAxis, gX, gY;
+            node_size = 20;
+            outer_transform = {
+                x:0,
+                y:0,
+                k:1
+            };
+            lineCurveScale = 1;
+
+            drag_line;
+            temp_link = {source:null,target:null};
+            activeNodes = [];
+            activeLinks = [];
+            selected_id;
+
+            node_type = {};
             redraw();
         }
     }

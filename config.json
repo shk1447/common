@@ -7,25 +7,14 @@
     "port": 1000,
     "tcp_port":2000,
     "session_time":30,
+    "external_url":"http://naver.com",
     "database": {
       "type": "mysql",
-      "oracledb": {
-        "host": "localhost",
-        "user": "renobit_v1",
-        "password": "renobit_v1",
-        "database": "xe"
-      },
       "mysql": {
         "host": "127.0.0.1",
         "user": "root",
         "password": "soul1087",
         "database": "common"
-      },
-      "pg": {
-        "host": "127.0.0.1",
-        "user": "postgres",
-        "password": "soul1087",
-        "database": "renobit"
       }
     }
   }
