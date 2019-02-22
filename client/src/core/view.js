@@ -77,7 +77,7 @@ common.view = (function() {
     function dragstarted(d) {
         //d3.event.stopPropagation();
         d3.select(this).classed("dragging", true);
-        redraw();
+        //redraw();
     }
     
     function dragged(d) {
@@ -87,7 +87,7 @@ common.view = (function() {
     
     function dragended(d) {
         d3.select(this).classed("dragging", false);
-        redraw();
+        //redraw();
     }
 
     function addNodes(node) {
