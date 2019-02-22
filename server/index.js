@@ -33,30 +33,6 @@ khan = {
 }
 
 module.exports = function(config) {
-    // var knex_database = knex({
-    //     client:config.database.type,
-    //     connection:{
-    //         host:config.database[config.database.type].host,
-    //         user:config.database[config.database.type].user,
-    //         password:config.database[config.database.type].password,
-    //         database:config.database[config.database.type].database
-    //     },
-    //     pool: {min:0,max:10}
-    // });
-    // if(config.database.type === "oracledb") {
-    //     knex_database["fetchAsString"] = [ 'clob' ]
-    // }
-
-    // khan.database = knex_database;
-
-    // // postgresql에서 스토리지 대문자 인식이 안되기에 소문자로 변경합니다.
-    // khan.session_store = new KnexSessionStore({
-    //     knex:khan.database,
-    //     tablename:"tb_sessions"
-    // })
-    function ha_mode() {
-        socket.tcp_socket(parseInt(config.tcp_port),config.cluster);
-    }
     ClusterServer = {
         name: 'ClusterServer',
         
@@ -71,7 +47,6 @@ module.exports = function(config) {
             function eachWorker(callback) { for (var id in cluster.workers) { callback(cluster.workers[id]); } }
             
             if (cluster.isMaster) {
-                ha_mode();
                 for (i = 0; i < me.cpus; i += 1) {
                     var worker = cluster.fork();
 
@@ -117,29 +92,6 @@ module.exports = function(config) {
     app.use(compression());
     app.use(bodyParser.urlencoded({limit:'5mb',extended:true}));
     app.use(bodyParser.json({limit:'5mb'}));
-    app.use(busboy());
-
-    app.use(session({
-        secret: 'khan',
-        cookie: {
-            maxAge: 1000 * 60 * config.session_time
-        },
-        saveUninitialized: false,
-        resave: false,
-        //store:khan.session_store,
-        rolling:true
-    }));
-
-    app.use(passport.initialize());
-    app.use(passport.session());
-
-    app.use((req,res,next) => {
-        if(khan.service) {
-            next();
-        } else {
-            res.status(401).send();
-        }
-    })
 
     router(app,config);
     khan['app'] = app;
