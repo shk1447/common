@@ -10,12 +10,15 @@ const OptimizeCSSPlugin = require('optimize-css-assets-webpack-plugin')
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin')
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 
+const CompressionPlugin = require("compression-webpack-plugin");
+const BundleAnalyzerPlugin = require("webpack-bundle-analyzer").BundleAnalyzerPlugin;
+
 var project_path = path.resolve(__dirname,'../../project/' + process.env.project);
 var root_path = path.resolve(project_path, './_build');
 
-var webpackConfig = merge(baseWebpackConfig, {
+var webpack_config = {
   watch:process.env.watch === 'true',
-  devtool: 'eval-source-map',
+  devtool: process.env.mode === 'development' ? 'eval-source-map' : 'cheap-module-source-map',
   output: {
     path: root_path,
     publicPath: './',
@@ -24,12 +27,13 @@ var webpackConfig = merge(baseWebpackConfig, {
   },
   plugins: [
     new UglifyJsPlugin({
+      minimize:process.env.mode === 'development' ? true : false,
       uglifyOptions: {
         compress: {
           warnings: false
         }
       },
-      sourceMap: true,
+      sourceMap: process.env.mode === 'development' ? true : false,
       parallel: true
     }),
     // extract css into its own file
@@ -99,8 +103,30 @@ var webpackConfig = merge(baseWebpackConfig, {
       async: 'vendor-async',
       children: true,
       minChunks: 3
+    }),
+    new webpack.DefinePlugin({
+      'process.env.NODE_ENV': '"production"'
+    }),
+    new CompressionPlugin({
+      asset: '[path].gz[query]',
+      algorithm: 'gzip',
+      test: /\.js$|\.css$|\.html$|\.eot?.+$|\.ttf?.+$|\.woff?.+$|\.svg?.+$/,
+      threshold: 10240,
+      minRatio: 0.8
     })
   ]
-})
+}
+
+if(process.env.mode === "development") {
+  webpack_config.plugins.push(
+    new BundleAnalyzerPlugin({
+      analyzerMode: 'disabled',
+      generateStatsFile: true,
+      statsOptions: { source: false }
+    })
+  );
+}
+
+var webpackConfig = merge(baseWebpackConfig, webpack_config)
 
 module.exports =  merge(webpackConfig, { module: { rules: utils.styleLoaders({sourceMap: true, usePostCSS: true}) }});
