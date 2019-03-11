@@ -24,6 +24,7 @@
     </div>
     <div id="right-panel" ref="right_panel">
     </div>
+    <create-node-modal ref="createNodeModal"></create-node-modal>
 </div>
 </template>
 
@@ -33,6 +34,8 @@ import TopologyComponent from './viewer/TopologyComponent.vue'
 import DashboardComponent from './viewer/DashboardComponent.vue'
 import AlarmComponent from './viewer/AlarmComponent.vue'
 import LogComponent from './viewer/LogComponent.vue'
+import CreateNodeModal from './modal/CreateNodeModal.vue'
+
 export default {
     data () {
         return {
@@ -46,7 +49,8 @@ export default {
         "topology-component" : TopologyComponent,
         "dashboard-component" : DashboardComponent,
         "log-component" : LogComponent,
-        "alarm-component" : AlarmComponent
+        "alarm-component" : AlarmComponent,
+        "create-node-modal" : CreateNodeModal
     },
     methods: {
         handleSelect(key, keyPath) {
@@ -105,6 +109,11 @@ export default {
             });
         },1000)
         console.log('mounted')
+        common.events.on('popup', function(d) {
+            console.log(d);
+            console.log(me.$refs.createNodeModal)
+            me.$refs.createNodeModal.show();
+        });
     },
     beforeUpdate() {
 

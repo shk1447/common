@@ -18,7 +18,6 @@ var root_path = path.resolve(project_path, './_build');
 
 var webpack_config = {
   watch:process.env.watch === 'true',
-  devtool: process.env.mode === 'development' ? 'eval-source-map' : 'cheap-module-source-map',
   output: {
     path: root_path,
     publicPath: './',
@@ -125,6 +124,7 @@ if(process.env.mode === "development") {
       statsOptions: { source: false }
     })
   );
+  webpack_config["devtool"] = 'eval-source-map';
 }
 
 var webpackConfig = merge(baseWebpackConfig, webpack_config)

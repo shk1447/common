@@ -39,9 +39,9 @@ export default {
         //     common.view.setPhysicalNode(data);
         // })
         
-        api.getSampleLogical().then(function(data) {
-            common.view.setLogicalNode(data)
-        })
+        // api.getSampleLogical().then(function(data) {
+        //     common.view.setLogicalNode(data)
+        // })
     },
     beforeUpdate() {
 
@@ -106,6 +106,11 @@ export default {
 .port {
     stroke:#999;
     stroke-width: 1px;
+    visibility: collapse;
+}
+
+.port.visible {
+    visibility: visible;
 }
 
 .port_hovered {
