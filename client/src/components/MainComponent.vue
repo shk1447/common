@@ -94,25 +94,23 @@ export default {
     },
     mounted() {
         var me = this;
-        me.$loading({});
+        // me.$loading({});
 
-        common.events.on("test", me.handleNotiify)
+        // common.events.on("test", me.handleNotiify)
 
-        common.events.on('showRightPanel', function(d) {
-            $(me.$refs.right_panel).toggle('slide');
-        })
-        setTimeout(function() {
-            me.$loading({}).close();
-            me.$message({
-                message:'load complete',
-                type:'info'
-            });
-        },1000)
-        console.log('mounted')
+        // common.events.on('showRightPanel', function(d) {
+        //     $(me.$refs.right_panel).toggle('slide');
+        // })
+        // setTimeout(function() {
+        //     me.$loading({}).close();
+        //     me.$message({
+        //         message:'load complete',
+        //         type:'info'
+        //     });
+        // },1000)
+        // console.log('mounted')
         common.events.on('popup', function(d) {
-            console.log(d);
-            console.log(me.$refs.createNodeModal)
-            me.$refs.createNodeModal.show();
+            me.$refs.createNodeModal.show(d);
         });
     },
     beforeUpdate() {

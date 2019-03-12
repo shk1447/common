@@ -5,7 +5,7 @@ require('./d3_extension/keybinding');
 common.view = (function() {
     var width;
     var height;
-    var outer, vis, outer_background, drag_group, link_group, node_types;
+    var outer, vis, outer_background, drag_group, link_group, node_types, toolbox;
     var x, y, gX, gY, xAxis, yAxis;
     var node_size = 28;
     var outer_transform = {
@@ -22,6 +22,7 @@ common.view = (function() {
     var activeLinks = [];
     var selected_id;
 
+    var types = [];
     var node_type = {};
 
     function canvasMouseDown() {
@@ -59,15 +60,11 @@ common.view = (function() {
         var x = (d3.event.offsetX - outer_transform.x ) / outer_transform.k;
         var y = (d3.event.offsetY - outer_transform.y ) / outer_transform.k
         var node_info = {
-            uuid:'test' + (activeNodes.length + 1),
-            name:'test' + (activeNodes.length + 1),
-            type:'SPINE_SWITCH',
             status:~~(Math.random() * (5 - 0 + 1)) + 0,
             x:x,
             y:y
         }
-        common.events.emit('popup', node_info);
-        addNodes(node_info);
+        common.events.emit('popup', {node_info:node_info, node_types:types, event:d3.event});
     };
 
     function zoomed() {
@@ -97,6 +94,47 @@ common.view = (function() {
         activeNodes.push(node);
         activeNodes = activeNodes;
         redraw();
+    }
+
+    var activeDropShadow;
+
+    var dropShadow = {
+        'stdDeviation': 2,
+        'dx': 0,
+        'dy': 0,
+        'slope': 0.5,
+        'type': 'linear'
+    };
+
+    function addDrawDropShadow() {
+        activeDropShadow = 'dropshadow';
+    
+        var filter = outer.append('defs')
+            .append('filter')
+                .attr('id', activeDropShadow)
+                // x, y, width and height represent values in the current coordinate system that results
+                // from taking the current user coordinate system in place at the time when the
+                // <filter> element is referenced
+                // (i.e., the user coordinate system for the element referencing the <filter> element via a filter attribute).
+                .attr('filterUnits','userSpaceOnUse');
+    
+        filter.append('feGaussianBlur')
+            .attr('in', 'SourceAlpha')
+            .attr('stdDeviation', parseInt(dropShadow.stdDeviation));
+    
+        filter.append('feOffset')
+            .attr('dx', parseInt(dropShadow.dx))
+            .attr('dy', parseInt(dropShadow.dy));
+    
+        var feComponentTransfer = filter.append('feComponentTransfer');
+        feComponentTransfer
+            .append('feFuncA')
+                .attr('type', dropShadow.type)
+                .attr('slope', parseFloat(dropShadow.slope));
+    
+        var feMerge = filter.append('feMerge');
+        feMerge.append('feMergeNode');
+        feMerge.append('feMergeNode').attr('in', 'SourceGraphic');
     }
 
     function nodeClicked(node, node_info) {
@@ -260,8 +298,13 @@ common.view = (function() {
             
             thisNode.attr("transform", function(d) { return "translate(" + (d.x) + "," + (d.y) + ")"; });
 
-            if(d.uuid === selected_id) d.node.classed('selected', true)
-            else d.node.classed('selected', false)
+            if(d.uuid === selected_id) {
+                d.node.classed('selected', true)
+                d.node.attr('filter', 'url(#' + activeDropShadow + ')' );
+            } else {
+                d.node.classed('selected', false)
+                d.node.attr('filter', null );
+            }
         });
 
         var link = link_group.selectAll(".link").data(activeLinks, function(d) { return d.source.uuid+":"+d.target.uuid });
@@ -302,8 +345,20 @@ common.view = (function() {
             var id = d.source.uuid + ":" + d.target.uuid;
             var path_data = lineGenerator([[d.source.x, d.source.y],[d.target.x, d.target.y]])
             thisLink.attr("d", path_data);
-            if(id === selected_id) thisLink.classed('selected', true)
-            else thisLink.classed('selected', false)
+            if(id === selected_id) {
+                thisLink.attr('filter', 'url(#' + activeDropShadow + ')' )
+                thisLink.classed('selected', true)
+            } else {
+                thisLink.attr('filter', null )
+                thisLink.classed('selected', false)
+            }
+            if(d.source.uuid === selected_id || d.target.uuid === selected_id) {
+                var result = activeNodes.filter(function(a) {return a.uuid === d.source.uuid || a.uuid === d.target.uuid});
+                result.forEach(function(v,i) {
+                    v.node.attr('filter', 'url(#' + activeDropShadow + ')' );
+                })
+                thisLink.attr('filter', 'url(#' + activeDropShadow + ')' )
+            }
         })
         var anim_links = link_group.selectAll('.link_anim');
         anim_links.each(function(d,i) {
@@ -354,6 +409,7 @@ common.view = (function() {
             count: type.length,
             hue: 'blue'
         })
+        types = type;
         type.forEach(function(d,i) {
             var y = (type_size.height*i) + (margin*i);
             node_types.append('rect').attr('rx', 5).attr('x', 0).attr('y', y)
@@ -447,6 +503,25 @@ common.view = (function() {
                 .call(yAxis);
 
             node_types = outer.append('g').attr('class', 'node_types').attr("transform", function(d) { return "translate(" + 70 + "," + 70 + ")"; })
+            toolbox = outer.append('g').attr('class', 'node_types').attr("transform", function(d) { return "translate(" + (width - 70) + "," + 70 + ")"; })
+            
+            var defaultStyle = {
+                padding: "0px 5px 0px 5px",
+                margin: "5px",
+                "border-radius": "16px",
+                "background-color": "white",
+                "stroke": "none",
+                "cursor": "pointer"
+              };
+            toolbox.append('i').attr('class', 'icon fa fa-5x fa-twitter-square').style(defaultStyle);
+
+            var refresh = toolbox.append('rect').attr('rx', 5).attr('x', 0).attr('y', 40)
+            .attr('width', 30).attr('height', 30).attr('fill', 'white')
+            .style("stroke", "#333")
+
+            refresh.append('svg:i').attr('x',0).attr('y',0).attr('class', 'el-icon-refresh')
+
+            addDrawDropShadow();
 
             common.events.on('onAddNode', addNodes)
 
