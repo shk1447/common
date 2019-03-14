@@ -8,7 +8,7 @@ common.view = (function() {
     var height;
     var outer, vis, outer_background, drag_group, link_group, node_types, toolbox;
     var x, y, gX, gY, xAxis, yAxis;
-    var node_size = 28;
+    var node_size = 16;
     var outer_transform = {
         x:0,
         y:0,
@@ -76,6 +76,7 @@ common.view = (function() {
         vis.attr("transform", d3.event.transform);
         gX.call(xAxis.scale(d3.event.transform.rescaleX(x)));
         gY.call(yAxis.scale(d3.event.transform.rescaleY(y)));
+        redraw();
     }
 
     function dragstarted(d) {
@@ -190,7 +191,6 @@ common.view = (function() {
                 .style("cursor", "pointer")
                 .on('click', (function() { var node = d; return function(d,i) { nodeClicked(d3.select(this),node) }})())
                 .on('contextmenu', function() {
-                    var node = d;
                     common.events.emit('popup', {
                         name : 'detailNodeModal',
                         params : d
@@ -199,10 +199,11 @@ common.view = (function() {
                     d3.event.preventDefault();
                 })
                 .on('mouseover', function() {
-                    var node = d3.select(this);
-                    var port = node.select('.port')
-                    port.classed('visible',true);
-                    
+                    if(outer_transform.k === 1) {
+                        var node = d3.select(this);
+                        var port = node.select('.port')
+                        port.classed('visible',true);
+                    }
                 })
                 .on('mouseout', function() { 
                     var node = d3.select(this);
@@ -354,13 +355,11 @@ common.view = (function() {
             var thisLink = d3.select(this);
             var id = d.source.uuid + ":" + d.target.uuid;
             var path_data = lineGenerator([[d.source.x, d.source.y],[d.target.x, d.target.y]])
-            thisLink.attr("d", path_data);
+            thisLink.attr("d", path_data).attr("stroke-width", node_size/4).attr('stroke','#888');
             if(id === selected_id) {
-                thisLink.attr('filter', 'url(#' + activeDropShadow + ')' )
-                thisLink.classed('selected', true)
+                thisLink.attr('filter', 'url(#' + activeDropShadow + ')' ).attr('stroke', '#ff7f0e');
             } else {
                 thisLink.attr('filter', null )
-                thisLink.classed('selected', false)
             }
             if(d.source.uuid === selected_id || d.target.uuid === selected_id) {
                 var result = activeNodes.filter(function(a) {return a.uuid === d.source.uuid || a.uuid === d.target.uuid});
@@ -374,7 +373,7 @@ common.view = (function() {
         anim_links.each(function(d,i) {
             var thisLink = d3.select(this);
             var path_data = lineGenerator([[d.source.x, d.source.y],[d.target.x, d.target.y]])
-            thisLink.attr("d", path_data)
+            thisLink.attr("d", path_data).attr("stroke-width", node_size/4).attr('stroke','rgb(221,221,221)');
             var totalLength = thisLink.node().getTotalLength();
             thisLink.attr("stroke-dasharray", totalLength/8 + " " + totalLength);
             function repeat() {

@@ -127,20 +127,11 @@ export default {
 }
 
 .link_line {
-    stroke:#888;
-    stroke-width:5;
     fill:none;
     pointer-events: none;
 }
 
-.link_line.selected {
-    stroke:#ff7f0e;
-    stroke-width:6;
-}
-
 .link_anim {
-    stroke:rgb(221, 221, 221);
-    stroke-width:5;
     fill:none;
     pointer-events: none;
 }
