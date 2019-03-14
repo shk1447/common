@@ -43,15 +43,14 @@ module.exports = function(config) {
         start: function (server, port) {
             var me = this,
                 i;
-            var count = 0;
             
             function eachWorker(callback) { for (var id in cluster.workers) { callback(cluster.workers[id]); } }
             
             if (cluster.isMaster) {
-                var stats_path = path.resolve(process.env.root_path, './stats.json');
-                var test = JSON.parse(fs.readFileSync(stats_path,'utf8'));
-                var webpack_analyzer = require('webpack-bundle-analyzer')
-                webpack_analyzer.start(test);
+                // var stats_path = path.resolve(process.env.root_path, './stats.json');
+                // var test = JSON.parse(fs.readFileSync(stats_path,'utf8'));
+                // var webpack_analyzer = require('webpack-bundle-analyzer')
+                // webpack_analyzer.start(test);
                 for (i = 0; i < me.cpus; i += 1) {
                     var worker = cluster.fork();
 
@@ -78,10 +77,9 @@ module.exports = function(config) {
 
                 server.listen(port,'0.0.0.0', function(){
                     khan.logger.info(me.name + ' starting worker thread #' + cluster.worker.id);
-                    count++;
-                    if(cluster.worker.id === me.cpus) {
-                        require('opener')("http://localhost:" + port);
-                    }
+                    // if(cluster.worker.id === me.cpus) {
+                    //     require('opener')("http://localhost:" + port);
+                    // }
                 }).on('error', function(err){
                     khan.logger.error(err.message);
                 })

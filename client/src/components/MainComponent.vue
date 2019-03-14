@@ -20,11 +20,12 @@
         <log-component v-if="activeIndex === '3'"></log-component>
         <alarm-component v-if="activeIndex === '4'"></alarm-component>
     </div>
-    <div id="left-panel" ref="left_panel">
+    <!-- <div id="left-panel" ref="left_panel">
     </div>
     <div id="right-panel" ref="right_panel">
-    </div>
+    </div> -->
     <create-node-modal ref="createNodeModal"></create-node-modal>
+    <detail-node-modal ref="detailNodeModal"></detail-node-modal>
 </div>
 </template>
 
@@ -35,6 +36,7 @@ import DashboardComponent from './viewer/DashboardComponent.vue'
 import AlarmComponent from './viewer/AlarmComponent.vue'
 import LogComponent from './viewer/LogComponent.vue'
 import CreateNodeModal from './modal/CreateNodeModal.vue'
+import DetailNodeModal from './modal/DetailNodeModal.vue'
 
 export default {
     data () {
@@ -50,7 +52,8 @@ export default {
         "dashboard-component" : DashboardComponent,
         "log-component" : LogComponent,
         "alarm-component" : AlarmComponent,
-        "create-node-modal" : CreateNodeModal
+        "create-node-modal" : CreateNodeModal,
+        "detail-node-modal" : DetailNodeModal
     },
     methods: {
         handleSelect(key, keyPath) {
@@ -69,18 +72,6 @@ export default {
             } else {
                 this.activeIndex = key;
             }
-        },
-        handleNotiify(d) {
-            var me = this;
-            me.$message({
-                message:d,
-                type:'info'
-            })  
-            // me.$notify({
-            //     message: d,
-            //     type: 'success'
-            // });
-            $(me.$refs.right_panel).toggleClass('show');
         }
     },
     beforeCreate(){
@@ -110,7 +101,7 @@ export default {
         // },1000)
         // console.log('mounted')
         common.events.on('popup', function(d) {
-            me.$refs.createNodeModal.show(d);
+            me.$refs[d.name].show(d.params);
         });
     },
     beforeUpdate() {

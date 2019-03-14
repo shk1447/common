@@ -1,6 +1,7 @@
 const d3 = require('d3');
 const randomColor = require('randomcolor') ;
 require('./d3_extension/keybinding');
+const api = require('../api/api.js');
 
 common.view = (function() {
     var width;
@@ -64,7 +65,10 @@ common.view = (function() {
             x:x,
             y:y
         }
-        common.events.emit('popup', {node_info:node_info, node_types:types, event:d3.event});
+        common.events.emit('popup', {
+            name : 'createNodeModal',
+            params : {node_info:node_info, node_types:types, event:d3.event}
+        });
     };
 
     function zoomed() {
@@ -183,6 +187,17 @@ common.view = (function() {
             var node = d3.select(this);
             node.attr("id",d.uuid)
                 .attr("transform", function(d) { return "translate(" + (d.x) + "," + (d.y) + ")"; })
+                .style("cursor", "pointer")
+                .on('click', (function() { var node = d; return function(d,i) { nodeClicked(d3.select(this),node) }})())
+                .on('contextmenu', function() {
+                    var node = d;
+                    common.events.emit('popup', {
+                        name : 'detailNodeModal',
+                        params : d
+                    });
+                    d3.event.stopPropagation();
+                    d3.event.preventDefault();
+                })
                 .on('mouseover', function() {
                     var node = d3.select(this);
                     var port = node.select('.port')
@@ -247,15 +262,10 @@ common.view = (function() {
             }
 
             d.node = node.append("circle")
+                .style("cursor", "pointer")
                 .attr("class", "node")
                 .attr("r", node_size)
                 .attr("fill",function(d) { return node_type[d.type] ? node_type[d.type].color : 'rgb(166, 187, 207)' })
-                .on('click', (function() { var node = d; return function(d,i) { nodeClicked(d3.select(this),node) }})())
-                .on('contextmenu', function() {
-                    common.events.emit('showRightPanel', 'test');
-                    d3.event.stopPropagation();
-                    d3.event.preventDefault();
-                })
                 
             
             node.append("circle")
@@ -504,22 +514,38 @@ common.view = (function() {
 
             node_types = outer.append('g').attr('class', 'node_types').attr("transform", function(d) { return "translate(" + 70 + "," + 70 + ")"; })
             toolbox = outer.append('g').attr('class', 'node_types').attr("transform", function(d) { return "translate(" + (width - 70) + "," + 70 + ")"; })
-            
-            var defaultStyle = {
-                padding: "0px 5px 0px 5px",
-                margin: "5px",
-                "border-radius": "16px",
-                "background-color": "white",
-                "stroke": "none",
-                "cursor": "pointer"
-              };
-            toolbox.append('i').attr('class', 'icon fa fa-5x fa-twitter-square').style(defaultStyle);
 
-            var refresh = toolbox.append('rect').attr('rx', 5).attr('x', 0).attr('y', 40)
-            .attr('width', 30).attr('height', 30).attr('fill', 'white')
-            .style("stroke", "#333")
+            var save = toolbox.append('text')
+            save.attr("y",40)
+            .attr('font-size', "20px")
+            .attr('font-family', 'FontAwesome')
+            .text(function(d) { return '\uf0c7' })
+            .style('fill','rgb(51, 51, 51)')
+            .style('cursor','pointer')
+            save.on("mouseover", function() {
+                d3.select(this).style('fill','#ff7f0e')
+            })
+            .on("mouseout", function() {
+                d3.select(this).style('fill','rgb(51, 51, 51)')
+            }).on("click", function() {
+                // save current topology
+            })
 
-            refresh.append('svg:i').attr('x',0).attr('y',0).attr('class', 'el-icon-refresh')
+            var refresh = toolbox.append('text')
+            refresh.attr("y",80)
+            .attr('font-size', "20px")
+            .attr('font-family', 'FontAwesome')
+            .text(function(d) { return '\uf021' })
+            .style('fill','rgb(51, 51, 51)')
+            .style('cursor','pointer')
+            refresh.on("mouseover", function() {
+                d3.select(this).style('fill','#ff7f0e')
+            })
+            .on("mouseout", function() {
+                d3.select(this).style('fill','rgb(51, 51, 51)')
+            }).on("click", function() {
+                // refresh topology
+            })
 
             addDrawDropShadow();
 
