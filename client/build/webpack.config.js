@@ -55,6 +55,12 @@ var webpack_config = {
     },{
       from: path.resolve(__dirname, '../src/vendor'),
       to: path.resolve(root_path, './vendor')
+    },{
+      from: path.resolve(__dirname, '../icons'),
+      to: path.resolve(root_path, './icons')
+    },{
+      from: path.resolve(__dirname, '../images'),
+      to: path.resolve(root_path, './images')
     }]),
     // generate dist index.html with correct asset hash for caching.
     // you can customize output by editing /index.html

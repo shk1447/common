@@ -37,7 +37,8 @@ export default {
     components:{
     },
     methods: {
-        show() {
+        show(d) {
+            console.log(d);
             this.$modal.show('detail-node');
         },
         beforeModalClose() {

@@ -72,6 +72,17 @@ export default {
             } else {
                 this.activeIndex = key;
             }
+        },
+        handlePopup(d) {
+            var me = this;
+            me.$refs[d.name].show(d.params);
+        },
+        handleMessage(d) {
+            var me = this;
+            me.$message({
+                message:d.message,
+                type:d.type
+            });
         }
     },
     beforeCreate(){
@@ -100,9 +111,8 @@ export default {
         //     });
         // },1000)
         // console.log('mounted')
-        common.events.on('popup', function(d) {
-            me.$refs[d.name].show(d.params);
-        });
+        common.events.on('popup', me.handlePopup);
+        common.events.on('message', me.handleMessage);
     },
     beforeUpdate() {
 
@@ -115,7 +125,8 @@ export default {
     },
     destroyed() {
         var me = this;
-        common.events.off('test', me.handleNotiify);
+        common.events.off('popup', me.handlePopup);
+        common.events.off('message', me.handleMessage);
         console.log('destroyed')
     }
 }

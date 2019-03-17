@@ -30,18 +30,16 @@ export default {
     },
     mounted() {
         var me = this;
+        me.$loading({});
         console.log('mounted');
         common.view.init('workspace');
         api.getSampleNodeType().then(function(data) {
             common.view.setNodeType(data);
+            api.getTopology().then(function(data) {
+                common.view.reload(data);
+                me.$loading({}).close();
+            });
         })
-        // api.getSamplePhysical().then(function(data) {
-        //     common.view.setPhysicalNode(data);
-        // })
-        
-        // api.getSampleLogical().then(function(data) {
-        //     common.view.setLogicalNode(data)
-        // })
     },
     beforeUpdate() {
 

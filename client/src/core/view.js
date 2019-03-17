@@ -1,14 +1,14 @@
 const d3 = require('d3');
 const randomColor = require('randomcolor') ;
 require('./d3_extension/keybinding');
-const api = require('../api/api.js');
+import api from '../api/api.js';
 
 common.view = (function() {
     var width;
     var height;
     var outer, vis, outer_background, drag_group, link_group, node_types, toolbox;
     var x, y, gX, gY, xAxis, yAxis;
-    var node_size = 16;
+    var node_size = 24;
     var outer_transform = {
         x:0,
         y:0,
@@ -18,7 +18,7 @@ common.view = (function() {
     var lineGenerator;
 
     var drag_line;
-    var temp_link = {source:null,target:null,speed:10};
+    var temp_link = {sourceUuid:null,targetUuid:null,source:null,target:null,speed:10};
     var activeNodes = [];
     var activeLinks = [];
     var selected_id;
@@ -97,7 +97,6 @@ common.view = (function() {
 
     function addNodes(node) {
         activeNodes.push(node);
-        activeNodes = activeNodes;
         redraw();
     }
 
@@ -154,17 +153,19 @@ common.view = (function() {
         d3.event.preventDefault();
         
         temp_link.source = node;
+        temp_link.sourceUuid = node.uuid;
     }
 
     function portMouseUp(port, node, type) {
         temp_link.target = node;
+        temp_link.targetUuid = node.uuid;
         
-        if(temp_link.source && temp_link.target) {
+        if(temp_link.sourceUuid && temp_link.targetUuid) {
             temp_link.speed = Math.round(Math.random()*100);
             activeLinks.push(temp_link);
             redraw();
         }
-        temp_link = {source:null,target:null};
+        temp_link = {source:null, sourceUuid:null,targetUuid:null, target:null};
     }
 
     function portMouseOver(port, node, type) {
@@ -267,6 +268,11 @@ common.view = (function() {
                 .attr("class", "node")
                 .attr("r", node_size)
                 .attr("fill",function(d) { return node_type[d.type] ? node_type[d.type].color : 'rgb(166, 187, 207)' })
+            
+            var icon_url = "/icons/server.svg";
+            //var icon_group = node.append("g").attr("class", "icon_group").attr("x", -node_size).attr("y", -node_size);
+            var icon = node.append("image").attr("xlink:href", icon_url).attr("x", -node_size/2).attr("y", -node_size/2).attr("width", node_size).attr("height", node_size);
+
                 
             
             node.append("circle")
@@ -318,7 +324,7 @@ common.view = (function() {
             }
         });
 
-        var link = link_group.selectAll(".link").data(activeLinks, function(d) { return d.source.uuid+":"+d.target.uuid });
+        var link = link_group.selectAll(".link").data(activeLinks, function(d) { return d.sourceUuid+":"+d.targetUuid });
 
         var linkEnter = link.enter().insert("svg:g")
             .attr("class", "link");
@@ -327,12 +333,13 @@ common.view = (function() {
             var l = d3.select(this);
             l.append("svg:path").attr("class", "link_background link_path")
                                 .on("click",function(d) {
-                                    selected_id = d.source.uuid+":"+d.target.uuid;
+                                    selected_id = d.sourceUuid+":"+d.targetUuid;
                                     redraw();
                                 })
             var link = l.append("svg:path").attr('class', 'link_line link_path')
             l.append("svg:path").attr('class', 'link_anim')
-
+            if(!d.source) d.source = activeNodes.find(function(a) { return a.uuid === d.sourceUuid});
+            if(!d.target) d.target = activeNodes.find(function(a) { return a.uuid === d.targetUuid});
             l.append('svg:text')
             .attr('class', 'speed')
             .attr('x', (d.source.x + d.target.x)/2)
@@ -438,8 +445,20 @@ common.view = (function() {
         return node_types;
     }
 
+    function reload(data) {
+        var me = this;
+        activeNodes = [];
+        activeLinks = [];
+        me.redraw();
+        if(data && data.activeNodes) activeNodes = data.activeNodes;
+        if(data && data.activeLinks) activeLinks = data.activeLinks;
+        me.redraw();
+    }
+
     return {
+        reload:reload,
         init: function(id) {
+            var me = this;
             lineGenerator = d3.line().curve(d3.curveCardinal);
             var container_div = document.getElementById(id);
             width = container_div.clientWidth;
@@ -528,6 +547,23 @@ common.view = (function() {
                 d3.select(this).style('fill','rgb(51, 51, 51)')
             }).on("click", function() {
                 // save current topology
+                var nodes = activeNodes.map(function(d) {
+                    return {
+                        x:d.x,y:d.y,name:d.name,uuid:d.uuid,type:d.type,status:d.status
+                    }
+                });
+                var links = activeLinks.map(function(d) {
+                    return {
+                        sourceUuid : d.source.uuid,
+                        targetUuid : d.target.uuid,
+                        speed : d.speed
+                    }
+                })
+                api.setTopology({activeNodes:nodes, activeLinks:links}).then(function(){
+                    common.events.emit('message', {message:'Save Success.', type:'info'})
+                }).catch(function(err) {
+                    common.events.emit('message', {message:'Save Failure.', type:'error'})
+                })
             })
 
             var refresh = toolbox.append('text')
@@ -543,7 +579,13 @@ common.view = (function() {
             .on("mouseout", function() {
                 d3.select(this).style('fill','rgb(51, 51, 51)')
             }).on("click", function() {
-                // refresh topology
+                // refresh topologyreload
+                api.getTopology().then(function(data) {
+                    me.reload(data);
+                    common.events.emit('message', {message:'Reload Success.', type:'info'})
+                }).catch(function(err) {
+                    common.events.emit('message', {message:'Reload Failure.', type:'error'})
+                })
             })
 
             addDrawDropShadow();
