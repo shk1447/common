@@ -3,10 +3,6 @@
     <div id="menu-bar">
         <el-menu :default-active="activeIndex" mode="horizontal" @select="handleSelect" ref="menu_bar"
             background-color="#333" active-text-color="#fff" text-color="#909399">
-            <el-menu-item index="1">Topology</el-menu-item>
-            <el-menu-item index="2">Dashboard</el-menu-item>
-            <el-menu-item index="3">DevLogs</el-menu-item>
-            <el-menu-item index="4">Alarms</el-menu-item>
             <el-submenu index="5" style="float: right;">
                 <template slot="title"><i class="el-icon-menu"></i></template>
                 <el-menu-item index="5-2"><i class="el-icon-information"></i> About</el-menu-item>
@@ -20,9 +16,10 @@
         <log-component v-if="activeIndex === '3'"></log-component>
         <alarm-component v-if="activeIndex === '4'"></alarm-component>
     </div>
-    <!-- <div id="left-panel" ref="left_panel">
+    <div id="left-panel" ref="left_panel">
+        left menu panel
     </div>
-    <div id="right-panel" ref="right_panel">
+    <!-- <div id="right-panel" ref="right_panel">
     </div> -->
     <create-node-modal ref="createNodeModal"></create-node-modal>
     <detail-node-modal ref="detailNodeModal"></detail-node-modal>
@@ -96,6 +93,7 @@ export default {
     },
     mounted() {
         var me = this;
+        //$(me.$refs.left_panel).classed('show', true);
         // me.$loading({});
 
         // common.events.on("test", me.handleNotiify)
@@ -154,7 +152,8 @@ body, html {
 #main-container {
     position: absolute;
     top:60px;
-    width:100vw;
+    left:10vw;
+    width:90vw;
     height:calc(100vh - 60px);
 }
 
@@ -178,12 +177,10 @@ body, html {
 
 #left-panel {
     position: absolute;
-    opacity: .2;
-    top:60px;
-    width:20vw;
+    top:65px;
+    width:10vw;
     height:calc(100vh - 70px);
     border-radius: 10px;
-    transform: translateX(-20vw);
     transition: all .75s ease;
     background: #333;
 }

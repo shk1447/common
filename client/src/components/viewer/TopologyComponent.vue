@@ -136,7 +136,6 @@ export default {
 
 .drag_line {
     stroke:#ff7f0e;
-    stroke-width:5;
     fill:none;
     pointer-events: none;
 }

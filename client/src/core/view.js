@@ -1,14 +1,15 @@
 const d3 = require('d3');
 const randomColor = require('randomcolor') ;
 require('./d3_extension/keybinding');
+require('./d3_extension/d3-tip.js');
 import api from '../api/api.js';
 
 common.view = (function() {
     var width;
     var height;
-    var outer, vis, outer_background, drag_group, link_group, node_types, toolbox;
+    var outer, vis, outer_background, drag_group, link_group, node_types, toolbox, tooltip;
     var x, y, gX, gY, xAxis, yAxis;
-    var node_size = 24;
+    var node_size = 16;
     var outer_transform = {
         x:0,
         y:0,
@@ -52,7 +53,7 @@ common.view = (function() {
             if(drag_line) {
                 drag_line.attr("d", path_data)
             } else {
-                drag_line = drag_group.append("svg:path").attr("class", "drag_line").attr("d", path_data)
+                drag_line = drag_group.append("svg:path").attr("class", "drag_line").attr("stroke-width", node_size/4).attr("d", path_data)
             }
         }
     }
@@ -205,11 +206,13 @@ common.view = (function() {
                         var port = node.select('.port')
                         port.classed('visible',true);
                     }
+                    tooltip.show();
                 })
                 .on('mouseout', function() { 
                     var node = d3.select(this);
                     var port = node.select('.port')
                     port.classed('visible',false);
+                    tooltip.hide();
                 })
                 .call(d3.drag()
                     .on('start', dragstarted)
@@ -419,7 +422,7 @@ common.view = (function() {
     }
 
     function setNodeType(type) {
-        var type_size = {width:50,height:25};
+        var type_size = {width:node_size*2,height:node_size};
         var margin = 5;
         var color_array = randomColor({
             count: type.length,
@@ -427,10 +430,22 @@ common.view = (function() {
         })
         types = type;
         type.forEach(function(d,i) {
+            var type_info = d;
             var y = (type_size.height*i) + (margin*i);
-            node_types.append('rect').attr('rx', 5).attr('x', 0).attr('y', y)
+            var node_type_rect = node_types.append('rect').attr('rx', 5).attr('x', 0).attr('y', y)
                         .attr('width', type_size.width).attr('height', type_size.height).attr('fill', color_array[i])
                         .style("stroke", "#333")
+                        .style("cursor", "pointer");
+
+            node_type_rect.on('click', function(d) {
+                            console.log(type_info)
+                        })
+                        .on('mouseover', function(d) {
+                            node_type_rect.style('stroke', '#ff7f0e')
+                        })
+                        .on('mouseout', function(d) {
+                            node_type_rect.style('stroke', '#333')
+                        })
             node_types.append("svg:text").attr("x", type_size.width+margin)
                         .attr('y', y+(type_size.height/2)).attr("dy", ".35em").attr("text-anchor","start").text(d.type);
 
@@ -464,6 +479,14 @@ common.view = (function() {
             width = container_div.clientWidth;
             height = container_div.clientHeight;
 
+
+            tooltip = d3.tip()
+                .attr('class', 'd3-tip')
+                .offset([0, 0])
+                .html(function(d) {
+                    console.log(d);
+                    return "<strong>name:</strong> <span style='color:red'>test</span>";
+                });
             var zoom = d3.zoom().scaleExtent([1,50]).translateExtent([[0,0],[width,height]]).on("zoom", zoomed)
             // var drag = d3.drag().on("dragstart")
 
@@ -503,6 +526,7 @@ common.view = (function() {
 
             drag_group = vis.append("g");
             link_group = vis.append("g");
+            vis.call(tooltip);
 
             x = d3.scaleLinear()
                 .domain([-1, width + 1])
@@ -535,7 +559,7 @@ common.view = (function() {
 
             var save = toolbox.append('text')
             save.attr("y",40)
-            .attr('font-size', "20px")
+            .attr('font-size', "15px")
             .attr('font-family', 'FontAwesome')
             .text(function(d) { return '\uf0c7' })
             .style('fill','rgb(51, 51, 51)')
@@ -568,7 +592,7 @@ common.view = (function() {
 
             var refresh = toolbox.append('text')
             refresh.attr("y",80)
-            .attr('font-size', "20px")
+            .attr('font-size', "15px")
             .attr('font-family', 'FontAwesome')
             .text(function(d) { return '\uf021' })
             .style('fill','rgb(51, 51, 51)')

@@ -30,6 +30,7 @@ body {
     font-family: Poppins-Regular, sans-serif;
     overflow: hidden;
     margin: 0px;
+    font-size:12px;
 }
 
 </style>
