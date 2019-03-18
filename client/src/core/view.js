@@ -373,7 +373,7 @@ common.view = (function() {
                 result.forEach(function(v,i) {
                     v.node.attr('filter', 'url(#' + activeDropShadow + ')' );
                 })
-                thisLink.attr('filter', 'url(#' + activeDropShadow + ')' )
+                thisLink.attr('filter', 'url(#' + activeDropShadow + ')' ).attr('stroke', '#ff7f0e');
             }
         })
         var anim_links = link_group.selectAll('.link_anim');
@@ -598,125 +598,6 @@ common.view = (function() {
         setNodeType : setNodeType,
         getNodeType : getNodeType,
         addNodes : addNodes,
-        setLogicalNode : function(data) {
-            var start_point = {
-                x:300,
-                y:200
-            };
-            var link_list = [];
-            for(var i = 0; i < data.length; i++) {
-                var root_node = data[i];
-                console.log('root', root_node.uuid, root_node.name, root_node.type);
-                var node_info = {
-                    id:root_node.uuid,
-                    name:root_node.name,
-                    type:root_node.type,
-                    x:start_point.x * (i+1),
-                    y:start_point.y * (i+1)
-                }
-                activeNodes.push(node_info);
-                if(root_node.vFabrics) {
-                    for(var j = 0; j < root_node.vFabrics.length; j++) {
-                        var child_node = root_node.vFabrics[j];
-                        var child_network = {
-                            id : child_node.uuid,
-                            name : child_node.name,
-                            type : child_node.type,
-                            x : node_info.x + (node_size*2*(j+1)),
-                            y : node_info.y + (node_size*2*(j+1))
-                        }
-                        activeNodes.push(child_network);
-                        activeLinks.push({source:node_info,target:child_network,speed:25})
-                        console.log('fabric',child_node.uuid);
-                        if(child_node.vSwitchs) {
-                            for(var k = 0; k < child_node.vSwitchs.length; k++) {
-                                var child_node2 = child_node.vSwitchs[k];
-                                activeNodes.push({
-                                    id : child_node2.uuid,
-                                    name : child_node2.name,
-                                    type : child_node2.type,
-                                    x : node_info.x + (node_size*2*(j+1)*(k+1)),
-                                    y : node_info.y + (node_size*2*(j+1)*(k+1))
-                                });
-                                if(child_node2.upLink) console.log(child_node2.upLink);
-                            }
-                        }
-                    }
-                }
-            }
-
-            for(var k = 0; k < link_list.length; k++) {
-                var link_info = link_list[k];
-                var source = activeNodes.find(function(d) { return d.uuid === link_info.topNodeUuid});
-                var target = activeNodes.find(function(d) { return d.uuid === link_info.bottomNodeUuid});
-                if(source && target) {
-                    activeLinks.push({
-                        source:source,
-                        target:target,
-                        speed: parseFloat(link_info.speed)
-                    })
-                } else {
-                    console.log(source, target);
-                    console.log(link_info);
-                }
-            }
-            redraw();
-        },
-        setPhysicalNode : function(data) {
-            var start_point = {
-                x:300,
-                y:200
-            }
-            var count = 0;
-            var link_list = [];
-            var valid_list = [];
-            for(var i = 0; i < data.length; i++) {
-                var root_node = data[i];
-                var node_info_root = {
-                    id:root_node.uuid,
-                    name:root_node.name,
-                    type:root_node.nodeType,
-                    x:start_point.x * (i+1),
-                    y:start_point.y * (i+1)
-                }
-                count++;
-                if(root_node.nodeSubTree) {
-                    for(var j = 0; j < root_node.nodeSubTree.length; j++) {
-                        var child_node = root_node.nodeSubTree[j];
-                        var node_info_child = {
-                            id:child_node.uuid,
-                            name:child_node.name,
-                            type:child_node.nodeType,
-                            x:node_info_root.x + (node_size*2*(j+1)),
-                            y:node_info_root.y + (node_size*2*(j+1))
-                        }
-                        count++;
-                        if(!valid_list.includes(node_info_child.uuid)) activeNodes.push(node_info_child);
-                        if(child_node.uplinks) link_list = link_list.concat(child_node.uplinks)
-                        valid_list.push(node_info_child.uuid)
-                    }
-                }
-                if(!valid_list.includes(node_info_root.uuid)) activeNodes.push(node_info_root);
-                valid_list.push(node_info_root.uuid)
-                if(root_node.uplinks) link_list = link_list.concat(child_node.uplinks)
-            }
-            for(var k = 0; k < link_list.length; k++) {
-                var link_info = link_list[k];
-                var source = activeNodes.find(function(d) { return d.uuid === link_info.topNodeUuid});
-                var target = activeNodes.find(function(d) { return d.uuid === link_info.bottomNodeUuid});
-                if(source && target) {
-                    activeLinks.push({
-                        source:source,
-                        target:target,
-                        speed: parseFloat(link_info.speed)
-                    })
-                } else {
-                    console.log(source, target);
-                    console.log(link_info);
-                }
-            }
-            redraw();
-        },
         uninit: function() {
             width;
             height;
@@ -728,10 +609,9 @@ common.view = (function() {
                 y:0,
                 k:1
             };
-            lineCurveScale = 1;
 
             drag_line;
-            temp_link = {source:null,target:null};
+            temp_link = {sourceUuid:null,targetUuid:null,source:null,target:null,speed:0};
             activeNodes = [];
             activeLinks = [];
             selected_id;
