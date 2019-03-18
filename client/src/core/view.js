@@ -27,7 +27,35 @@ common.view = (function() {
     var types = [];
     var node_type = {};
 
+    function canvasContextMenu() {
+        var x = (d3.event.offsetX - outer_transform.x ) / outer_transform.k;
+        var y = (d3.event.offsetY - outer_transform.y ) / outer_transform.k
+        var node_info = {
+            status:~~(Math.random() * (5 - 0 + 1)) + 0,
+            x:x,
+            y:y
+        }
+        common.events.emit('contextmenu', {
+            active:true,
+            left : d3.event.pageX,
+            top : d3.event.pageY,
+            params : {
+                node_info:node_info,
+                node_types:types,
+                event:d3.event
+            }
+        });
+        d3.event.stopPropagation();
+        d3.event.preventDefault();
+    }
+
     function canvasMouseDown() {
+        common.events.emit('contextmenu', {
+            active:false,
+            x : d3.event.pageX,
+            y : d3.event.pageY,
+            params : {}
+        });
         selected_id = "";
         redraw();
     }
@@ -59,17 +87,18 @@ common.view = (function() {
     }
 
     function canvasDblClick() {
-        var x = (d3.event.offsetX - outer_transform.x ) / outer_transform.k;
-        var y = (d3.event.offsetY - outer_transform.y ) / outer_transform.k
-        var node_info = {
-            status:~~(Math.random() * (5 - 0 + 1)) + 0,
-            x:x,
-            y:y
-        }
-        common.events.emit('popup', {
-            name : 'createNodeModal',
-            params : {node_info:node_info, node_types:types, event:d3.event}
-        });
+        console.log('dbl click!!!');
+        // var x = (d3.event.offsetX - outer_transform.x ) / outer_transform.k;
+        // var y = (d3.event.offsetY - outer_transform.y ) / outer_transform.k
+        // var node_info = {
+        //     status:~~(Math.random() * (5 - 0 + 1)) + 0,
+        //     x:x,
+        //     y:y
+        // }
+        // common.events.emit('popup', {
+        //     name : 'createNodeModal',
+        //     params : {node_info:node_info, node_types:types, event:d3.event}
+        // });
     };
 
     function zoomed() {
@@ -457,7 +486,7 @@ common.view = (function() {
     }
 
     function getNodeType() {
-        return node_types;
+        return types;
     }
 
     function reload(data) {
@@ -511,6 +540,7 @@ common.view = (function() {
                         // .style("cursor", "crosshair")
                         .call(zoom)
                         .on('dblclick.zoom', null)
+                        .on('contextmenu', canvasContextMenu)
             
 
             vis = outer.append("svg:g")
@@ -555,62 +585,62 @@ common.view = (function() {
                 .call(yAxis);
 
             node_types = outer.append('g').attr('class', 'node_types').attr("transform", function(d) { return "translate(" + 70 + "," + 70 + ")"; })
-            toolbox = outer.append('g').attr('class', 'node_types').attr("transform", function(d) { return "translate(" + (width - 70) + "," + 70 + ")"; })
+            // toolbox = outer.append('g').attr('class', 'node_types').attr("transform", function(d) { return "translate(" + (width - 70) + "," + 70 + ")"; })
 
-            var save = toolbox.append('text')
-            save.attr("y",40)
-            .attr('font-size', "15px")
-            .attr('font-family', 'FontAwesome')
-            .text(function(d) { return '\uf0c7' })
-            .style('fill','rgb(51, 51, 51)')
-            .style('cursor','pointer')
-            save.on("mouseover", function() {
-                d3.select(this).style('fill','#ff7f0e')
-            })
-            .on("mouseout", function() {
-                d3.select(this).style('fill','rgb(51, 51, 51)')
-            }).on("click", function() {
-                // save current topology
-                var nodes = activeNodes.map(function(d) {
-                    return {
-                        x:d.x,y:d.y,name:d.name,uuid:d.uuid,type:d.type,status:d.status
-                    }
-                });
-                var links = activeLinks.map(function(d) {
-                    return {
-                        sourceUuid : d.source.uuid,
-                        targetUuid : d.target.uuid,
-                        speed : d.speed
-                    }
-                })
-                api.setTopology({activeNodes:nodes, activeLinks:links}).then(function(){
-                    common.events.emit('message', {message:'Save Success.', type:'info'})
-                }).catch(function(err) {
-                    common.events.emit('message', {message:'Save Failure.', type:'error'})
-                })
-            })
+            // var save = toolbox.append('text')
+            // save.attr("y",40)
+            // .attr('font-size', "15px")
+            // .attr('font-family', 'FontAwesome')
+            // .text(function(d) { return '\uf0c7' })
+            // .style('fill','rgb(51, 51, 51)')
+            // .style('cursor','pointer')
+            // save.on("mouseover", function() {
+            //     d3.select(this).style('fill','#ff7f0e')
+            // })
+            // .on("mouseout", function() {
+            //     d3.select(this).style('fill','rgb(51, 51, 51)')
+            // }).on("click", function() {
+            //     // save current topology
+            //     var nodes = activeNodes.map(function(d) {
+            //         return {
+            //             x:d.x,y:d.y,name:d.name,uuid:d.uuid,type:d.type,status:d.status
+            //         }
+            //     });
+            //     var links = activeLinks.map(function(d) {
+            //         return {
+            //             sourceUuid : d.source.uuid,
+            //             targetUuid : d.target.uuid,
+            //             speed : d.speed
+            //         }
+            //     })
+            //     api.setTopology({activeNodes:nodes, activeLinks:links}).then(function(){
+            //         common.events.emit('message', {message:'Save Success.', type:'info'})
+            //     }).catch(function(err) {
+            //         common.events.emit('message', {message:'Save Failure.', type:'error'})
+            //     })
+            // })
 
-            var refresh = toolbox.append('text')
-            refresh.attr("y",80)
-            .attr('font-size', "15px")
-            .attr('font-family', 'FontAwesome')
-            .text(function(d) { return '\uf021' })
-            .style('fill','rgb(51, 51, 51)')
-            .style('cursor','pointer')
-            refresh.on("mouseover", function() {
-                d3.select(this).style('fill','#ff7f0e')
-            })
-            .on("mouseout", function() {
-                d3.select(this).style('fill','rgb(51, 51, 51)')
-            }).on("click", function() {
-                // refresh topologyreload
-                api.getTopology().then(function(data) {
-                    me.reload(data);
-                    common.events.emit('message', {message:'Reload Success.', type:'info'})
-                }).catch(function(err) {
-                    common.events.emit('message', {message:'Reload Failure.', type:'error'})
-                })
-            })
+            // var refresh = toolbox.append('text')
+            // refresh.attr("y",80)
+            // .attr('font-size', "15px")
+            // .attr('font-family', 'FontAwesome')
+            // .text(function(d) { return '\uf021' })
+            // .style('fill','rgb(51, 51, 51)')
+            // .style('cursor','pointer')
+            // refresh.on("mouseover", function() {
+            //     d3.select(this).style('fill','#ff7f0e')
+            // })
+            // .on("mouseout", function() {
+            //     d3.select(this).style('fill','rgb(51, 51, 51)')
+            // }).on("click", function() {
+            //     // refresh topologyreload
+            //     api.getTopology().then(function(data) {
+            //         me.reload(data);
+            //         common.events.emit('message', {message:'Reload Success.', type:'info'})
+            //     }).catch(function(err) {
+            //         common.events.emit('message', {message:'Reload Failure.', type:'error'})
+            //     })
+            // })
 
             addDrawDropShadow();
 

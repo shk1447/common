@@ -1,8 +1,12 @@
 <template>
 <div id="app-main">
-    <div id="menu-bar">
+    <div class="header">
         <el-menu :default-active="activeIndex" mode="horizontal" @select="handleSelect" ref="menu_bar"
             background-color="#333" active-text-color="#fff" text-color="#909399">
+            <el-menu-item index="1">Topology</el-menu-item>
+            <el-menu-item index="2">Dashboard</el-menu-item>
+            <el-menu-item index="3">DevLogs</el-menu-item>
+            <el-menu-item index="4">Alarms</el-menu-item>
             <el-submenu index="5" style="float: right;">
                 <template slot="title"><i class="el-icon-menu"></i></template>
                 <el-menu-item index="5-2"><i class="el-icon-information"></i> About</el-menu-item>
@@ -10,19 +14,25 @@
             </el-submenu>
         </el-menu>
     </div>
-    <div id="main-container">
+    <div class="sidebar" ref="left_panel">
+        
+</div>
+<div class="handle" @click="handlePanelSlide">
+
+</div>
+    <div class="content">
         <topology-component v-if="activeIndex === '1'"></topology-component>
         <dashboard-component v-if="activeIndex === '2'"></dashboard-component>
         <log-component v-if="activeIndex === '3'"></log-component>
         <alarm-component v-if="activeIndex === '4'"></alarm-component>
     </div>
-    <div id="left-panel" ref="left_panel">
-        left menu panel
-    </div>
+    
+    
     <!-- <div id="right-panel" ref="right_panel">
     </div> -->
     <create-node-modal ref="createNodeModal"></create-node-modal>
     <detail-node-modal ref="detailNodeModal"></detail-node-modal>
+    <context-menu ref="contextMenu"></context-menu>
 </div>
 </template>
 
@@ -34,6 +44,7 @@ import AlarmComponent from './viewer/AlarmComponent.vue'
 import LogComponent from './viewer/LogComponent.vue'
 import CreateNodeModal from './modal/CreateNodeModal.vue'
 import DetailNodeModal from './modal/DetailNodeModal.vue'
+import ContextMenu from './menu/ContextMenuComponent.vue'
 
 export default {
     data () {
@@ -50,9 +61,14 @@ export default {
         "log-component" : LogComponent,
         "alarm-component" : AlarmComponent,
         "create-node-modal" : CreateNodeModal,
-        "detail-node-modal" : DetailNodeModal
+        "detail-node-modal" : DetailNodeModal,
+        "context-menu" : ContextMenu
     },
     methods: {
+        handlePanelSlide() {
+            var me = this;
+            $(me.$refs.left_panel).toggleClass('show');
+        },
         handleSelect(key, keyPath) {
             var me = this;
             if(key === "5-3") {
@@ -135,59 +151,44 @@ body, html {
 	font-family: Poppins-Regular, sans-serif;
 }
 
+html, body {
+  width: 100%;
+  height: 100%;
+}
+
+.header {
+  height: 60px;
+  background: #2196F3;
+}
+
+
+.content {
+  height: calc(100% - 60px);
+  overflow: hidden;
+}
+
 #app-main {
-    position: absolute;
-    top:0px;
-    left: 0px;
-    width:100vw;
-    height:100vh;
+    width:100%;
+    height:100%;
 }
 
-#menu-bar {
-    position: absolute;
-    width:100vw;
-    height:60px;
+.sidebar {
+  float: left;
+  width: 0px;
+  height: calc(100% - 60px);
+  background: #ffcdd2;
+  overflow: auto;
+  -webkit-transition: width 1s;
+  transition: width 1s;
 }
-
-#main-container {
-    position: absolute;
-    top:60px;
-    left:10vw;
-    width:90vw;
-    height:calc(100vh - 60px);
+.sidebar.show {
+    width:300px;
 }
-
-#right-panel {
-    position: absolute;
-    opacity: .2;
-    top:60px;
-    width:20vw;
-    height:calc(100vh - 70px);
-    border-radius: 10px;
-    transform: translateX(100vw);
-    transition: all .75s ease;
-    background: #333;
-    margin-top:10px;
+.handle {
+  float: left;
+  width: 10px;
+  height: calc(100% - 60px);
+  background: #ddd;
+  cursor: ew-resize;
 }
-
-#right-panel.show {
-    transform: translateX(80vw);
-    opacity: 1;
-}
-
-#left-panel {
-    position: absolute;
-    top:65px;
-    width:10vw;
-    height:calc(100vh - 70px);
-    border-radius: 10px;
-    transition: all .75s ease;
-    background: #333;
-}
-
-#left-panel.show {
-    transform: translateX(80vw);
-    opacity: 1;
-}
-  
 </style>
