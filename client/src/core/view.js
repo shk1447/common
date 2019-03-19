@@ -5,8 +5,7 @@ require('./d3_extension/d3-tip.js');
 import api from '../api/api.js';
 
 common.view = (function() {
-    var container_div;
-    var width, height;
+    var width, height, container_div;
     var outer, vis, outer_background, drag_group, link_group, node_types;
     var x, y, gX, gY, xAxis, yAxis, zoom;
     var node_size = 16;
@@ -92,7 +91,8 @@ common.view = (function() {
         vis.attr("transform", d3.event.transform);
         gX.call(xAxis.scale(d3.event.transform.rescaleX(x)));
         gY.call(yAxis.scale(d3.event.transform.rescaleY(y)));
-        redraw();
+        
+        //redraw();
     }
 
     function dragstarted(d) {
@@ -116,7 +116,7 @@ common.view = (function() {
         redraw();
     }
 
-    var activeDropShadow;
+    var activeDropShadow, activeBlur;
 
     var dropShadow = {
         'stdDeviation': 2,
@@ -127,10 +127,16 @@ common.view = (function() {
     };
 
     function addDrawDropShadow() {
+        activeBlur = 'blur';
         activeDropShadow = 'dropshadow';
+
+        var defs = outer.append('defs')
+        var blur_filter = defs.append('filter').attr('id', activeBlur)
+        blur_filter.append('feGaussianBlur')
+            .attr('in', 'SourceGraphic')
+            .attr('stdDeviation', parseInt(dropShadow.stdDeviation))
     
-        var filter = outer.append('defs')
-            .append('filter')
+        var filter = defs.append('filter')
                 .attr('id', activeDropShadow)
                 // x, y, width and height represent values in the current coordinate system that results
                 // from taking the current user coordinate system in place at the time when the
@@ -158,6 +164,8 @@ common.view = (function() {
     }
 
     function nodeClicked(node, node_info) {
+        d3.event.stopPropagation();
+        d3.event.preventDefault();
         //node.classed("selected", !node.classed("selected"))
         selected_id = node_info.uuid;
         redraw();
@@ -206,6 +214,16 @@ common.view = (function() {
             node.attr("id",d.uuid)
                 .attr("transform", function(d) { return "translate(" + (d.x) + "," + (d.y) + ")"; })
                 .style("cursor", "pointer")
+                .on('dblclick', function(){
+                    var k, kh, kw, x, y;
+                    kw = (container_div.clientWidth - container_div.clientWidth/10) / node.w;
+                    kh = (container_div.clientHeight - container_div.clientHeight/10) / node.h;
+                    k = d3.min([kw,kh])/2;
+                    x = container_div.clientWidth / 2 - d.x * k;
+                    y = container_div.clientHeight / 2 - d.y * k;
+                    var test = d3.zoomIdentity.translate(x,y).scale(k);
+                    outer.transition().duration(1200).call(zoom.transform, test)
+                })
                 .on('click', (function() { var node = d; return function(d,i) { nodeClicked(d3.select(this),node) }})())
                 .on('contextmenu', function() {
                     common.events.emit('popup', {
@@ -380,16 +398,14 @@ common.view = (function() {
             var path_data = lineGenerator([[d.source.x, d.source.y],[d.target.x, d.target.y]])
             thisLink.attr("d", path_data).attr("stroke-width", node_size/4).attr('stroke','#888');
             if(id === selected_id) {
-                thisLink.attr('filter', 'url(#' + activeDropShadow + ')' ).attr('stroke', '#ff7f0e');
-            } else {
-                thisLink.attr('filter', null )
+                thisLink.attr('stroke', '#ff7f0e');
             }
             if(d.source.uuid === selected_id || d.target.uuid === selected_id) {
                 var result = activeNodes.filter(function(a) {return a.uuid === d.source.uuid || a.uuid === d.target.uuid});
                 result.forEach(function(v,i) {
                     v.node.attr('filter', 'url(#' + activeDropShadow + ')' );
                 })
-                thisLink.attr('filter', 'url(#' + activeDropShadow + ')' ).attr('stroke', '#ff7f0e');
+                thisLink.attr('stroke', '#ff7f0e');
             }
         })
         var anim_links = link_group.selectAll('.link_anim');
@@ -499,11 +515,10 @@ common.view = (function() {
         },
         reload:reload,
         init: function(id) {
-            var me = this;
-            lineGenerator = d3.line().curve(d3.curveCardinal);
             container_div = document.getElementById(id);
-            width = 5000;
-            height = 5000;
+            lineGenerator = d3.line().curve(d3.curveCardinal);
+            width = container_div.clientWidth;
+            height = container_div.clientHeight;
             console.log(types);
             zoom = d3.zoom().on("zoom", zoomed)
             // var drag = d3.drag().on("dragstart")

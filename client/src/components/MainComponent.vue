@@ -69,6 +69,7 @@ export default {
         },
         handleSelect(key, keyPath) {
             var me = this;
+            me.open = false;
             if(key === "5-3") {
                 me.$confirm("로그아웃 하시겠습니까?", "로그아웃", {
                     confirmButtonText: 'OK', cancelButtonText: 'Cancel', type: 'info'
@@ -157,8 +158,8 @@ export default {
   width: 0px;
   height: calc(100% - 60px);
   overflow: auto;
-  -webkit-transition: width 1s;
-  transition: width 1s;
+  -webkit-transition: width .4s;
+  transition: width .4s;
   background-color: rgb(242,249,255);
   border: 1px solid #d8dce5;
   box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.12), 0 0 6px 0 rgba(0, 0, 0, 0.04);
@@ -172,8 +173,8 @@ export default {
   width: 0px;
   height: calc(100% - 60px);
   overflow: auto;
-  -webkit-transition: width 1s;
-  transition: width 1s;
+  -webkit-transition: width .4s;
+  transition: width .4s;
 }
 .sidebar_right.show {
     width:300px;

@@ -16,6 +16,7 @@ export default {
         return {
             menu_items : [{id:'add',label:'Add'},
                             {id:'save',label:'Save'},
+                            {id:'search',label:'Search'},
                             {id:'reload',label:'Reload'},
                             {id:'zoom_reset',label:'Reset Zoom'}],
             activeContextMenu:false,
@@ -38,11 +39,14 @@ export default {
                     });
                 break;
                 case 'reload' : 
+                    me.$loading({});
                     api.getTopology().then(function(data) {
                         common.view.reload(data);
                         common.events.emit('notify', {message:'Reload Success.', type:'success'})
+                        me.$loading({}).close();
                     }).catch(function(err) {
                         common.events.emit('notify', {message:'Reload Failure.', type:'error'})
+                        me.$loading({}).close();
                     })
                 break;
                 case 'save' :
@@ -68,6 +72,9 @@ export default {
                 break;
                 case 'zoom_reset' :
                     common.view.zoom_reset();
+                break;
+                case 'search' :
+                    common.events.emit('message', {type:'warning' , message:'Not implemented.'})
                 break;
             }
             me.activeContextMenu = false;
@@ -134,6 +141,7 @@ export default {
     border-bottom: 1px solid #E0E0E0;
     margin: 0;
     padding: 5px 35px;
+    cursor: pointer;
 }
 
 .menu-options li:last-child {

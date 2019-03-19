@@ -32,14 +32,16 @@ export default {
         var me = this;
         me.$loading({});
         console.log('mounted');
-        common.view.init('workspace');
-        api.getSampleNodeType().then(function(data) {
-            common.view.setNodeType(data);
-            api.getTopology().then(function(data) {
-                common.view.reload(data);
-                me.$loading({}).close();
-            });
-        })
+        setTimeout(function() {
+            common.view.init('workspace');
+            api.getSampleNodeType().then(function(data) {
+                common.view.setNodeType(data);
+                api.getTopology().then(function(data) {
+                    common.view.reload(data);
+                    me.$loading({}).close();
+                });
+            })
+        },450)
     },
     beforeUpdate() {
 
