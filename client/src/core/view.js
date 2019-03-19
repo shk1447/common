@@ -5,9 +5,9 @@ require('./d3_extension/d3-tip.js');
 import api from '../api/api.js';
 
 common.view = (function() {
-    var width;
-    var height;
-    var outer, vis, outer_background, drag_group, link_group, node_types, toolbox, tooltip;
+    var container_div;
+    var width, height;
+    var outer, vis, outer_background, drag_group, link_group, node_types;
     var x, y, gX, gY, xAxis, yAxis;
     var node_size = 16;
     var outer_transform = {
@@ -88,17 +88,6 @@ common.view = (function() {
 
     function canvasDblClick() {
         console.log('dbl click!!!');
-        // var x = (d3.event.offsetX - outer_transform.x ) / outer_transform.k;
-        // var y = (d3.event.offsetY - outer_transform.y ) / outer_transform.k
-        // var node_info = {
-        //     status:~~(Math.random() * (5 - 0 + 1)) + 0,
-        //     x:x,
-        //     y:y
-        // }
-        // common.events.emit('popup', {
-        //     name : 'createNodeModal',
-        //     params : {node_info:node_info, node_types:types, event:d3.event}
-        // });
     };
 
     function zoomed() {
@@ -235,13 +224,11 @@ common.view = (function() {
                         var port = node.select('.port')
                         port.classed('visible',true);
                     }
-                    tooltip.show();
                 })
                 .on('mouseout', function() { 
                     var node = d3.select(this);
                     var port = node.select('.port')
                     port.classed('visible',false);
-                    tooltip.hide();
                 })
                 .call(d3.drag()
                     .on('start', dragstarted)
@@ -499,23 +486,37 @@ common.view = (function() {
         me.redraw();
     }
 
+    function resize() {
+        //var container_div = document.getElementById(id);
+        console.log(width, height);
+        console.log(container_div.clientWidth, container_div.clientHeight)
+        width = container_div.clientWidth;
+        height = container_div.clientHeight;
+        outer.attr("width", width)
+            .attr("height", height)
+            .attr('viewBox', '0 0 ' + width + ' ' + height)
+        
+        outer_background.attr("width", width).attr("height", height);
+    }
+
+    function getNodes () {
+        return activeNodes;
+    }
+
+    function getLinks () {
+        return activeLinks;
+    }
+
     return {
+        resize: resize,
         reload:reload,
         init: function(id) {
             var me = this;
             lineGenerator = d3.line().curve(d3.curveCardinal);
-            var container_div = document.getElementById(id);
+            container_div = document.getElementById(id);
             width = container_div.clientWidth;
             height = container_div.clientHeight;
 
-
-            tooltip = d3.tip()
-                .attr('class', 'd3-tip')
-                .offset([0, 0])
-                .html(function(d) {
-                    console.log(d);
-                    return "<strong>name:</strong> <span style='color:red'>test</span>";
-                });
             var zoom = d3.zoom().scaleExtent([1,50]).translateExtent([[0,0],[width,height]]).on("zoom", zoomed)
             // var drag = d3.drag().on("dragstart")
 
@@ -556,7 +557,6 @@ common.view = (function() {
 
             drag_group = vis.append("g");
             link_group = vis.append("g");
-            vis.call(tooltip);
 
             x = d3.scaleLinear()
                 .domain([-1, width + 1])
@@ -567,80 +567,26 @@ common.view = (function() {
                 .range([-1, height + 1]);
 
             xAxis = d3.axisBottom(x)
-                .ticks((width + 2) / (height + 2) * 10)
+                .ticks((width + 2) / (height + 2) * 20)
                 .tickSize(height)
                 .tickPadding(8 - height);
 
             yAxis = d3.axisRight(y)
-                .ticks(10)
+                .ticks(20)
                 .tickSize(width)
                 .tickPadding(8 - width);
-            
+
             gX = outer.append("g")
                 .attr("class", "axis axis--x")
+                .attr("opacity", ".5")
                 .call(xAxis);
 
             gY = outer.append("g")
                 .attr("class", "axis axis--y")
+                .attr("opacity", ".5")
                 .call(yAxis);
 
             node_types = outer.append('g').attr('class', 'node_types').attr("transform", function(d) { return "translate(" + 70 + "," + 70 + ")"; })
-            // toolbox = outer.append('g').attr('class', 'node_types').attr("transform", function(d) { return "translate(" + (width - 70) + "," + 70 + ")"; })
-
-            // var save = toolbox.append('text')
-            // save.attr("y",40)
-            // .attr('font-size', "15px")
-            // .attr('font-family', 'FontAwesome')
-            // .text(function(d) { return '\uf0c7' })
-            // .style('fill','rgb(51, 51, 51)')
-            // .style('cursor','pointer')
-            // save.on("mouseover", function() {
-            //     d3.select(this).style('fill','#ff7f0e')
-            // })
-            // .on("mouseout", function() {
-            //     d3.select(this).style('fill','rgb(51, 51, 51)')
-            // }).on("click", function() {
-            //     // save current topology
-            //     var nodes = activeNodes.map(function(d) {
-            //         return {
-            //             x:d.x,y:d.y,name:d.name,uuid:d.uuid,type:d.type,status:d.status
-            //         }
-            //     });
-            //     var links = activeLinks.map(function(d) {
-            //         return {
-            //             sourceUuid : d.source.uuid,
-            //             targetUuid : d.target.uuid,
-            //             speed : d.speed
-            //         }
-            //     })
-            //     api.setTopology({activeNodes:nodes, activeLinks:links}).then(function(){
-            //         common.events.emit('message', {message:'Save Success.', type:'info'})
-            //     }).catch(function(err) {
-            //         common.events.emit('message', {message:'Save Failure.', type:'error'})
-            //     })
-            // })
-
-            // var refresh = toolbox.append('text')
-            // refresh.attr("y",80)
-            // .attr('font-size', "15px")
-            // .attr('font-family', 'FontAwesome')
-            // .text(function(d) { return '\uf021' })
-            // .style('fill','rgb(51, 51, 51)')
-            // .style('cursor','pointer')
-            // refresh.on("mouseover", function() {
-            //     d3.select(this).style('fill','#ff7f0e')
-            // })
-            // .on("mouseout", function() {
-            //     d3.select(this).style('fill','rgb(51, 51, 51)')
-            // }).on("click", function() {
-            //     // refresh topologyreload
-            //     api.getTopology().then(function(data) {
-            //         me.reload(data);
-            //         common.events.emit('message', {message:'Reload Success.', type:'info'})
-            //     }).catch(function(err) {
-            //         common.events.emit('message', {message:'Reload Failure.', type:'error'})
-            //     })
-            // })
 
             addDrawDropShadow();
 
@@ -652,12 +598,14 @@ common.view = (function() {
         setNodeType : setNodeType,
         getNodeType : getNodeType,
         addNodes : addNodes,
+        getNodes : getNodes,
+        getLinks : getLinks,
         uninit: function() {
             width;
             height;
             outer, vis, outer_background, drag_group, link_group, node_types;
             x, y, xAxis, yAxis, gX, gY;
-            node_size = 28;
+            node_size = 16;
             outer_transform = {
                 x:0,
                 y:0,

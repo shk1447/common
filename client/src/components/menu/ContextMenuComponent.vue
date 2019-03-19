@@ -7,18 +7,16 @@
 </template>
 
 <script>
-
+import api from '../../api/api.js'
 export default {
     props: {
         actionMenu: { type : Function }
     },
     data () {
         return {
-            menu_items : [{id:'add_node',label:'Add Node'},
-                            {id:'reload',label:'Reload'},
+            menu_items : [{id:'add',label:'Add'},
                             {id:'save',label:'Save'},
-                            {id:'save_as',label:'Save As'},
-                            {id:'search',label:'Serach'}],
+                            {id:'reload',label:'Reload'}],
             activeContextMenu:false,
             top:'0px',
             left:'0px',
@@ -32,15 +30,41 @@ export default {
         handleClickMenu(item) {
             var me = this;
             switch(item.id) {
-                case 'add_node' :
+                case 'add' :
                     common.events.emit('popup', {
                         name : 'createNodeModal',
                         params : {node_info:me.params.node_info, node_types:me.params.node_types, event:me.params.event}
                     });
                 break;
                 case 'reload' : 
-                    console.log('reload');
-                break
+                    api.getTopology().then(function(data) {
+                        common.view.reload(data);
+                        common.events.emit('notify', {message:'Reload Success.', type:'success'})
+                    }).catch(function(err) {
+                        common.events.emit('notify', {message:'Reload Failure.', type:'error'})
+                    })
+                break;
+                case 'save' :
+                    // save current topology
+                    var nodes = common.view.getNodes().map(function(d) {
+                        return {
+                            x:d.x,y:d.y,name:d.name,uuid:d.uuid,type:d.type,status:d.status
+                        }
+                    });
+                    var links = common.view.getLinks().map(function(d) {
+                        return {
+                            sourceUuid : d.source.uuid,
+                            targetUuid : d.target.uuid,
+                            speed : d.speed
+                        }
+                    })
+                    api.setTopology({activeNodes:nodes, activeLinks:links}).then(function(){
+                        common.events.emit('notify', {message:'Save Success.', type:'success'})
+                    }).catch(function(err) {
+                        common.events.emit('notify', {message:'Save Failure.', type:'error'})
+                    })
+                    console.log('save');
+                break;
             }
             me.activeContextMenu = false;
         },
@@ -76,6 +100,7 @@ export default {
 
     },
     destroyed() {
+        var me = this;
         console.log('destroyed')
         common.events.off('contextmenu', me.handleContextMenu);
     }

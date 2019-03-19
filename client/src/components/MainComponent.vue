@@ -1,8 +1,8 @@
 <template>
 <div id="app-main">
     <div class="header">
-        <el-menu :default-active="activeIndex" mode="horizontal" @select="handleSelect" ref="menu_bar"
-            background-color="#333" active-text-color="#fff" text-color="#909399">
+        <el-menu class="test" :default-active="activeIndex" mode="horizontal" @select="handleSelect" ref="menu_bar"
+            background-color="rgb(41,50,63)" active-text-color="rgb(99,170,244)" text-color="rgb(114,119,126)">
             <el-menu-item index="1">Topology</el-menu-item>
             <el-menu-item index="2">Dashboard</el-menu-item>
             <el-menu-item index="3">DevLogs</el-menu-item>
@@ -14,12 +14,12 @@
             </el-submenu>
         </el-menu>
     </div>
-    <div class="sidebar" ref="left_panel">
+    <div :class="open ? 'sidebar_left show' : 'sidebar_left'" ref="left_panel">
         
-</div>
-<div class="handle" @click="handlePanelSlide">
-
-</div>
+    </div>
+    <div class="handle" @click="handlePanelSlide">
+        <i :class="open ? 'el-icon-caret-left' : 'el-icon-caret-right'" style="vertical-align: middle;"></i>
+    </div>
     <div class="content">
         <topology-component v-if="activeIndex === '1'"></topology-component>
         <dashboard-component v-if="activeIndex === '2'"></dashboard-component>
@@ -27,9 +27,6 @@
         <alarm-component v-if="activeIndex === '4'"></alarm-component>
     </div>
     
-    
-    <!-- <div id="right-panel" ref="right_panel">
-    </div> -->
     <create-node-modal ref="createNodeModal"></create-node-modal>
     <detail-node-modal ref="detailNodeModal"></detail-node-modal>
     <context-menu ref="contextMenu"></context-menu>
@@ -52,7 +49,8 @@ export default {
             isCollapse: true,
             code_list:[],
             data_list:{},
-            activeIndex:'1'
+            activeIndex:'1',
+            open:false
         }
     },
     components:{
@@ -67,7 +65,7 @@ export default {
     methods: {
         handlePanelSlide() {
             var me = this;
-            $(me.$refs.left_panel).toggleClass('show');
+            me.open = !me.open;
         },
         handleSelect(key, keyPath) {
             var me = this;
@@ -96,37 +94,28 @@ export default {
                 message:d.message,
                 type:d.type
             });
+        },
+        handleNotify(d) {
+            var me = this;
+            me.$notify({
+                message:d.message,
+                type:d.type
+            });
         }
     },
     beforeCreate(){
-
+        
     },
     created() {
-        console.log('created')
     },
     beforeRouteUpdate(to,from){
 
     },
     mounted() {
         var me = this;
-        //$(me.$refs.left_panel).classed('show', true);
-        // me.$loading({});
-
-        // common.events.on("test", me.handleNotiify)
-
-        // common.events.on('showRightPanel', function(d) {
-        //     $(me.$refs.right_panel).toggle('slide');
-        // })
-        // setTimeout(function() {
-        //     me.$loading({}).close();
-        //     me.$message({
-        //         message:'load complete',
-        //         type:'info'
-        //     });
-        // },1000)
-        // console.log('mounted')
         common.events.on('popup', me.handlePopup);
         common.events.on('message', me.handleMessage);
+        common.events.on('notify', me.handleNotify);
     },
     beforeUpdate() {
 
@@ -141,24 +130,15 @@ export default {
         var me = this;
         common.events.off('popup', me.handlePopup);
         common.events.off('message', me.handleMessage);
+        common.events.off('notify', me.handleNotify);
         console.log('destroyed')
     }
 }
 </script>
 <style>
 
-body, html {
-	font-family: Poppins-Regular, sans-serif;
-}
-
-html, body {
-  width: 100%;
-  height: 100%;
-}
-
 .header {
   height: 60px;
-  background: #2196F3;
 }
 
 
@@ -172,23 +152,53 @@ html, body {
     height:100%;
 }
 
-.sidebar {
+.sidebar_left {
   float: left;
   width: 0px;
   height: calc(100% - 60px);
-  background: #ffcdd2;
+  overflow: auto;
+  -webkit-transition: width 1s;
+  transition: width 1s;
+  background-color: rgb(242,249,255);
+  border: 1px solid #d8dce5;
+  box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.12), 0 0 6px 0 rgba(0, 0, 0, 0.04);
+}
+.sidebar_left.show {
+    width:300px;
+}
+
+.sidebar_right {
+  float: right;
+  width: 0px;
+  height: calc(100% - 60px);
   overflow: auto;
   -webkit-transition: width 1s;
   transition: width 1s;
 }
-.sidebar.show {
+.sidebar_right.show {
     width:300px;
 }
+.handle_right {
+  float: right;
+  width: 10px;
+  height: calc(100% - 60px);
+  cursor: pointer;
+  display: flex; justify-content: center; align-items: center;
+}
+
 .handle {
   float: left;
   width: 10px;
   height: calc(100% - 60px);
-  background: #ddd;
-  cursor: ew-resize;
+  cursor: pointer;
+  display: flex; justify-content: center; align-items: center;
+}
+
+.test .el-menu-item {
+    background-color:rgb(41,50,63) !important;
+}
+
+.test .el-submenu .el-submenu__title {
+    background-color:rgb(41,50,63) !important;
 }
 </style>
