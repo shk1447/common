@@ -8,7 +8,7 @@ common.view = (function() {
     var container_div;
     var width, height;
     var outer, vis, outer_background, drag_group, link_group, node_types;
-    var x, y, gX, gY, xAxis, yAxis;
+    var x, y, gX, gY, xAxis, yAxis, zoom;
     var node_size = 16;
     var outer_transform = {
         x:0,
@@ -56,16 +56,13 @@ common.view = (function() {
             y : d3.event.pageY,
             params : {}
         });
-        selected_id = "";
-        redraw();
-    }
-
-    function canvasMouseUp() {
         temp_link = {source:null,target:null};
         if(drag_line) {
             drag_line.remove();
             drag_line = null;
         }
+        selected_id = "";
+        redraw();
     }
 
     function canvasMouseMove() {
@@ -219,7 +216,7 @@ common.view = (function() {
                     d3.event.preventDefault();
                 })
                 .on('mouseover', function() {
-                    if(outer_transform.k === 1) {
+                    if(outer_transform.k === 1 || true) {
                         var node = d3.select(this);
                         var port = node.select('.port')
                         port.classed('visible',true);
@@ -486,19 +483,6 @@ common.view = (function() {
         me.redraw();
     }
 
-    function resize() {
-        //var container_div = document.getElementById(id);
-        console.log(width, height);
-        console.log(container_div.clientWidth, container_div.clientHeight)
-        width = container_div.clientWidth;
-        height = container_div.clientHeight;
-        outer.attr("width", width)
-            .attr("height", height)
-            .attr('viewBox', '0 0 ' + width + ' ' + height)
-        
-        outer_background.attr("width", width).attr("height", height);
-    }
-
     function getNodes () {
         return activeNodes;
     }
@@ -508,16 +492,20 @@ common.view = (function() {
     }
 
     return {
-        resize: resize,
+        zoom_reset: function(evt) {
+            var me = this;
+            outer.transition().duration(750).call(zoom.transform, d3.zoomIdentity);
+            redraw();
+        },
         reload:reload,
         init: function(id) {
             var me = this;
             lineGenerator = d3.line().curve(d3.curveCardinal);
             container_div = document.getElementById(id);
-            width = container_div.clientWidth;
-            height = container_div.clientHeight;
-
-            var zoom = d3.zoom().scaleExtent([1,50]).translateExtent([[0,0],[width,height]]).on("zoom", zoomed)
+            width = 5000;
+            height = 5000;
+            console.log(types);
+            zoom = d3.zoom().on("zoom", zoomed)
             // var drag = d3.drag().on("dragstart")
 
             function test() {
@@ -535,25 +523,18 @@ common.view = (function() {
                         .append("svg:svg")
                         .attr("width", width)
                         .attr("height", height)
-                        .attr('viewBox', '0 0 ' + width + ' ' + height)
                         .attr('preserveAspectRatio', 'xMinYMin')
                         // .attr("pointer-events", "all")
                         // .style("cursor", "crosshair")
                         .call(zoom)
                         .on('dblclick.zoom', null)
                         .on('contextmenu', canvasContextMenu)
+                        .on('click', canvasMouseDown)
+                        .on('mousemove', canvasMouseMove)
+                        .on('dblclick', canvasDblClick)
             
 
             vis = outer.append("svg:g")
-                        .on('mousedown', canvasMouseDown)
-                        .on('mousemove', canvasMouseMove)
-                        .on('mouseup', canvasMouseUp)
-                        .on('dblclick', canvasDblClick)
-
-            outer_background = vis.append("svg:rect")
-                        .attr("width", width)
-                        .attr("height", height)
-                        .attr("fill","#fff");
 
             drag_group = vis.append("g");
             link_group = vis.append("g");
@@ -601,6 +582,7 @@ common.view = (function() {
         getNodes : getNodes,
         getLinks : getLinks,
         uninit: function() {
+            outer.remove();
             width;
             height;
             outer, vis, outer_background, drag_group, link_group, node_types;

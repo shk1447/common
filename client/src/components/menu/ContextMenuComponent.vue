@@ -16,7 +16,8 @@ export default {
         return {
             menu_items : [{id:'add',label:'Add'},
                             {id:'save',label:'Save'},
-                            {id:'reload',label:'Reload'}],
+                            {id:'reload',label:'Reload'},
+                            {id:'zoom_reset',label:'Reset Zoom'}],
             activeContextMenu:false,
             top:'0px',
             left:'0px',
@@ -64,6 +65,9 @@ export default {
                         common.events.emit('notify', {message:'Save Failure.', type:'error'})
                     })
                     console.log('save');
+                break;
+                case 'zoom_reset' :
+                    common.view.zoom_reset();
                 break;
             }
             me.activeContextMenu = false;
