@@ -1,3 +1,5 @@
+const _ = require('lodash');
+
 const net = require('net');
 const http = require('http');
 const https = require('https');
@@ -25,14 +27,23 @@ const socket = require('./socket');
 const router = require('./router');
 const runtime = require('./runtime');
 
+const model = require('./model');
+
 khan = {
     service:true,
     session_store:null,
     database:null,
-    logger:require('./utils/logger')
+    logger:require('./utils/logger'),
+    model:null
 }
 
 module.exports = function(config) {
+    khan.database = knex({
+        client:config.database.type,
+        connection : config.database[config.database.type]
+    })
+    khan.model = model();
+
     ClusterServer = {
         name: 'ClusterServer',
         
@@ -51,6 +62,9 @@ module.exports = function(config) {
                 // var test = JSON.parse(fs.readFileSync(stats_path,'utf8'));
                 // var webpack_analyzer = require('webpack-bundle-analyzer')
                 // webpack_analyzer.start(test);
+                _.each(khan.model, (d,i) => {
+                    d.initialize();
+                })
                 for (i = 0; i < me.cpus; i += 1) {
                     var worker = cluster.fork();
 
