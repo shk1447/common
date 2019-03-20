@@ -38,4 +38,16 @@ export default {
             return res;
         })
     },
+    getSampleController: function() {
+        var url = location.origin + "/sample/controller";
+        return http.get(url).then(function(res) {
+            return res;
+        })
+    },
+    getSampleMap: function(controllers) {
+        var url = location.origin + "/sample/map";
+        return http.get(url).then(function(res) {
+            return res;
+        })
+    }
 }

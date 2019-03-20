@@ -36,10 +36,7 @@ export default {
             common.view.init('workspace');
             api.getSampleNodeType().then(function(data) {
                 common.view.setNodeType(data);
-                api.getTopology().then(function(data) {
-                    common.view.reload(data);
-                    me.$loading({}).close();
-                });
+                me.$loading({}).close();
             })
         },450)
     },

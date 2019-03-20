@@ -173,11 +173,13 @@ common.view = (function() {
     }
 
     function portMouseDown(port, node, type) {
-        d3.event.stopPropagation();
-        d3.event.preventDefault();
-        
-        temp_link.source = node;
-        temp_link.sourceUuid = node.uuid;
+        if(d3.event.button === 0) {
+            d3.event.stopPropagation();
+            d3.event.preventDefault();
+            
+            temp_link.source = node;
+            temp_link.sourceUuid = node.uuid;
+        }
     }
 
     function portMouseUp(port, node, type) {
@@ -218,7 +220,7 @@ common.view = (function() {
                     var k, kh, kw, x, y;
                     kw = (container_div.clientWidth - container_div.clientWidth/10) / node.w;
                     kh = (container_div.clientHeight - container_div.clientHeight/10) / node.h;
-                    k = d3.min([kw,kh])/2;
+                    k = d3.min([kw,kh])/4;
                     x = container_div.clientWidth / 2 - d.x * k;
                     y = container_div.clientHeight / 2 - d.y * k;
                     var test = d3.zoomIdentity.translate(x,y).scale(k);
@@ -304,8 +306,8 @@ common.view = (function() {
                 .attr("fill",function(d) { return node_type[d.type] ? node_type[d.type].color : 'rgb(166, 187, 207)' })
             
             var icon_url = "/icons/server.svg";
-            //var icon_group = node.append("g").attr("class", "icon_group").attr("x", -node_size).attr("y", -node_size);
-            var icon = node.append("image").attr("xlink:href", icon_url).attr("x", -node_size/2).attr("y", -node_size/2).attr("width", node_size).attr("height", node_size);
+            
+            node.append("image").attr("xlink:href", icon_url).attr("x", -node_size/2).attr("y", -node_size/2).attr("width", node_size).attr("height", node_size);
 
                 
             
@@ -319,28 +321,7 @@ common.view = (function() {
                 .on('mouseover', (function() { var node = d; return function(d,i) { portMouseOver(d3.select(this),node,'output') }})() )
                 .on('mouseout', (function() { var node = d; return function(d,i) { portMouseOut(d3.select(this),node,'output') }})() )
 
-            // node.append("circle")
-            //     .attr("class", "port")
-            //     .attr("cx", node_size)
-            //     .attr("r", node_size/4)
-            //     .attr("fill", function(d) { return '#ddd' })
-            //     .style("cursor", "crosshair")
-            //     .on('mousedown', (function() { var node = d; return function(d,i) { portMouseDown(d3.select(this),node,'output') }})() )
-            //     .on('mouseup', (function() { var node = d; return function(d,i) { portMouseUp(d3.select(this),node,'output') }})() )
-            //     .on('mouseover', (function() { var node = d; return function(d,i) { portMouseOver(d3.select(this),node,'output') }})() )
-            //     .on('mouseout', (function() { var node = d; return function(d,i) { portMouseOut(d3.select(this),node,'output') }})() )
-
-            // node.append("circle")
-            //     .attr("class", "port")
-            //     .attr("cx", -node_size)
-            //     .attr("r", node_size/4)
-            //     .attr("fill", function(d) { return '#ddd' })
-            //     .style("cursor", "crosshair")
-            //     .on('mousedown', (function() { var node = d; return function(d,i) { portMouseDown(d3.select(this),node,'input') }})() )
-            //     .on('mouseup', (function() { var node = d; return function(d,i) { portMouseUp(d3.select(this),node,'input') }})() )
-            //     .on('mouseover', (function() { var node = d; return function(d,i) { portMouseOver(d3.select(this),node,'input') }})() )
-            //     .on('mouseout', (function() { var node = d; return function(d,i) { portMouseOut(d3.select(this),node,'input') }})() )
-            var text = node.append('svg:text').attr('y', node_size+12).style('stroke', 'none').style("text-anchor", "middle").text(d.name);
+            node.append('svg:text').attr('y', node_size+12).style('stroke', 'none').style("text-anchor", "middle").text(d.name);
         });
 
         // 갱신
@@ -476,9 +457,9 @@ common.view = (function() {
                             node_type_rect.style('stroke', '#333')
                         })
             node_types.append("svg:text").attr("x", type_size.width+margin)
-                        .attr('y', y+(type_size.height/2)).attr("dy", ".35em").attr("text-anchor","start").text(d.type);
+                        .attr('y', y+(type_size.height/2)).attr("dy", ".35em").attr("text-anchor","start").text(d.desc);
 
-            node_type[d.type] = {
+            node_type[d.id] = {
                 color:color_array[i],
                 desc:d.desc
             }
@@ -508,6 +489,11 @@ common.view = (function() {
     }
 
     return {
+        clear: function() {
+            activeNodes = [];
+            activeLinks = [];
+            redraw();
+        },
         zoom_reset: function(evt) {
             var me = this;
             outer.transition().duration(750).call(zoom.transform, d3.zoomIdentity);

@@ -1,7 +1,7 @@
 <template>
 <div id="app-main">
     <div class="header">
-        <el-menu class="test" :default-active="activeIndex" mode="horizontal" @select="handleSelect" ref="menu_bar"
+        <el-menu class="menu_bar" :default-active="activeIndex" mode="horizontal" @select="handleSelect" ref="menu_bar"
             background-color="rgb(41,50,63)" active-text-color="rgb(99,170,244)" text-color="rgb(114,119,126)">
             <el-menu-item index="1">Topology</el-menu-item>
             <el-menu-item index="2">Dashboard</el-menu-item>
@@ -15,7 +15,7 @@
         </el-menu>
     </div>
     <div :class="open ? 'sidebar_left show' : 'sidebar_left'" ref="left_panel">
-        
+        <network-list ref="networkList" v-if="activeIndex === '1'"></network-list>
     </div>
     <div class="handle" @click="handlePanelSlide">
         <i :class="open ? 'el-icon-caret-left' : 'el-icon-caret-right'" style="vertical-align: middle;"></i>
@@ -42,6 +42,9 @@ import LogComponent from './viewer/LogComponent.vue'
 import CreateNodeModal from './modal/CreateNodeModal.vue'
 import DetailNodeModal from './modal/DetailNodeModal.vue'
 import ContextMenu from './menu/ContextMenuComponent.vue'
+import NetworkList from './panel/NetworkListPanel.vue';
+
+import api from '../api/api.js'
 
 export default {
     data () {
@@ -60,7 +63,8 @@ export default {
         "alarm-component" : AlarmComponent,
         "create-node-modal" : CreateNodeModal,
         "detail-node-modal" : DetailNodeModal,
-        "context-menu" : ContextMenu
+        "context-menu" : ContextMenu,
+        "network-list" : NetworkList
     },
     methods: {
         handlePanelSlide() {
@@ -157,7 +161,7 @@ export default {
   float: left;
   width: 0px;
   height: calc(100% - 60px);
-  overflow: auto;
+  overflow: hidden;
   -webkit-transition: width .4s;
   transition: width .4s;
   background-color: rgb(242,249,255);
@@ -168,38 +172,19 @@ export default {
     width:300px;
 }
 
-.sidebar_right {
-  float: right;
-  width: 0px;
-  height: calc(100% - 60px);
-  overflow: auto;
-  -webkit-transition: width .4s;
-  transition: width .4s;
-}
-.sidebar_right.show {
-    width:300px;
-}
-.handle_right {
-  float: right;
-  width: 10px;
-  height: calc(100% - 60px);
-  cursor: pointer;
-  display: flex; justify-content: center; align-items: center;
-}
-
 .handle {
   float: left;
-  width: 10px;
+  width: 15px;
   height: calc(100% - 60px);
   cursor: pointer;
   display: flex; justify-content: center; align-items: center;
 }
 
-.test .el-menu-item {
+.menu_bar .el-menu-item {
     background-color:rgb(41,50,63) !important;
 }
 
-.test .el-submenu .el-submenu__title {
+.menu_bar .el-submenu .el-submenu__title {
     background-color:rgb(41,50,63) !important;
 }
 </style>

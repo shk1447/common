@@ -63,11 +63,13 @@ export default {
                             speed : d.speed
                         }
                     })
-                    api.setTopology({activeNodes:nodes, activeLinks:links}).then(function(){
+                    var params = {activeNodes:nodes, activeLinks:links};
+                    api.setTopology(params).then(function(){
                         common.events.emit('notify', {message:'Save Success.', type:'success'})
                     }).catch(function(err) {
                         common.events.emit('notify', {message:'Save Failure.', type:'error'})
                     })
+                    common.events.emit('save')
                     console.log('save');
                 break;
                 case 'zoom_reset' :

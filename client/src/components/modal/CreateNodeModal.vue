@@ -25,8 +25,8 @@
             </el-form-item>
             <el-form-item label="TYPE" prop="type">
                 <el-select v-model="form.type" placeholder="please select your zone">
-                    <el-option v-for="item in node_types" :key="item.type"
-                           :label="item.desc" :value="item.type"></el-option>
+                    <el-option v-for="item in node_types" :key="item.id"
+                           :label="item.desc" :value="item.id"></el-option>
                 </el-select>
             </el-form-item>
         </el-form>
