@@ -34,10 +34,7 @@ export default {
         console.log('mounted');
         setTimeout(function() {
             common.view.init('workspace');
-            api.getSampleNodeType().then(function(data) {
-                common.view.setNodeType(data);
-                me.$loading({}).close();
-            })
+            me.$loading({}).close();
         },450)
     },
     beforeUpdate() {

@@ -2,44 +2,38 @@
 <div style="height:100%">
 <el-tabs class="left_tabs" type="border-card">
     <el-tab-pane>
-        <span slot="label" class="tab_title"><i class="el-icon-share"></i> Controller</span>
+        <span slot="label" class="tab_title"><i class="el-icon-share"></i> Recommend</span>
         <el-tree class="demo" show-checkbox draggable default-expand-all ref="controller_list"
              :data="data" :props="defaultProps" node-key="uuid"
              :allow-drag="allowDrag" :allow-drop="allowDrop" @check="check">
             <span class="custom-tree-node" slot-scope="{ node, data }">
-                <span><i :class="data.type === 'folder' ? 'el-icon-goods' : 'el-icon-share'"></i>   {{ node.label }}</span>
+                <span><i :class="data.id === 'goods' ? 'el-icon-goods' : 'el-icon-star-off'"></i>   {{ node.label }}</span>
+                <span v-if="data.id !== 'goods'">
+                    <i class="el-icon-circle-plus-outline action" @click="append(data,$event)"></i>
+                    <i v-if="data.id !== 'favorite'" class="el-icon-delete action" @click="remove(node,data,$event)"></i>
+                </span>
             </span>
         </el-tree>
     </el-tab-pane>
-    <el-tab-pane>
-        <span slot="label" class="tab_title"><i class="el-icon-date"></i> Test</span>
-    </el-tab-pane>
 </el-tabs>
-<!-- <div style="margin-top:5px;">
-<el-button-group>
-  <el-button size="mini" type="primary" icon="el-icon-edit"></el-button>
-  <el-button size="mini" type="primary" icon="el-icon-share"></el-button>
-  <el-button size="mini" type="primary" icon="el-icon-delete"></el-button>
-</el-button-group>
-</div> -->
 </div>
 </template>
 
 <script>
-
+let id = 1000;
 import api from '../../api/api.js'
 
 export default {
     data () {
         return {
             data: [{
-                uuid:'fluid',
-                name: 'fluid',
+                id:'goods',
+                name: 'Goods',
                 type:'folder',
                 children: []
             },{
-                uuid:'custom',
-                name: 'custom',
+                id:'favorite',
+                name: 'Favorite',
                 type:'folder',
                 children: []
             }],
@@ -54,29 +48,39 @@ export default {
         
     },
     methods: {
+        test(a,b) {
+            console.log(a,b)
+        },
+        append(data,event) {
+            event.preventDefault();
+            event.stopPropagation();
+            const newChild = { id: id++, name: 'testtest', children: [] };
+            if (!data.children) {
+                this.$set(data, 'children', []);
+            }
+            data.children.push(newChild);
+        },
+
+        remove(node, data,event) {
+            event.preventDefault();
+            event.stopPropagation();
+            const parent = node.parent;
+            const children = parent.data.children || parent.data;
+            const index = children.findIndex(d => d.id === data.id);
+            children.splice(index, 1);
+        },
         check(node,nodes) {
             var me = this;
-            common.view.clear();
-            var controllers = nodes.checkedNodes.filter(function(d) { return d.type !== 'folder'});
-            if(controllers.length > 0) {
-                me.$loading({});
-                api.getSampleMap(controllers).then(function(data) {
-                    common.view.reload(data);
-                    me.$loading({}).close();
-                })
-            }
-            me.selected_controllers = controllers;
         },
         allowDrag(node) {
             var allow = true;
-            if(node.data.uuid === 'fluid' || node.data.uuid === 'custom') {
+            if(node.data.id === 'goods' || node.data.id === 'favorite') {
                 allow = false;
             }
             return allow;
         },
         allowDrop(drag_node, drop_node, type) {
             var allow = true;
-            console.log(drag_node.data.uuid, drop_node.data.uuid , type);
             if(drag_node.data.type !== 'folder' && drop_node.data.type !== 'folder' && type === 'inner') {
                 allow = false;
             } else if(drop_node.data.type === 'folder' && (type === 'prev' || type === 'next')) {
@@ -96,10 +100,7 @@ export default {
     },
     mounted() {
         var me = this;
-        api.getSampleController().then(function(data) {
-            var fluid_folder = me.data.find(function(d) { return d.uuid === 'fluid' });
-            fluid_folder.children = data;
-        })
+        
         console.log('mounted');
     },
     beforeUpdate() {
@@ -127,5 +128,19 @@ export default {
 
 .tab_title {
     font-size : 12px;
+}
+.custom-tree-node {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 14px;
+    padding-right: 8px;
+}
+.action {
+    margin-left: 4px;
+}
+.action:hover {
+    color: rgb(99,170,244);
 }
 </style>

@@ -15,7 +15,7 @@
         </el-menu>
     </div>
     <div :class="open ? 'sidebar_left show' : 'sidebar_left'" ref="left_panel">
-        <network-list ref="networkList" v-if="activeIndex === '1'"></network-list>
+        <stocker-list ref="stocker_list" v-if="activeIndex === '1'"></stocker-list>
     </div>
     <div class="handle" @click="handlePanelSlide">
         <i :class="open ? 'el-icon-caret-left' : 'el-icon-caret-right'" style="vertical-align: middle;"></i>
@@ -42,7 +42,7 @@ import LogComponent from './viewer/LogComponent.vue'
 import CreateNodeModal from './modal/CreateNodeModal.vue'
 import DetailNodeModal from './modal/DetailNodeModal.vue'
 import ContextMenu from './menu/ContextMenuComponent.vue'
-import NetworkList from './panel/NetworkListPanel.vue';
+import StockerList from './panel/StockerListPanel.vue';
 
 import api from '../api/api.js'
 
@@ -64,7 +64,7 @@ export default {
         "create-node-modal" : CreateNodeModal,
         "detail-node-modal" : DetailNodeModal,
         "context-menu" : ContextMenu,
-        "network-list" : NetworkList
+        "stocker-list" : StockerList
     },
     methods: {
         handlePanelSlide() {
@@ -83,7 +83,7 @@ export default {
                     me.$refs.menu_bar.activeIndex = me.activeIndex;
                 });
             } else if ( key === '5-2') {
-                me.$alert('<p>NAME : <strong>FLUID</strong></p><p>VERSION : <strong>1.0.1</strong></p>', 'PRODUCT INFO',{dangerouslyUseHTMLString: true})
+                me.$alert('<p>NAME : <strong>STOCKER</strong></p><p>VERSION : <strong>1.0.1</strong></p>', 'PRODUCT INFO',{dangerouslyUseHTMLString: true})
                 me.$refs.menu_bar.activeIndex = me.activeIndex;
             } else {
                 this.activeIndex = key;

@@ -6,7 +6,7 @@ import api from '../api/api.js';
 
 common.view = (function() {
     var width, height, container_div;
-    var outer, vis, outer_background, drag_group, link_group, node_types;
+    var outer, vis, outer_background, link_group, node_types;
     var x, y, gX, gY, xAxis, yAxis, zoom;
     var node_size = 16;
     var outer_transform = {
@@ -17,8 +17,6 @@ common.view = (function() {
     
     var lineGenerator;
 
-    var drag_line;
-    var temp_link = {sourceUuid:null,targetUuid:null,source:null,target:null,speed:10};
     var activeNodes = [];
     var activeLinks = [];
     var selected_id;
@@ -55,31 +53,13 @@ common.view = (function() {
             y : d3.event.pageY,
             params : {}
         });
-        temp_link = {source:null,target:null};
-        if(drag_line) {
-            drag_line.remove();
-            drag_line = null;
-        }
+        
         selected_id = "";
         redraw();
     }
 
     function canvasMouseMove() {
-        var start_point = temp_link.source ? temp_link.source : temp_link.target;
-        var mouse_x = (d3.event.offsetX - outer_transform.x ) / outer_transform.k;
-        var mouse_y = (d3.event.offsetY - outer_transform.y ) / outer_transform.k;
-        if(start_point) {
-            var x1 = temp_link.source ? (start_point.x) : mouse_x;
-            var y1 = temp_link.source ? start_point.y : mouse_y;
-            var x2 = temp_link.source ? mouse_x : (start_point.x);
-            var y2 = temp_link.source ? mouse_y : start_point.y;
-            var path_data = lineGenerator([[x1, y1],[x2, y2]])
-            if(drag_line) {
-                drag_line.attr("d", path_data)
-            } else {
-                drag_line = drag_group.append("svg:path").attr("class", "drag_line").attr("stroke-width", node_size/4).attr("d", path_data)
-            }
-        }
+        
     }
 
     function canvasDblClick() {
@@ -172,36 +152,6 @@ common.view = (function() {
         //common.events.emit('test',node_info.id)
     }
 
-    function portMouseDown(port, node, type) {
-        if(d3.event.button === 0) {
-            d3.event.stopPropagation();
-            d3.event.preventDefault();
-            
-            temp_link.source = node;
-            temp_link.sourceUuid = node.uuid;
-        }
-    }
-
-    function portMouseUp(port, node, type) {
-        temp_link.target = node;
-        temp_link.targetUuid = node.uuid;
-        
-        if(temp_link.sourceUuid && temp_link.targetUuid) {
-            temp_link.speed = Math.round(Math.random()*100);
-            activeLinks.push(temp_link);
-            redraw();
-        }
-        temp_link = {source:null, sourceUuid:null,targetUuid:null, target:null};
-    }
-
-    function portMouseOver(port, node, type) {
-        port.classed("port_hovered",true);
-    }
-
-    function portMouseOut(port, node, type) {
-        port.classed("port_hovered",false);
-    }
-
     function redraw() {
         var node = vis.selectAll(".nodegroup").data(activeNodes, function(d) { return d.uuid });
 
@@ -234,18 +184,6 @@ common.view = (function() {
                     });
                     d3.event.stopPropagation();
                     d3.event.preventDefault();
-                })
-                .on('mouseover', function() {
-                    if(outer_transform.k === 1 || true) {
-                        var node = d3.select(this);
-                        var port = node.select('.port')
-                        port.classed('visible',true);
-                    }
-                })
-                .on('mouseout', function() { 
-                    var node = d3.select(this);
-                    var port = node.select('.port')
-                    port.classed('visible',false);
                 })
                 .call(d3.drag()
                     .on('start', dragstarted)
@@ -305,21 +243,9 @@ common.view = (function() {
                 .attr("r", node_size)
                 .attr("fill",function(d) { return node_type[d.type] ? node_type[d.type].color : 'rgb(166, 187, 207)' })
             
-            var icon_url = "/icons/server.svg";
+            // var icon_url = "/icons/server.svg";
             
-            node.append("image").attr("xlink:href", icon_url).attr("x", -node_size/2).attr("y", -node_size/2).attr("width", node_size).attr("height", node_size);
-
-                
-            
-            node.append("circle")
-                .attr("class", "port")
-                .attr("r", node_size/4)
-                .attr("fill", function(d) { return '#ddd' })
-                .style("cursor", "crosshair")
-                .on('mousedown', (function() { var node = d; return function(d,i) { portMouseDown(d3.select(this),node,'output') }})() )
-                .on('mouseup', (function() { var node = d; return function(d,i) { portMouseUp(d3.select(this),node,'output') }})() )
-                .on('mouseover', (function() { var node = d; return function(d,i) { portMouseOver(d3.select(this),node,'output') }})() )
-                .on('mouseout', (function() { var node = d; return function(d,i) { portMouseOut(d3.select(this),node,'output') }})() )
+            // node.append("image").attr("xlink:href", icon_url).attr("x", -node_size/2).attr("y", -node_size/2).attr("width", node_size).attr("height", node_size);
 
             node.append('svg:text').attr('y', node_size+12).style('stroke', 'none').style("text-anchor", "middle").text(d.name);
         });
@@ -351,19 +277,19 @@ common.view = (function() {
                                     selected_id = d.sourceUuid+":"+d.targetUuid;
                                     redraw();
                                 })
-            var link = l.append("svg:path").attr('class', 'link_line link_path')
+            l.append("svg:path").attr('class', 'link_line link_path')
             l.append("svg:path").attr('class', 'link_anim')
             if(!d.source) d.source = activeNodes.find(function(a) { return a.uuid === d.sourceUuid});
             if(!d.target) d.target = activeNodes.find(function(a) { return a.uuid === d.targetUuid});
             l.append('svg:text')
-            .attr('class', 'speed')
+            .attr('class', 'volume_power')
             .attr('x', (d.source.x + d.target.x)/2)
             .attr('y', (d.source.y + d.target.y)/2)
             .style('stroke', 'none').text(d.speed);
         })
         link.exit().remove();
 
-        var speed_texts = link_group.selectAll('.speed');
+        var speed_texts = link_group.selectAll('.volume_power');
 
         speed_texts.each(function(d,i) {
             var text = d3.select(this);
@@ -495,7 +421,6 @@ common.view = (function() {
             redraw();
         },
         zoom_reset: function(evt) {
-            var me = this;
             outer.transition().duration(750).call(zoom.transform, d3.zoomIdentity);
             redraw();
         },
@@ -537,7 +462,6 @@ common.view = (function() {
 
             vis = outer.append("svg:g")
 
-            drag_group = vis.append("g");
             link_group = vis.append("g");
 
             x = d3.scaleLinear()
@@ -586,7 +510,7 @@ common.view = (function() {
             outer.remove();
             width;
             height;
-            outer, vis, outer_background, drag_group, link_group, node_types;
+            outer, vis, outer_background, link_group, node_types;
             x, y, xAxis, yAxis, gX, gY;
             node_size = 16;
             outer_transform = {
@@ -595,8 +519,6 @@ common.view = (function() {
                 k:1
             };
 
-            drag_line;
-            temp_link = {sourceUuid:null,targetUuid:null,source:null,target:null,speed:0};
             activeNodes = [];
             activeLinks = [];
             selected_id;

@@ -1,9 +1,5 @@
 
-const sample = require('./sample.js');
-const network = require('./network.js');
-const topology = require('./topology.js');
+const user = require('./user.js');
 module.exports = {
-    sample:sample,
-    network:network,
-    topology:topology
+    user:user
 }

@@ -40,9 +40,15 @@ khan = {
 module.exports = function(config) {
     khan.database = knex({
         client:config.database.type,
-        connection : config.database[config.database.type]
+        connection : config.database[config.database.type],
+        pool: {min:0,max:10}
     })
     khan.model = model();
+
+    khan.session_store = new KnexSessionStore({
+        knex:khan.database,
+        tablename:"sessions"
+    })
 
     ClusterServer = {
         name: 'ClusterServer',
@@ -113,7 +119,6 @@ module.exports = function(config) {
     app.use(compression());
     app.use(bodyParser.urlencoded({limit:'5mb',extended:true}));
     app.use(bodyParser.json({limit:'5mb'}));
-<<<<<<< HEAD
     app.use(busboy());
 
     app.use(session({
@@ -137,8 +142,6 @@ module.exports = function(config) {
             res.status(401).send();
         }
     })
-=======
->>>>>>> pribit
 
     router(app,config);
     khan['app'] = app;
