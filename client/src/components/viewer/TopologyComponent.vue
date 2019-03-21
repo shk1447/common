@@ -38,7 +38,7 @@ export default {
                 common.view.setNodeType(data);
                 me.$loading({}).close();
             })
-        },450)
+        },500)
     },
     beforeUpdate() {
 
@@ -55,13 +55,7 @@ export default {
     }
 }
 </script>
-<style scope>
-  
-#workspace {
-    user-select: none;
-    width:100%;
-    height:100%;
-}
+<style>
 
 .lasso {
     stroke-width: 1px;

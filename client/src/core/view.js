@@ -459,7 +459,7 @@ common.view = (function() {
             node_types.append("svg:text").attr("x", type_size.width+margin)
                         .attr('y', y+(type_size.height/2)).attr("dy", ".35em").attr("text-anchor","start").text(d.desc);
 
-            node_type[d.id] = {
+            node_type[d.name] = {
                 color:color_array[i],
                 desc:d.desc
             }

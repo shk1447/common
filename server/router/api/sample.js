@@ -1,206 +1,142 @@
-const nodetype = [
-    {
-      "id": "SpineSwitch",
-      "type": "SPINE_SWITCH",
-      "desc": "Spine Switch",
-      "opcode": 3,
-      "icon": "/icons/switch.png"
-    },
-    {
-      "id": "LeafSwitch",
-      "type": "LEAF_SWITCH",
-      "desc": "Leaf Switch",
-      "opcode": 3,
-      "icon": "/icons/switch.png"
-    },
-    {
-      "id": "Server",
-      "type": "SERVER",
-      "desc": "Server",
-      "opcode": 3,
-      "icon": "/icons/switch.png"
-    },
-    {
-      "id": "Fabric",
-      "type": "FABRIC",
-      "desc": "Fabric",
-      "opcode": 3,
-      "icon": "/icons/switch.png"
-    },
-    {
-        "id": "vNetwork",
-        "type": "vNETWORK",
-        "desc": "Virtual Network",
-        "opcode": 3,
-        "icon": "/icons/switch.png"
-    },
-    {
-      "id": "vFabric",
-      "type": "vFABRIC",
-      "desc": "Virtual Fabric",
-      "opcode": 3,
-      "icon": "/icons/switch.png"
-    },
-    {
-      "id": "vSwitch",
-      "type": "vSWITCH",
-      "desc": "Virtual Switch",
-      "opcode": 3,
-      "icon": "/icons/switch.png"
-    },
-    {
-      "id": "vRouter",
-      "type": "vROUTER",
-      "desc": "Virtual Router",
-      "opcode": 3,
-      "icon": "/icons/switch.png"
-    },
-    {
-      "id": "vServer",
-      "type": "vSERVER",
-      "desc": "Virtual Server",
-      "opcode": 3,
-      "icon": "/icons/switch.png"
-    }
-  ];
+const nodetype = [{"name":"SPINE_SWITCH","id":1,"desc":"Spine Switch","icon":"/icons/switch.png"},{"name":"LEAF_SWITCH","id":2,"desc":"Leaf Switch","icon":"/icons/switch.png"},{"name":"L2_SWITCH","id":3,"desc":"L2 Switch","icon":"/icons/switch.png"},{"name":"L3_ROUTER","id":5,"desc":"L3 Router","icon":"/icons/switch.png"},{"name":"SERVER","id":6,"desc":"Server","icon":"/icons/switch.png"},{"name":"vServer","id":7,"desc":"Virtual Server","icon":"/icons/switch.png"},{"name":"SDN","id":8,"desc":"Software Defined Network","icon":"/icons/switch.png"},{"name":"vNetwork","id":9,"desc":"Virtual Network","icon":"/icons/switch.png"}]
 
 const overlay = {
-    "vNetworks": [
-      {
-        "uuid": "string",
-        "name": "string",
-        "status": 0,
-        "links": [
-          {
-            "sourceUuid": "string",
-            "targetUuid": "string",
-            "speed": "1G"
-          }
-        ],
-        "networkLayer": "L1",
-        "opcode": 0
-      }
-    ],
-    "vSwitchs": [
-      {
-        "uuid": "string",
-        "name": "string",
-        "status": 0,
-        "links": [
-          {
-            "sourceUuid": "string",
-            "targetUuid": "string",
-            "speed": "1G"
-          }
-        ],
-        "ports": [
-          {
-            "uuid": "string",
-            "name": "string",
-            "status": "string"
-          }
-        ],
-        "networkLayer": "L1",
-        "opcode": 0
-      }
-    ],
-    "vRouters": [
-      {
-        "uuid": "string",
-        "name": "string",
-        "status": 0,
-        "links": [
-          {
-            "sourceUuid": "string",
-            "targetUuid": "string",
-            "speed": "1G"
-          }
-        ],
-        "networkLayer": "L1",
-        "opcode": 0
-      }
-    ],
-    "vServers": [
-      {
-        "uuid": "string",
-        "name": "string",
-        "status": 0,
-        "links": [
-          {
-            "sourceUuid": "string",
-            "targetUuid": "string",
-            "speed": "1G"
-          }
-        ],
-        "networkLayer": "L1",
-        "opcode": 0
-      }
-    ]
-  }
+  "vNetwork": [
+    {
+      "uuid": "string",
+      "name": "string",
+      "status": 0,
+      "links": [
+        {
+          "sourceUuid": "string",
+          "targetUuid": "string",
+          "speed": "1G"
+        }
+      ],
+      "networkLayer": "L1",
+      "opcode": 0
+    }
+  ],
+  "L2_SWITCH": [
+    {
+      "uuid": "string",
+      "name": "string",
+      "status": 0,
+      "links": [
+        {
+          "sourceUuid": "string",
+          "targetUuid": "string",
+          "speed": "1G"
+        }
+      ],
+      "ports": [
+        {
+          "uuid": "string",
+          "name": "string",
+          "status": "string"
+        }
+      ],
+      "networkLayer": "L1",
+      "opcode": 0
+    }
+  ],
+  "L3_ROUTER": [
+    {
+      "uuid": "string",
+      "name": "string",
+      "status": 0,
+      "links": [
+        {
+          "sourceUuid": "string",
+          "targetUuid": "string",
+          "speed": "1G"
+        }
+      ],
+      "networkLayer": "L1",
+      "opcode": 0
+    }
+  ],
+  "vServer": [
+    {
+      "uuid": "string",
+      "name": "string",
+      "status": 0,
+      "links": [
+        {
+          "sourceUuid": "string",
+          "targetUuid": "string",
+          "speed": "1G"
+        }
+      ],
+      "networkLayer": "L1",
+      "opcode": 0
+    }
+  ]
+}
 const underlay = {
-    "spineSwitch": [
-      {
-        "uuid": "string",
-        "name": "string",
-        "status": 0,
-        "links": [
-          {
-            "sourceUuid": "string",
-            "targetUuid": "string",
-            "speed": "1G"
-          }
-        ],
-        "ports": [
-          {
-            "uuid": "string",
-            "name": "string",
-            "status": "string"
-          }
-        ],
-        "networkLayer": "L1",
-        "opcode": 0
-      }
-    ],
-    "leafSwitch": [
-      {
-        "uuid": "string",
-        "name": "string",
-        "status": 0,
-        "links": [
-          {
-            "sourceUuid": "string",
-            "targetUuid": "string",
-            "speed": "1G"
-          }
-        ],
-        "ports": [
-          {
-            "uuid": "string",
-            "name": "string",
-            "status": "string"
-          }
-        ],
-        "networkLayer": "L1",
-        "opcode": 0
-      }
-    ],
-    "server": [
-      {
-        "uuid": "string",
-        "name": "string",
-        "status": 0,
-        "links": [
-          {
-            "sourceUuid": "string",
-            "targetUuid": "string",
-            "speed": "1G"
-          }
-        ],
-        "networkLayer": "L1",
-        "opcode": 0
-      }
-    ]
-  }
+  "SPINE_SWITCH": [
+    {
+      "uuid": "string",
+      "name": "string",
+      "status": 0,
+      "links": [
+        {
+          "sourceUuid": "string",
+          "targetUuid": "string",
+          "speed": "1G"
+        }
+      ],
+      "ports": [
+        {
+          "uuid": "string",
+          "name": "string",
+          "status": "string"
+        }
+      ],
+      "networkLayer": "L1",
+      "opcode": 0
+    }
+  ],
+  "LEAF_SWITCH": [
+    {
+      "uuid": "string",
+      "name": "string",
+      "status": 0,
+      "links": [
+        {
+          "sourceUuid": "string",
+          "targetUuid": "string",
+          "speed": "1G"
+        }
+      ],
+      "ports": [
+        {
+          "uuid": "string",
+          "name": "string",
+          "status": "string"
+        }
+      ],
+      "networkLayer": "L1",
+      "opcode": 0
+    }
+  ],
+  "SERVER": [
+    {
+      "uuid": "string",
+      "name": "string",
+      "status": 0,
+      "links": [
+        {
+          "sourceUuid": "string",
+          "targetUuid": "string",
+          "speed": "1G"
+        }
+      ],
+      "networkLayer": "L1",
+      "opcode": 0
+    }
+  ]
+}
 
 module.exports = {
     get: {
