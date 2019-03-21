@@ -3,7 +3,9 @@ import Vue from 'vue'
 import ElementUI from "element-ui";
 import locale from 'element-ui/lib/locale/lang/en'
 import './assets/style/style.css';
+import vmodal from 'vue-js-modal';
 
+Vue.use(vmodal);
 Vue.use(ElementUI, { locale });
 // Vue.$loading = Vue.prototype.$loading;
 // Vue.$msgbox = Vue.prototype.$msgbox;

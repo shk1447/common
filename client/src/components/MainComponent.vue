@@ -1,8 +1,8 @@
 <template>
 <div id="app-main">
-    <div id="menu-bar">
-        <el-menu :default-active="activeIndex" mode="horizontal" @select="handleSelect" ref="menu_bar"
-            background-color="#333" active-text-color="#fff" text-color="#909399">
+    <div class="header">
+        <el-menu class="menu_bar" :default-active="activeIndex" mode="horizontal" @select="handleSelect" ref="menu_bar"
+            background-color="rgb(41,50,63)" active-text-color="rgb(99,170,244)" text-color="rgb(114,119,126)">
             <el-menu-item index="1">Topology</el-menu-item>
             <el-menu-item index="2">Dashboard</el-menu-item>
             <el-menu-item index="3">DevLogs</el-menu-item>
@@ -14,16 +14,22 @@
             </el-submenu>
         </el-menu>
     </div>
-    <div id="main-container">
+    <div :class="open ? 'sidebar_left show' : 'sidebar_left'" ref="left_panel">
+        <network-list ref="networkList" v-if="activeIndex === '1'"></network-list>
+    </div>
+    <div class="handle" @click="handlePanelSlide">
+        <i :class="open ? 'el-icon-caret-left' : 'el-icon-caret-right'" style="vertical-align: middle;"></i>
+    </div>
+    <div class="content">
         <topology-component v-if="activeIndex === '1'"></topology-component>
         <dashboard-component v-if="activeIndex === '2'"></dashboard-component>
         <log-component v-if="activeIndex === '3'"></log-component>
         <alarm-component v-if="activeIndex === '4'"></alarm-component>
     </div>
-    <div id="left-panel" ref="left_panel">
-    </div>
-    <div id="right-panel" ref="right_panel">
-    </div>
+    
+    <create-node-modal ref="createNodeModal"></create-node-modal>
+    <detail-node-modal ref="detailNodeModal"></detail-node-modal>
+    <context-menu ref="contextMenu"></context-menu>
 </div>
 </template>
 
@@ -33,24 +39,41 @@ import TopologyComponent from './viewer/TopologyComponent.vue'
 import DashboardComponent from './viewer/DashboardComponent.vue'
 import AlarmComponent from './viewer/AlarmComponent.vue'
 import LogComponent from './viewer/LogComponent.vue'
+import CreateNodeModal from './modal/CreateNodeModal.vue'
+import DetailNodeModal from './modal/DetailNodeModal.vue'
+import ContextMenu from './menu/ContextMenuComponent.vue'
+import NetworkList from './panel/NetworkListPanel.vue';
+
+import api from '../api/api.js'
+
 export default {
     data () {
         return {
             isCollapse: true,
             code_list:[],
             data_list:{},
-            activeIndex:'1'
+            activeIndex:'1',
+            open:false
         }
     },
     components:{
         "topology-component" : TopologyComponent,
         "dashboard-component" : DashboardComponent,
         "log-component" : LogComponent,
-        "alarm-component" : AlarmComponent
+        "alarm-component" : AlarmComponent,
+        "create-node-modal" : CreateNodeModal,
+        "detail-node-modal" : DetailNodeModal,
+        "context-menu" : ContextMenu,
+        "network-list" : NetworkList
     },
     methods: {
+        handlePanelSlide() {
+            var me = this;
+            me.open = !me.open;
+        },
         handleSelect(key, keyPath) {
             var me = this;
+            me.open = false;
             if(key === "5-3") {
                 me.$confirm("로그아웃 하시겠습니까?", "로그아웃", {
                     confirmButtonText: 'OK', cancelButtonText: 'Cancel', type: 'info'
@@ -66,45 +89,38 @@ export default {
                 this.activeIndex = key;
             }
         },
-        handleNotiify(d) {
+        handlePopup(d) {
+            var me = this;
+            me.$refs[d.name].show(d.params);
+        },
+        handleMessage(d) {
             var me = this;
             me.$message({
-                message:d,
-                type:'info'
-            })  
-            // me.$notify({
-            //     message: d,
-            //     type: 'success'
-            // });
-            $(me.$refs.right_panel).toggleClass('show');
+                message:d.message,
+                type:d.type
+            });
+        },
+        handleNotify(d) {
+            var me = this;
+            me.$notify({
+                message:d.message,
+                type:d.type
+            });
         }
     },
     beforeCreate(){
-
+        
     },
     created() {
-        console.log('created')
     },
     beforeRouteUpdate(to,from){
 
     },
     mounted() {
         var me = this;
-        me.$loading({});
-
-        common.events.on("test", me.handleNotiify)
-
-        common.events.on('showRightPanel', function(d) {
-            $(me.$refs.right_panel).toggle('slide');
-        })
-        setTimeout(function() {
-            me.$loading({}).close();
-            me.$message({
-                message:'load complete',
-                type:'info'
-            });
-        },1000)
-        console.log('mounted')
+        common.events.on('popup', me.handlePopup);
+        common.events.on('message', me.handleMessage);
+        common.events.on('notify', me.handleNotify);
     },
     beforeUpdate() {
 
@@ -117,71 +133,58 @@ export default {
     },
     destroyed() {
         var me = this;
-        common.events.off('test', me.handleNotiify);
+        common.events.off('popup', me.handlePopup);
+        common.events.off('message', me.handleMessage);
+        common.events.off('notify', me.handleNotify);
         console.log('destroyed')
     }
 }
 </script>
 <style>
 
-body, html {
-	font-family: Poppins-Regular, sans-serif;
+.header {
+  height: 60px;
+}
+
+
+.content {
+  height: calc(100% - 60px);
+  overflow: hidden;
 }
 
 #app-main {
-    position: absolute;
-    top:0px;
-    left: 0px;
-    width:100vw;
-    height:100vh;
+    width:100%;
+    height:100%;
 }
 
-#menu-bar {
-    position: absolute;
-    width:100vw;
-    height:60px;
+.sidebar_left {
+  float: left;
+  width: 0px;
+  height: calc(100% - 60px);
+  overflow: hidden;
+  -webkit-transition: width .4s;
+  transition: width .4s;
+  background-color: rgb(242,249,255);
+  border: 1px solid #d8dce5;
+  box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.12), 0 0 6px 0 rgba(0, 0, 0, 0.04);
+}
+.sidebar_left.show {
+    width:300px;
 }
 
-#main-container {
-    position: absolute;
-    top:60px;
-    width:100vw;
-    height:calc(100vh - 60px);
+.handle {
+  float: left;
+  width: 15px;
+  height: calc(100% - 60px);
+  cursor: pointer;
+  display: flex; justify-content: center; align-items: center;
 }
 
-#right-panel {
-    position: absolute;
-    opacity: .2;
-    top:60px;
-    width:20vw;
-    height:calc(100vh - 70px);
-    border-radius: 10px;
-    transform: translateX(100vw);
-    transition: all .75s ease;
-    background: #333;
-    margin-top:10px;
+.menu_bar .el-menu-item {
+    background-color:rgb(41,50,63) !important;
 }
 
-#right-panel.show {
-    transform: translateX(80vw);
-    opacity: 1;
+.menu_bar .el-submenu .el-submenu__title {
+    background-color:rgb(41,50,63) !important;
 }
-
-#left-panel {
-    position: absolute;
-    opacity: .2;
-    top:60px;
-    width:20vw;
-    height:calc(100vh - 70px);
-    border-radius: 10px;
-    transform: translateX(-20vw);
-    transition: all .75s ease;
-    background: #333;
-}
-
-#left-panel.show {
-    transform: translateX(80vw);
-    opacity: 1;
-}
-  
 </style>

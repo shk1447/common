@@ -30,18 +30,15 @@ export default {
     },
     mounted() {
         var me = this;
+        me.$loading({});
         console.log('mounted');
-        common.view.init('workspace');
-        api.getSampleNodeType().then(function(data) {
-            common.view.setNodeType(data);
-        })
-        // api.getSamplePhysical().then(function(data) {
-        //     common.view.setPhysicalNode(data);
-        // })
-        
-        api.getSampleLogical().then(function(data) {
-            common.view.setLogicalNode(data)
-        })
+        setTimeout(function() {
+            common.view.init('workspace');
+            api.getSampleNodeType().then(function(data) {
+                common.view.setNodeType(data);
+                me.$loading({}).close();
+            })
+        },450)
     },
     beforeUpdate() {
 
@@ -106,6 +103,11 @@ export default {
 .port {
     stroke:#999;
     stroke-width: 1px;
+    visibility: collapse;
+}
+
+.port.visible {
+    visibility: visible;
 }
 
 .port_hovered {
@@ -122,27 +124,17 @@ export default {
 }
 
 .link_line {
-    stroke:#888;
-    stroke-width:5;
     fill:none;
     pointer-events: none;
 }
 
-.link_line.selected {
-    stroke:#ff7f0e;
-    stroke-width:6;
-}
-
 .link_anim {
-    stroke:rgb(221, 221, 221);
-    stroke-width:5;
     fill:none;
     pointer-events: none;
 }
 
 .drag_line {
     stroke:#ff7f0e;
-    stroke-width:5;
     fill:none;
     pointer-events: none;
 }

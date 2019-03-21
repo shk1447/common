@@ -1,39 +1,20 @@
 import http from "../core/utils/http.js";
 
 export default {
-    getNetController: function(manager_id) {
-        var url = "/v1/fluid/network/underlay/manager";
-        if(manager_id) url += "/" + manager_id;
+    getNetController: function() {
+        var url = "/network/controller";
         return http.get(url).then(function(res) {
             return res;
         })
     },
-    getParentSwitch: function(manager_id, switch_id) {
-        var url = "/v1/fluid/network/underlay/" + manager_id;
-        if(switch_id) url += "/spine/" + switch_id
-        else url += "/spine"
+    getUnderlay: function(uuid) {
+        var url = "/network/underlay?uuid=" + uuid;
         return http.get(url).then(function(res) {
             return res;
         })
     },
-    getChildSwitch:function(manager_id, switch_id) {
-        var url = "/v1/fluid/network/underlay/" + manager_id;
-        if(switch_id) url += "/leaf/" + switch_id
-        else url += "/leaf"
-        return http.get(url).then(function(res) {
-            return res;
-        })
-    },
-    getSamplePhysical: function() {
-        var url = location.origin + "/sample/physical";
-
-        return http.get(url).then(function(res) {
-            return res;
-        })
-    },
-    getSampleLogical: function() {
-        var url = location.origin + "/sample/logical";
-
+    getOverlay: function(uuid) {
+        var url = "/network/controller?uuid=" + uuid;
         return http.get(url).then(function(res) {
             return res;
         })
@@ -41,6 +22,30 @@ export default {
     getSampleNodeType: function() {
         var url = location.origin + "/sample/nodetype"
 
+        return http.get(url).then(function(res) {
+            return res;
+        })
+    },
+    setTopology: function(data) {
+        var url = "/topology/save";
+        return http.post(url, data).then(function(res) {
+            return res;
+        })
+    },
+    getTopology: function(data) {
+        var url = "/topology/search";
+        return http.get(url).then(function(res) {
+            return res;
+        })
+    },
+    getSampleController: function() {
+        var url = location.origin + "/sample/controller";
+        return http.get(url).then(function(res) {
+            return res;
+        })
+    },
+    getSampleMap: function(controllers) {
+        var url = location.origin + "/sample/map";
         return http.get(url).then(function(res) {
             return res;
         })
