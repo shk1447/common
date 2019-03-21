@@ -187,4 +187,9 @@ export default {
 .menu_bar .el-submenu .el-submenu__title {
     background-color:rgb(41,50,63) !important;
 }
+
+.el-tabs__content {
+    height: 100%;
+    overflow: auto !important;
+}
 </style>

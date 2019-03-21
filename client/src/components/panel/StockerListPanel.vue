@@ -4,7 +4,7 @@
     <el-tab-pane>
         <span slot="label" class="tab_title"><i class="el-icon-share"></i> Recommend</span>
         <el-tree class="demo" show-checkbox draggable default-expand-all ref="controller_list"
-             :data="data" :props="defaultProps" node-key="uuid"
+             :data="data" :props="defaultProps" node-key="id"
              :allow-drag="allowDrag" :allow-drop="allowDrop" @check="check">
             <span class="custom-tree-node" slot-scope="{ node, data }">
                 <span><i :class="data.id === 'goods' ? 'el-icon-goods' : 'el-icon-star-off'"></i>   {{ node.label }}</span>
