@@ -1,6 +1,5 @@
 const _ = require('lodash');
 const fs = require('fs');
-const fsPath = require('fs-path');
 const path = require('path');
 const pack_path = path.resolve(process.env.root_path, './custom/packs');
 const module_loader = require('../utils/module_loader');

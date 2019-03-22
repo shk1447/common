@@ -5,20 +5,21 @@ var fsPath = require('fs-path');
 module.exports = {
     get : {
         "search" : function(req,res,next) {
-            var response = {};
-            var file_path = path.resolve(process.env.root_path, './output/topology.json')
-            if(fs.existsSync(file_path)) {
-                var contents = fs.readFileSync(file_path,'utf8');
-                response = JSON.parse(contents);
-            }
-            res.status(200).send(response);
+            res.status(200).send();
+        },
+        "logout" : function(req,res,next) {
+            
         }
     },
     post: {
-        "save" : function(req,res,next) {
-            var file_path = path.resolve(process.env.root_path, './output/topology.json')
-            fsPath.writeFileSync(file_path, JSON.stringify(req.body, null, 2), 'utf8');
+        "login" : function(req,res,next) {
             res.status(200).send();
+        },
+        "add" : function(req,res,next) {
+
+        },
+        "remove" : function(req,res,next) {
+
         }
     }
 }

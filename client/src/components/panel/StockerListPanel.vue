@@ -100,7 +100,9 @@ export default {
     },
     mounted() {
         var me = this;
-        
+        api.getGoods().then(function(data) {
+            me.data[0].children = data;
+        });
         console.log('mounted');
     },
     beforeUpdate() {
