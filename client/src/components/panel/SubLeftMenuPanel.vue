@@ -3,15 +3,15 @@
 <el-tabs class="left_tabs" type="border-card">
     <el-tab-pane>
         <span slot="label" class="tab_title"><i class="el-icon-share"></i>Controller</span>
-        <el-tree class="demo" show-checkbox draggable default-expand-all ref="controller_list"
-             :data="data" :props="defaultProps" node-key="id"
-             :allow-drag="allowDrag" :allow-drop="allowDrop" @check="check">
+        <el-tree class="demo" show-checkbox default-expand-all ref="controller_list"
+             :data="data" :props="defaultProps" node-key="uuid" @check="check">
+             <!-- draggable :allow-drag="allowDrag" :allow-drop="allowDrop"  -->
             <span class="custom-tree-node" slot-scope="{ node, data }">
-                <span><i :class="data.id === 'fluid' ? 'el-icon-goods' : 'el-icon-star-off'"></i>   {{ node.label }}</span>
-                <span v-if="data.id !== 'fluid'">
+                <span><i :class="data.uuid === 'fluid' ? 'el-icon-goods' : 'el-icon-star-off'"></i>   {{ node.label }}</span>
+                <!-- <span v-if="data.id !== 'fluid'">
                     <i class="el-icon-circle-plus-outline action" @click="append(data,$event)"></i>
                     <i v-if="data.id !== 'fluid'" class="el-icon-delete action" @click="remove(node,data,$event)"></i>
-                </span>
+                </span> -->
             </span>
         </el-tree>
     </el-tab-pane>
@@ -27,7 +27,7 @@ export default {
     data () {
         return {
             data: [{
-                id:'fluid',
+                uuid:'fluid',
                 name: 'FLUID',
                 type:'folder',
                 children: []
@@ -43,45 +43,20 @@ export default {
         
     },
     methods: {
-        test(a,b) {
-            console.log(a,b)
-        },
-        append(data,event) {
-            event.preventDefault();
-            event.stopPropagation();
-            const newChild = { id: id++, name: 'testtest', children: [] };
-            if (!data.children) {
-                this.$set(data, 'children', []);
-            }
-            data.children.push(newChild);
-        },
-
-        remove(node, data,event) {
-            event.preventDefault();
-            event.stopPropagation();
-            const parent = node.parent;
-            const children = parent.data.children || parent.data;
-            const index = children.findIndex(d => d.id === data.id);
-            children.splice(index, 1);
-        },
         check(node,nodes) {
             var me = this;
-        },
-        allowDrag(node) {
-            var allow = true;
-            if(node.data.id === 'goods' || node.data.id === 'favorite') {
-                allow = false;
+            console.log(nodes.checkedNodes);
+            var params = nodes.checkedNodes.filter(function(d) { return d.type !== 'folder' });
+            if(params.length > 0) {
+                api.getUnderlay(params).then(function(underlay) {
+                    api.getOverlay(params).then(function(overlay) {
+                        console.log(underlay, overlay);
+                        common.view.setMap(params,underlay, overlay);
+                    })
+                })
+            } else {
+                common.view.clear();
             }
-            return allow;
-        },
-        allowDrop(drag_node, drop_node, type) {
-            var allow = true;
-            if(drag_node.data.type !== 'folder' && drop_node.data.type !== 'folder' && type === 'inner') {
-                allow = false;
-            } else if(drop_node.data.type === 'folder' && (type === 'prev' || type === 'next')) {
-                allow = false;
-            }
-            return allow;
         }
     },
     beforeCreate(){
@@ -95,9 +70,9 @@ export default {
     },
     mounted() {
         var me = this;
-        // api.getGoods().then(function(data) {
-        //     me.data[0].children = data;
-        // });
+        api.getNetController().then(function(data) {
+            me.data[0].children = data;
+        })
         console.log('mounted');
     },
     beforeUpdate() {

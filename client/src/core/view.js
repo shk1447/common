@@ -1,5 +1,7 @@
 const d3 = require('d3');
-const randomColor = require('randomcolor') ;
+const _ = require('lodash');
+const randomColor = require('randomcolor');
+
 require('./d3_extension/keybinding');
 require('./d3_extension/d3-tip.js');
 import api from '../api/api.js';
@@ -299,12 +301,13 @@ common.view = (function() {
                 repeat();
             }
 
-            if(d.port && d.port.length > 0) {
+            if(d.ports && d.ports.length > 0) {
                 d.node = node.append("rect")
+                    .attr('rx', node_size/4)
                     .attr('x', -node_size)
                     .attr('y', -node_size)
-                    .attr("width", node_size)
-                    .attr("height", node_size)
+                    .attr("width", node_size*2)
+                    .attr("height", node_size*2)
             } else {
                 d.node = node.append("circle")
                     .attr("r", node_size)
@@ -407,10 +410,10 @@ common.view = (function() {
             function repeat() {
                 thisLink.attr('stroke-dashoffset', totalLength + (totalLength/4));
                 thisLink.transition()
-                            .duration(20000/d.speed)
+                            .duration(1000)
                             .attr("stroke-dashoffset", totalLength/8)
                         .transition()
-                            .duration(20000/d.speed)
+                            .duration(1000)
                             .attr('stroke-dashoffset', totalLength + (totalLength/4))
                         .on("end", repeat)
             }
@@ -497,6 +500,54 @@ common.view = (function() {
     }
 
     return {
+        setMap: function(root, underlay,overlay) {
+            _.each(root, function(v,i) {
+                var root_x,  root_y;
+                root_x = container_div.clientWidth*(i+1)/2;
+                root_y = container_div.clientHeight*(i+1)/2;
+                v["x"] = root_x;
+                v["y"] = root_y;
+                v["type"] = "SDN";
+                activeNodes.push(v)
+                
+                var count = 0;
+                var total_count = Object.keys(underlay[v.uuid]).length;
+                _.each(underlay[v.uuid], function(data, type) {
+                    _.each(data, function(item, index) {
+                        var area_width = root_x / total_count;
+                        var x = root_x - (area_width * count) - (area_width/2)
+                        var y = root_y + (((index % 2 === 1) ? -node_size : node_size)*index*2)
+                        item["x"] = x;
+                        item["y"] = y;
+                        item["type"] = type;
+                        activeNodes.push(item);
+                        if(item.links && item.links.length > 0) {
+                            activeLinks = activeLinks.concat(item.links);
+                        }
+                    })
+                    count++;
+                })
+
+                count = 0;
+                total_count = Object.keys(overlay[v.uuid]).length;
+                _.each(overlay[v.uuid], function(data,type) {
+                    _.each(data, function(item, index) {
+                        var area_width = root_x / total_count;
+                        var x = root_x + (area_width * count) + (area_width/2)
+                        var y = (container_div.clientHeight / 2) + (((index % 2 === 1) ? -node_size : node_size)*index*2)
+                        item["x"] = x;
+                        item["y"] = y;
+                        item["type"] = type;
+                        activeNodes.push(item);
+                        if(item.links && item.links.length > 0) {
+                            activeLinks = activeLinks.concat(item.links);
+                        }
+                    })
+                    count++;
+                })
+            });
+            redraw();
+        },
         clear: function() {
             activeNodes = [];
             activeLinks = [];
