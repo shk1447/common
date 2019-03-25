@@ -1,23 +1,36 @@
 <template>
-    <div id="workspace">
+<div style="width:100%;height:calc(100% - 60px);">
+<div class="test">
+    <div :class="open ? 'sub_menu show' : 'sub_menu'" ref="left_panel">
+        <sub-menu ref="sub_menu"></sub-menu>
     </div>
+    <div class="handle" @click="handlePanelSlide">
+        <i :class="open ? 'el-icon-caret-left' : 'el-icon-caret-right'" style="vertical-align: middle;"></i>
+    </div>
+</div>
+<div id="workspace">
+</div>
+</div>
 </template>
 
 <script>
-
+import SubLeftMenuPanel from '../panel/SubLeftMenuPanel.vue';
 import api from '../../api/api.js'
 
 export default {
     data () {
         return {
-            
+            open:false
         }
     },
     components:{
-        
+        "sub-menu" :SubLeftMenuPanel
     },
     methods: {
-        
+        handlePanelSlide() {
+            var me = this;
+            me.open = !me.open;
+        }
     },
     beforeCreate(){
 
@@ -56,7 +69,6 @@ export default {
 }
 </script>
 <style>
-
 .lasso {
     stroke-width: 1px;
     stroke: #3cace7;
@@ -132,4 +144,36 @@ export default {
     fill:none;
     pointer-events: none;
 }
+
+
+	
+.sub_menu {
+  float: left;
+  width: 0px;
+  height: 100%;
+  overflow: hidden;
+  -webkit-transition: width .4s;
+  transition: width .4s;
+  background-color: rgb(242,249,255);
+  border: 1px solid #d8dce5;
+  box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.12), 0 0 6px 0 rgba(0, 0, 0, 0.04);
+}
+.sub_menu.show {
+    width:300px;
+}
+
+
+.handle {
+  float: left;
+  width: 15px;
+  height: 100%;
+  cursor: pointer;
+  display: flex; justify-content: center; align-items: center;
+}
+
+.test {
+    position: absolute;
+    height: 100%;
+}
+
 </style>
