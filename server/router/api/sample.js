@@ -17,6 +17,61 @@ const controller = [{
   "port" : "컨트롤러 연결 포트",
   "parameter" : "컨트롤러 세부 옵션",
   "fluidCSDNType" : "컨트롤러 유형"
+},{
+  "uuid" : "sdn02",
+  "name" : "Fluid SDN02",
+  "desc" : "Fluid SDN02",
+  "ineternalAddress" : "컨트롤러 연결 내부 주소",
+  "externalAddress" : "컨트롤러 연결 주소",
+  "adminId" : "컨트롤러 연결 아이디",
+  "adminPw" : "컨트롤러 연결 암호",
+  "port" : "컨트롤러 연결 포트",
+  "parameter" : "컨트롤러 세부 옵션",
+  "fluidCSDNType" : "컨트롤러 유형"
+},{
+  "uuid" : "sdn03",
+  "name" : "Fluid SDN03",
+  "desc" : "Fluid SDN03",
+  "ineternalAddress" : "컨트롤러 연결 내부 주소",
+  "externalAddress" : "컨트롤러 연결 주소",
+  "adminId" : "컨트롤러 연결 아이디",
+  "adminPw" : "컨트롤러 연결 암호",
+  "port" : "컨트롤러 연결 포트",
+  "parameter" : "컨트롤러 세부 옵션",
+  "fluidCSDNType" : "컨트롤러 유형"
+},{
+  "uuid" : "sdn04",
+  "name" : "Fluid SDN04",
+  "desc" : "Fluid SDN04",
+  "ineternalAddress" : "컨트롤러 연결 내부 주소",
+  "externalAddress" : "컨트롤러 연결 주소",
+  "adminId" : "컨트롤러 연결 아이디",
+  "adminPw" : "컨트롤러 연결 암호",
+  "port" : "컨트롤러 연결 포트",
+  "parameter" : "컨트롤러 세부 옵션",
+  "fluidCSDNType" : "컨트롤러 유형"
+},{
+  "uuid" : "sdn05",
+  "name" : "Fluid SDN05",
+  "desc" : "Fluid SDN05",
+  "ineternalAddress" : "컨트롤러 연결 내부 주소",
+  "externalAddress" : "컨트롤러 연결 주소",
+  "adminId" : "컨트롤러 연결 아이디",
+  "adminPw" : "컨트롤러 연결 암호",
+  "port" : "컨트롤러 연결 포트",
+  "parameter" : "컨트롤러 세부 옵션",
+  "fluidCSDNType" : "컨트롤러 유형"
+},{
+  "uuid" : "sdn06",
+  "name" : "Fluid SDN06",
+  "desc" : "Fluid SDN06",
+  "ineternalAddress" : "컨트롤러 연결 내부 주소",
+  "externalAddress" : "컨트롤러 연결 주소",
+  "adminId" : "컨트롤러 연결 아이디",
+  "adminPw" : "컨트롤러 연결 암호",
+  "port" : "컨트롤러 연결 포트",
+  "parameter" : "컨트롤러 세부 옵션",
+  "fluidCSDNType" : "컨트롤러 유형"
 }]
 
 module.exports = {
@@ -25,7 +80,11 @@ module.exports = {
       var response = {};
       var controller_list = req.body.map((d) => { return d.uuid });
       _.each(controller_list, (v,i) => {
-        response[v] = overlay;
+        if(i === 0) {
+          response[v] = overlay;
+        } else {
+          response[v] = {};
+        }
       })
       res.status(200).send(response);
     },
@@ -33,7 +92,11 @@ module.exports = {
       var response = {};
       var controller_list = req.body.map((d) => { return d.uuid });
       _.each(controller_list, (v,i) => {
-        response[v] = underlay;
+        if(i === 0) {
+          response[v] = underlay;
+        } else {
+          response[v] = {};
+        }
       })
       res.status(200).send(response);
     }

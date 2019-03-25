@@ -511,10 +511,28 @@ common.view = (function() {
 
     return {
         setMap: function(root, underlay,overlay) {
+            var grid_x = 0;
+            var grid_y = 0;
             _.each(root, function(v,i) {
                 var root_x,  root_y;
-                root_x = container_div.clientWidth*(i+1)/2;
-                root_y = container_div.clientHeight*(i+1)/2;
+
+                function test() {
+                    if(grid_x + grid_y === i) {
+                        return {
+                            x:grid_x,
+                            y:grid_y
+                        }
+                    } else {
+                        (i % 2 === 1) ? grid_x++ : grid_y++;
+                        return test();
+                    }
+                }
+                var grid = test();
+                grid_x = 0;
+                grid_y = 0;
+
+                root_x = (container_div.clientWidth/2) + container_div.clientWidth*grid.x;
+                root_y = (container_div.clientHeight/2) + container_div.clientHeight*grid.y;
                 v["x"] = root_x;
                 v["y"] = root_y;
                 v["type"] = "SDN";

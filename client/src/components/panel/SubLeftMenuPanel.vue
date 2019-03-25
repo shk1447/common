@@ -45,7 +45,7 @@ export default {
     methods: {
         check(node,nodes) {
             var me = this;
-            console.log(nodes.checkedNodes);
+            me.$loading({});
             var checked_list = nodes.checkedNodes.filter(function(d) { return d.type !== 'folder' });
             var params = checked_list.map(function(d) { return {uuid : d.uuid, name: d.name}})
             if(params.length > 0) {
@@ -53,10 +53,12 @@ export default {
                     api.getOverlay(params).then(function(overlay) {
                         console.log(underlay, overlay);
                         common.view.setMap(params,underlay, overlay);
+                        me.$loading({}).close();
                     })
                 })
             } else {
                 common.view.clear();
+                me.$loading({}).close();
             }
         }
     },
