@@ -8,7 +8,7 @@
                 </a>
             </div>
         </div>
-        <network-list ref="networkList" v-if="activeIndex === '1'"></network-list>
+        <main-menu ref="main_menu"></main-menu>
     </div>
     <div class="content">
         <div class="header">
@@ -42,7 +42,7 @@ import LogComponent from './viewer/LogComponent.vue'
 import CreateNodeModal from './modal/CreateNodeModal.vue'
 import DetailNodeModal from './modal/DetailNodeModal.vue'
 import ContextMenu from './menu/ContextMenuComponent.vue'
-import NetworkList from './panel/NetworkListPanel.vue';
+import MainMenuPanel from './panel/MainMenuPanel.vue';
 
 import api from '../api/api.js'
 
@@ -61,7 +61,7 @@ export default {
         "create-node-modal" : CreateNodeModal,
         "detail-node-modal" : DetailNodeModal,
         "context-menu" : ContextMenu,
-        "network-list" : NetworkList
+        "main-menu" : MainMenuPanel
     },
     methods: {
         handleLogout() {

@@ -45,6 +45,16 @@ export default {
                 children:[{
                     id:"topology",
                     label:"토폴로지"
+                }]
+            }],
+            sample_menu:[{
+                id:"network",
+                label:"네트워크",
+                icon:"ic_snb_network",
+                expand: true,
+                children:[{
+                    id:"topology",
+                    label:"토폴로지"
                 },{
                     id:"router",
                     label:"인스턴스"

@@ -299,10 +299,18 @@ common.view = (function() {
                 repeat();
             }
 
-            d.node = node.append("circle")
-                .style("cursor", "pointer")
+            if(d.port && d.port.length > 0) {
+                d.node = node.append("rect")
+                    .attr('x', -node_size)
+                    .attr('y', -node_size)
+                    .attr("width", node_size)
+                    .attr("height", node_size)
+            } else {
+                d.node = node.append("circle")
+                    .attr("r", node_size)
+            }
+            d.node.style("cursor", "pointer")
                 .attr("class", "node")
-                .attr("r", node_size)
                 .attr("fill",function(d) { return node_type[d.type] ? node_type[d.type].color : 'rgb(166, 187, 207)' })
             
             var icon_url = "/icons/server.svg";
