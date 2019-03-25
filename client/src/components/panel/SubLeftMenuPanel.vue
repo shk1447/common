@@ -46,7 +46,8 @@ export default {
         check(node,nodes) {
             var me = this;
             console.log(nodes.checkedNodes);
-            var params = nodes.checkedNodes.filter(function(d) { return d.type !== 'folder' });
+            var checked_list = nodes.checkedNodes.filter(function(d) { return d.type !== 'folder' });
+            var params = checked_list.map(function(d) { return {uuid : d.uuid, name: d.name}})
             if(params.length > 0) {
                 api.getUnderlay(params).then(function(underlay) {
                     api.getOverlay(params).then(function(overlay) {

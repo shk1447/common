@@ -28,6 +28,15 @@ common.view = (function() {
     var types = [];
     var node_type = {};
 
+    var color_define = {
+        "speed" : {
+            "1G":"#008000",
+            "10G":"#7CFC00",
+            "25G":"#4B0082",
+            "100G":"#008080"
+        }
+    }
+
     function canvasContextMenu() {
         var x = (d3.event.offsetX - outer_transform.x ) / outer_transform.k;
         var y = (d3.event.offsetY - outer_transform.y ) / outer_transform.k
@@ -397,25 +406,26 @@ common.view = (function() {
                 result.forEach(function(v,i) {
                     v.node.attr('filter', 'url(#' + activeDropShadow + ')' );
                 })
-                thisLink.attr('stroke', '#ff7f0e');
+                thisLink.attr('stroke', color_define.speed[d.speed] ? color_define.speed[d.speed] : '#ff7f0e');
             }
         })
         var anim_links = link_group.selectAll('.link_anim');
         anim_links.each(function(d,i) {
             var thisLink = d3.select(this);
             var path_data = lineGenerator([[d.source.x, d.source.y],[d.target.x, d.target.y]])
-            thisLink.attr("d", path_data).attr("stroke-width", node_size/4).attr('stroke','rgb(221,221,221)');
+            thisLink.attr("d", path_data).attr("stroke-width", node_size/4)
+                .attr('stroke', 'rgb(221,221,221)');
             var totalLength = thisLink.node().getTotalLength();
             thisLink.attr("stroke-dasharray", totalLength/8 + " " + totalLength);
             function repeat() {
                 thisLink.attr('stroke-dashoffset', totalLength + (totalLength/4));
                 thisLink.transition()
-                            .duration(1000)
-                            .attr("stroke-dashoffset", totalLength/8)
-                        .transition()
-                            .duration(1000)
-                            .attr('stroke-dashoffset', totalLength + (totalLength/4))
-                        .on("end", repeat)
+                    .duration(20000/(d.traffic ? d.traffic : Math.round(Math.random()*100)))
+                    .attr("stroke-dashoffset", totalLength/8)
+                .transition()
+                    .duration(20000/(d.traffic ? d.traffic : Math.round(Math.random()*100)))
+                    .attr('stroke-dashoffset', totalLength + (totalLength/4))
+                .on("end", repeat)
             }
             repeat();
         })
@@ -516,7 +526,7 @@ common.view = (function() {
                     _.each(data, function(item, index) {
                         var area_width = root_x / total_count;
                         var x = root_x - (area_width * count) - (area_width/2)
-                        var y = root_y + (((index % 2 === 1) ? -node_size : node_size)*index*2)
+                        var y = root_y + (((index % 2 === 1) ? -node_size : node_size) * Math.ceil(index/2)*3)
                         item["x"] = x;
                         item["y"] = y;
                         item["type"] = type;
@@ -534,7 +544,7 @@ common.view = (function() {
                     _.each(data, function(item, index) {
                         var area_width = root_x / total_count;
                         var x = root_x + (area_width * count) + (area_width/2)
-                        var y = (container_div.clientHeight / 2) + (((index % 2 === 1) ? -node_size : node_size)*index*2)
+                        var y = root_y + (((index % 2 === 1) ? -node_size : node_size) * Math.ceil(index/2)*3)
                         item["x"] = x;
                         item["y"] = y;
                         item["type"] = type;
