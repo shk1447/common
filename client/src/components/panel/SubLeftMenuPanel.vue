@@ -1,21 +1,15 @@
 <template>
-<div style="height:100%">
-<el-tabs class="left_tabs" type="border-card">
-    <el-tab-pane>
-        <span slot="label" class="tab_title"><i class="el-icon-share"></i>Controller</span>
-        <el-tree class="demo" show-checkbox default-expand-all ref="controller_list"
-             :data="data" :props="defaultProps" node-key="uuid" @check="check">
-             <!-- draggable :allow-drag="allowDrag" :allow-drop="allowDrop"  -->
-            <span class="custom-tree-node" slot-scope="{ node, data }">
-                <span><i :class="data.uuid === 'fluid' ? 'el-icon-goods' : 'el-icon-star-off'"></i>   {{ node.label }}</span>
-                <!-- <span v-if="data.id !== 'fluid'">
-                    <i class="el-icon-circle-plus-outline action" @click="append(data,$event)"></i>
-                    <i v-if="data.id !== 'fluid'" class="el-icon-delete action" @click="remove(node,data,$event)"></i>
-                </span> -->
-            </span>
-        </el-tree>
-    </el-tab-pane>
-</el-tabs>
+<div style="height:100%; overflow:auto">
+    <el-tree class="demo" show-checkbox :data="data" :props="defaultProps" node-key="id" @check="check">
+            <!-- draggable :allow-drag="allowDrag" :allow-drop="allowDrop"  -->
+        <span class="custom-tree-node" slot-scope="{ node, data }">
+            <span><i :class="data.id === 'daily' ? 'el-icon-date' : 'el-icon-star-off'"></i>   {{ node.label }}</span>
+            <!-- <span v-if="data.id !== 'fluid'">
+                <i class="el-icon-circle-plus-outline action" @click="append(data,$event)"></i>
+                <i v-if="data.id !== 'fluid'" class="el-icon-delete action" @click="remove(node,data,$event)"></i>
+            </span> -->
+        </span>
+    </el-tree>
 </div>
 </template>
 
@@ -27,8 +21,8 @@ export default {
     data () {
         return {
             data: [{
-                uuid:'fluid',
-                name: 'FLUID',
+                id:'daily',
+                name: '일별 추천 리스트',
                 type:'folder',
                 children: []
             }],
@@ -48,15 +42,23 @@ export default {
             me.$loading({});
             common.view.clear();
             var checked_list = nodes.checkedNodes.filter(function(d) { return d.type !== 'folder' });
-            var params = checked_list.map(function(d) { return {uuid : d.uuid, name: d.name}})
+            var params = checked_list.map(function(d) { return {id : d.id, name:d.name,prev_id: d.prev_id}})
+            console.log(params);
             if(params.length > 0) {
-                api.getUnderlay(params).then(function(underlay) {
-                    api.getOverlay(params).then(function(overlay) {
-                        console.log(underlay, overlay);
-                        common.view.setMap(params,underlay, overlay);
-                        me.$loading({}).close();
-                    })
+                
+                api.getRecommends(params).then(function(map) {
+                    common.view.setRecommends(params, map);
+                    me.$loading({}).close();
                 })
+                
+                // api.getUnderlay(params).then(function(underlay) {
+                //     api.getOverlay(params).then(function(overlay) {
+                //         console.log(underlay, overlay);
+                //         common.view.setMap(params,underlay, overlay);
+                //         me.$loading({}).close();
+                //     })
+                // })
+                
             } else {
                 me.$loading({}).close();
             }
@@ -73,7 +75,7 @@ export default {
     },
     mounted() {
         var me = this;
-        api.getNetController().then(function(data) {
+        api.getDaily().then(function(data) {
             me.data[0].children = data;
         })
         console.log('mounted');
@@ -117,5 +119,10 @@ export default {
 }
 .action:hover {
     color: rgb(99,170,244);
+}
+
+.wow {
+    height: calc(100% - 39px);
+    overflow: auto;
 }
 </style>

@@ -153,12 +153,12 @@ common.view = (function() {
     function nodeClicked(node, node_info) {
         d3.event.stopPropagation();
         d3.event.preventDefault();
-        selected_id = node_info.uuid;
+        selected_id = node_info.id;
         redraw();
     }
 
     function redraw() {
-        var node = vis.selectAll(".nodegroup").data(activeNodes, function(d) { return d.uuid });
+        var node = vis.selectAll(".nodegroup").data(activeNodes, function(d) { return d.id });
 
         node.exit().remove();
 
@@ -168,7 +168,7 @@ common.view = (function() {
         // 신규
         nodeEnter.each(function(d,i) {
             var node = d3.select(this);
-            node.attr("id",d.uuid)
+            node.attr("id",d.id)
                 .attr("transform", function(d) { return "translate(" + (d.x) + "," + (d.y) + ")"; })
                 .style("cursor", "pointer")
                 .on('dblclick', function(){
@@ -270,7 +270,7 @@ common.view = (function() {
             
             thisNode.attr("transform", function(d) { return "translate(" + (d.x) + "," + (d.y) + ")"; });
 
-            if(d.uuid === selected_id) {
+            if(d.id === selected_id) {
                 d.node.classed('selected', true)
                 d.node.attr('filter', 'url(#' + activeDropShadow + ')' );
             } else {
@@ -279,7 +279,7 @@ common.view = (function() {
             }
         });
 
-        var link = link_group.selectAll(".link").data(activeLinks, function(d) { return d.sourceUuid+":"+d.targetUuid });
+        var link = link_group.selectAll(".link").data(activeLinks, function(d) { return d.source+":"+d.target });
 
         var linkEnter = link.enter().insert("svg:g")
             .attr("class", "link");
@@ -288,18 +288,18 @@ common.view = (function() {
             var l = d3.select(this);
             l.append("svg:path").attr("class", "link_background link_path")
                                 .on("click",function(d) {
-                                    selected_id = d.sourceUuid+":"+d.targetUuid;
+                                    selected_id = d.source+":"+d.target;
                                     redraw();
                                 })
             l.append("svg:path").attr('class', 'link_line link_path')
             l.append("svg:path").attr('class', 'link_anim')
-            if(!d.source) d.source = activeNodes.find(function(a) { return a.uuid === d.sourceUuid});
-            if(!d.target) d.target = activeNodes.find(function(a) { return a.uuid === d.targetUuid});
+            if(!d.sourceNode) d.sourceNode = activeNodes.find(function(a) { return a.id === d.source});
+            if(!d.targetNode) d.targetNode = activeNodes.find(function(a) { return a.id === d.target});
             l.append('svg:text')
             .attr('class', 'volume_power')
-            .attr('x', (d.source.x + d.target.x)/2)
-            .attr('y', (d.source.y + d.target.y)/2)
-            .style('stroke', 'none').text(d.speed);
+            .attr('x', (d.sourceNode.x + d.targetNode.x)/2)
+            .attr('y', (d.sourceNode.y + d.targetNode.y)/2)
+            .style('stroke', 'none').text(Math.round(d.volume_percent));
         })
         link.exit().remove();
 
@@ -308,21 +308,21 @@ common.view = (function() {
         speed_texts.each(function(d,i) {
             var text = d3.select(this);
             var text_width = text.node().getComputedTextLength()
-            text.attr('x', (d.source.x + d.target.x)/2 - (text_width/2))
-            .attr('y', (d.source.y + d.target.y)/2)
+            text.attr('x', (d.sourceNode.x + d.targetNode.x)/2 - (text_width/2))
+            .attr('y', (d.sourceNode.y + d.targetNode.y)/2)
         })
 
         var links = link_group.selectAll('.link_path')
         links.each(function(d,i) {
             var thisLink = d3.select(this);
-            var id = d.source.uuid + ":" + d.target.uuid;
-            var path_data = lineGenerator([[d.source.x, d.source.y],[d.target.x, d.target.y]])
+            var id = d.sourceNode.id + ":" + d.targetNode.id;
+            var path_data = lineGenerator([[d.sourceNode.x, d.sourceNode.y],[d.targetNode.x, d.targetNode.y]])
             thisLink.attr("d", path_data).attr("stroke-width", node_size/4).attr('stroke','#888');
             if(id === selected_id) {
                 thisLink.attr('stroke', '#ff7f0e');
             }
-            if(d.source.uuid === selected_id || d.target.uuid === selected_id) {
-                var result = activeNodes.filter(function(a) {return a.uuid === d.source.uuid || a.uuid === d.target.uuid});
+            if(d.sourceNode.id === selected_id || d.targetNode.id === selected_id) {
+                var result = activeNodes.filter(function(a) {return a.id === d.sourceNode.id || a.id === d.targetNode.id});
                 result.forEach(function(v,i) {
                     v.node.attr('filter', 'url(#' + activeDropShadow + ')' );
                 })
@@ -332,7 +332,7 @@ common.view = (function() {
         var anim_links = link_group.selectAll('.link_anim');
         anim_links.each(function(d,i) {
             var thisLink = d3.select(this);
-            var path_data = lineGenerator([[d.source.x, d.source.y],[d.target.x, d.target.y]])
+            var path_data = lineGenerator([[d.sourceNode.x, d.sourceNode.y],[d.targetNode.x, d.targetNode.y]])
             thisLink.attr("d", path_data).attr("stroke-width", node_size/4)
                 .attr('stroke', 'rgb(221,221,221)');
             var totalLength = thisLink.node().getTotalLength();
@@ -340,11 +340,8 @@ common.view = (function() {
             function repeat() {
                 thisLink.attr('stroke-dashoffset', totalLength + (totalLength/4));
                 thisLink.transition()
-                    .duration(20000/(d.traffic ? d.traffic : Math.round(Math.random()*100)))
+                    .duration(20000/d.volume_percent)
                     .attr("stroke-dashoffset", totalLength/8)
-                .transition()
-                    .duration(20000/(d.traffic ? d.traffic : Math.round(Math.random()*100)))
-                    .attr('stroke-dashoffset', totalLength + (totalLength/4))
                 .on("end", repeat)
             }
             repeat();
@@ -352,13 +349,13 @@ common.view = (function() {
     }
 
     function deleteItem() {
-        var node_index = activeNodes.findIndex(function(d) {return d.uuid === selected_id});
+        var node_index = activeNodes.findIndex(function(d) {return d.id === selected_id});
         if(node_index >= 0) {
             var remove_index = [];
             var link_length = activeLinks.length;
             for(var i = 0; i < link_length; i++) {
                 var d = activeLinks[i];
-                if((d.source.uuid === selected_id || d.target.uuid === selected_id)) {
+                if((d.sourceNode.id === selected_id || d.targetNode.id === selected_id)) {
                     remove_index.push(i);
                 }
             }
@@ -430,6 +427,40 @@ common.view = (function() {
     }
 
     return {
+        setRecommends:function(root,recommends) {
+            var grid_width = Math.ceil(Math.sqrt(root.length));
+            _.each(root, function(v,i) {
+                var root_x,  root_y;
+                
+                var grid_x = i % grid_width;
+                var grid_y = Math.floor(i / grid_width);
+                console.log(grid_x, grid_y);
+                root_x = (container_div.clientWidth/2) + container_div.clientWidth*grid_x;
+                root_y = (container_div.clientHeight/2) + container_div.clientHeight*grid_y;
+                v["x"] = root_x;
+                v["y"] = root_y;
+
+                activeNodes.push(v);
+
+                // var count = 0;
+                var node_width = Math.ceil(Math.sqrt(recommends[i].length));
+                _.each(recommends[i], function(item, index) {
+                    var node_x = index % node_width;
+                    var node_y = Math.floor(index / node_width);
+                    var x = (root_x + (node_size*6)) + (node_size * node_x * 6)
+                    var y = (root_y + (node_size*6)) + (node_size * node_y * 6)
+                    item["x"] = x;
+                    item["y"] = y;
+                    activeNodes.push(item);
+                    activeLinks.push({
+                        source:v.id,
+                        target:item.id,
+                        volume_percent:item.volume_percent
+                    })
+                })
+            });
+            redraw();
+        },
         setMap: function(root, underlay,overlay) {
             var grid_width = Math.ceil(Math.sqrt(root.length));
             _.each(root, function(v,i) {
@@ -446,8 +477,8 @@ common.view = (function() {
                 activeNodes.push(v)
                 
                 var count = 0;
-                var total_count = Object.keys(underlay[v.uuid]).length;
-                _.each(underlay[v.uuid], function(data, type) {
+                var total_count = Object.keys(underlay[v.id]).length;
+                _.each(underlay[v.id], function(data, type) {
                     _.each(data, function(item, index) {
                         var area_width = root_x / total_count;
                         var x = root_x - (area_width * count) - (area_width/2)
@@ -464,8 +495,8 @@ common.view = (function() {
                 })
 
                 count = 0;
-                total_count = Object.keys(overlay[v.uuid]).length;
-                _.each(overlay[v.uuid], function(data,type) {
+                total_count = Object.keys(overlay[v.id]).length;
+                _.each(overlay[v.id], function(data,type) {
                     _.each(data, function(item, index) {
                         var area_width = root_x / total_count;
                         var x = root_x + (area_width * count) + (area_width/2)

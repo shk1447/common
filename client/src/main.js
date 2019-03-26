@@ -5,6 +5,19 @@ import locale from 'element-ui/lib/locale/lang/en'
 import './assets/style/style.css';
 import vmodal from 'vue-js-modal';
 
+import { library } from '@fortawesome/fontawesome-svg-core'
+import { faUserSecret, faDoorOpen, faWonSign, faAngleUp, faAngleDown } from '@fortawesome/free-solid-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+library.add(faUserSecret)
+library.add(faDoorOpen)
+library.add(faWonSign);
+library.add(faAngleDown);
+library.add(faAngleUp)
+ 
+Vue.component('font-awesome-icon', FontAwesomeIcon)
+
+
+
 Vue.use(vmodal);
 Vue.use(ElementUI, { locale });
 // Vue.$loading = Vue.prototype.$loading;
@@ -24,7 +37,7 @@ import router from './router';
 //import event_api  from './api/event_api.js';
 //Vue.prototype.$socket = event_api();
 
-import core from './core';
+import './core';
 
 
 new Vue({

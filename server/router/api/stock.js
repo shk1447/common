@@ -1,3 +1,4 @@
+var _ = require('lodash');
 var fs = require('fs');
 var path = require('path');
 var fsPath = require('fs-path');
@@ -11,8 +12,8 @@ module.exports = {
                 res.status(500).send(err);
             })
         },
-        "goods" : function(req,res,next) {
-            khan.model.past_stock.selectGoods().then((data) => {
+        "daily" : function(req,res,next) {
+            khan.model.past_stock.selectDaily().then((data) => {
                 res.status(200).send(data);
             }).catch((err) => {
                 res.status(500).send(err);
@@ -20,8 +21,24 @@ module.exports = {
         }
     },
     post: {
-        "upload" : function(req,res,next) {
-            res.status(200).send();
+        "recommend" : function(req,res,next) {
+            khan.model.past_stock.selectRecommend(req.body).then((data) => {
+                res.status(200).send(data[0]);
+            }).catch((err) => {
+                res.status(500).send(err);
+            })
+        },
+        "recommends" : function(req,res,next) {
+            var daylist = req.body;
+            var promises = [];
+            _.each(daylist, (param) => {
+                promises.push(khan.model.past_stock.selectRecommends(param));
+            })
+            Promise.all(promises).then((result) => {
+                res.status(200).send(result);
+            }).catch((err) => {
+                res.status(500).send(err);
+            })
         }
     }
 }

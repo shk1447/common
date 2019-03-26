@@ -1,5 +1,5 @@
 <template>
-<div style="width:100%;height:calc(100% - 60px);">
+<div style="width:100%;height:calc(100% - 58px);">
 <div class="test">
     <div :class="open ? 'sub_menu show' : 'sub_menu'" ref="left_panel">
         <sub-menu ref="sub_menu"></sub-menu>
@@ -47,10 +47,7 @@ export default {
         console.log('mounted');
         setTimeout(function() {
             common.view.init('workspace');
-            api.getSampleNodeType().then(function(data) {
-                common.view.setNodeType(data);
-                me.$loading({}).close();
-            })
+            me.$loading({}).close();
         },500)
     },
     beforeUpdate() {
@@ -154,7 +151,7 @@ export default {
   overflow: hidden;
   -webkit-transition: width .4s;
   transition: width .4s;
-  background-color: rgb(242,249,255);
+  background-color: rgb(253,253,253);
   border: 1px solid #d8dce5;
   box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.12), 0 0 6px 0 rgba(0, 0, 0, 0.04);
 }
@@ -173,7 +170,7 @@ export default {
 
 .test {
     position: absolute;
-    height: 100%;
+    height:calc(100% - 58px);
 }
 
 </style>
