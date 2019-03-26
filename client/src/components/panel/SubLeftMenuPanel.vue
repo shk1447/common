@@ -46,6 +46,7 @@ export default {
         check(node,nodes) {
             var me = this;
             me.$loading({});
+            common.view.clear();
             var checked_list = nodes.checkedNodes.filter(function(d) { return d.type !== 'folder' });
             var params = checked_list.map(function(d) { return {uuid : d.uuid, name: d.name}})
             if(params.length > 0) {
@@ -57,7 +58,6 @@ export default {
                     })
                 })
             } else {
-                common.view.clear();
                 me.$loading({}).close();
             }
         }

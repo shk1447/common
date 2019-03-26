@@ -149,10 +149,6 @@ common.view = (function() {
     
         var filter = defs.append('filter')
                 .attr('id', activeDropShadow)
-                // x, y, width and height represent values in the current coordinate system that results
-                // from taking the current user coordinate system in place at the time when the
-                // <filter> element is referenced
-                // (i.e., the user coordinate system for the element referencing the <filter> element via a filter attribute).
                 .attr('filterUnits','userSpaceOnUse');
     
         filter.append('feGaussianBlur')
@@ -177,10 +173,8 @@ common.view = (function() {
     function nodeClicked(node, node_info) {
         d3.event.stopPropagation();
         d3.event.preventDefault();
-        //node.classed("selected", !node.classed("selected"))
         selected_id = node_info.uuid;
         redraw();
-        //common.events.emit('test',node_info.id)
     }
 
     function portMouseDown(port, node, type) {
@@ -511,28 +505,15 @@ common.view = (function() {
 
     return {
         setMap: function(root, underlay,overlay) {
-            var grid_x = 0;
-            var grid_y = 0;
+            var grid_width = Math.ceil(Math.sqrt(root.length));
             _.each(root, function(v,i) {
                 var root_x,  root_y;
-
-                function test() {
-                    if(grid_x + grid_y === i) {
-                        return {
-                            x:grid_x,
-                            y:grid_y
-                        }
-                    } else {
-                        (i % 2 === 1) ? grid_x++ : grid_y++;
-                        return test();
-                    }
-                }
-                var grid = test();
-                grid_x = 0;
-                grid_y = 0;
-
-                root_x = (container_div.clientWidth/2) + container_div.clientWidth*grid.x;
-                root_y = (container_div.clientHeight/2) + container_div.clientHeight*grid.y;
+                
+                var grid_x = i % grid_width;
+                var grid_y = Math.floor(i / grid_width);
+                console.log(grid_x, grid_y);
+                root_x = (container_div.clientWidth/2) + container_div.clientWidth*grid_x;
+                root_y = (container_div.clientHeight/2) + container_div.clientHeight*grid_y;
                 v["x"] = root_x;
                 v["y"] = root_y;
                 v["type"] = "SDN";
