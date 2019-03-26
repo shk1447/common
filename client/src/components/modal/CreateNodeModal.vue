@@ -25,8 +25,8 @@
             </el-form-item>
             <el-form-item label="TYPE" prop="type">
                 <el-select v-model="form.type" placeholder="please select your zone">
-                    <el-option v-for="item in node_types" :key="item.id"
-                           :label="item.desc" :value="item.id"></el-option>
+                    <el-option v-for="item in node_types" :key="item.name"
+                           :label="item.desc" :value="item.name"></el-option>
                 </el-select>
             </el-form-item>
         </el-form>
@@ -62,17 +62,10 @@ export default {
     },
     methods: {
         show(opt) {
-            console.log(Math.abs(opt.event.x+130)/opt.event.view.innerWidth);
-            console.log(Math.abs(opt.event.y+130)/opt.event.view.innerHeight);
             this.$refs.create_node_modal.pivotX = Math.abs(opt.event.x)/opt.event.view.innerWidth;
             this.$refs.create_node_modal.pivotY = Math.abs(opt.event.y)/opt.event.view.innerHeight;
-            // this.$refs.create_node_modal.position.left = opt.event.x;
-            // this.$refs.create_node_modal.position.top = opt.event.y;
-            console.log(opt.event.x, opt.event.y);
-            console.log(this.$refs.create_node_modal);
             this.node_info = opt.node_info;
             this.node_types = opt.node_types;
-            //this.$refs.create_node_modal.$forceUpdate()
             this.$modal.show('create-node');
         },
         beforeModalClose() {
