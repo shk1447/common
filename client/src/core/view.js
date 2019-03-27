@@ -184,7 +184,7 @@ common.view = (function() {
                 .on('click', (function() { var node = d; return function(d,i) { nodeClicked(d3.select(this),node) }})())
                 .on('contextmenu', function() {
                     common.events.emit('popup', {
-                        name : 'detailNodeModal',
+                        name : 'chartModal',
                         params : d
                     });
                     d3.event.stopPropagation();

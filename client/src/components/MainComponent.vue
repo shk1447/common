@@ -19,6 +19,7 @@
     
     <create-node-modal ref="createNodeModal"></create-node-modal>
     <detail-node-modal ref="detailNodeModal"></detail-node-modal>
+    <chart-modal ref="chartModal"></chart-modal>
     <context-menu ref="contextMenu"></context-menu>
 </div>
 </template>
@@ -29,6 +30,7 @@ import TopologyComponent from './viewer/TopologyComponent.vue'
 import AlarmComponent from './viewer/AlarmComponent.vue'
 import CreateNodeModal from './modal/CreateNodeModal.vue'
 import DetailNodeModal from './modal/DetailNodeModal.vue'
+import ChartModal from './modal/ChartModal.vue'
 import ContextMenu from './menu/ContextMenuComponent.vue'
 import MainMenuPanel from './panel/MainMenuPanel.vue';
 
@@ -46,6 +48,7 @@ export default {
         "alarm-component" : AlarmComponent,
         "create-node-modal" : CreateNodeModal,
         "detail-node-modal" : DetailNodeModal,
+        "chart-modal" : ChartModal,
         "context-menu" : ContextMenu,
         "main-menu" : MainMenuPanel
     },
