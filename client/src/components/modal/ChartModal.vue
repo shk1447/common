@@ -77,75 +77,75 @@ export default {
 }
 </script>
 <style>
-.upGreenArrow{
-   width: 0;
-   height: 0;
-   border-style: solid;
-   border-width: 0 4.5px 12px 4.5px;
-   border-color: transparent transparent #00ff00 transparent;
-}
-  
-.downRedArrow{
-   width: 0;
-   height: 0;
-   border-style: solid;
-   border-width: 12px 4.5px 0 4.5px;
-   border-color: #ff0000 transparent transparent transparent;
-}
-
-.upArrow{
-  position: relative;
-  top: -15px;
-  left: -10px;
-  width:0;
-  height:0;
-  border: 6px solid transparent;
-  border-bottom-color: #00ff00;
-}
-.upArrow:after{
-  position: absolute;
-  content: '';
-  top: 20px;
-  left: -3px;
-  width: 6px;
-  height: 10px;
-  background: #00ff00;
-}
-
-.downArrow{
-  position: relative;
-  top: 18px;
-  left: -10px;
-  width: 0;
-  height: 0;
-  border: 6px solid transparent;
-  border-top-color: #ff0000;
-}
-.downArrow:after{
-  position: absolute;
-  content: '';
-  top: -15px;
-  left: -3px;
-  width: 6px;
-  height: 10px;
-  background: #ff0000;
-}
 
 
-/* d3 candle stick start */
+    body {
+        font: 10px sans-serif;
+    }
 
-.axis path,
-.axis line {
-    fill: none;
-    stroke: black;
-    shape-rendering: crispEdges;
-}
+    text {
+        fill: #000;
+    }
 
-.axis text {
-    font-family: 'Open Sans', sans-serif;
-    font-size: 11px;
-    fill: black;
-}
+    path.candle {
+        stroke: #000000;
+    }
+
+    path.candle.body {
+        stroke-width: 0;
+    }
+
+    path.candle.up {
+        fill: #FF0000;
+        stroke: #FF0000;
+    }
+
+    path.candle.down {
+        fill: #0000FF;
+        stroke: #0000FF;
+    }
+
+    path.ohlc {
+        stroke: #000000;
+        stroke-width: 1;
+    }
+
+    path.ohlc.up {
+        stroke: #00AA00;
+    }
+
+    path.ohlc.down {
+        stroke: #FF0000;
+    }
+
+    path.volume {
+        fill: #EEEEEE;
+    }
+
+    path.line {
+        fill: none;
+        stroke: #BF5FFF;
+        stroke-width: 1;
+    }
+
+    .extent {
+        stroke: #fff;
+        fill-opacity: .125;
+        shape-rendering: crispEdges;
+    }
+
+    .crosshair {
+        cursor: crosshair;
+    }
+
+    .crosshair path.wire {
+        stroke: #DDDDDD;
+        stroke-dasharray: 1, 1;
+    }
+
+    .crosshair .axisannotation path {
+        fill: #DDDDDD;
+    }
 
 #chart-space {
     width:100%;

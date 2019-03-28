@@ -1,9 +1,9 @@
-const d3 = require('d3');
+//const d3 = require('d3');
 const _ = require('lodash');
 const randomColor = require('randomcolor');
 
-require('./d3_extension/keybinding');
-require('./d3_extension/d3-tip.js');
+// require('./d3_extension/keybinding');
+// require('./d3_extension/d3-tip.js');
 import api from '../api/api.js';
 
 common.view = (function() {
@@ -533,17 +533,17 @@ common.view = (function() {
             zoom = d3.zoom().on("zoom", zoomed)
             // var drag = d3.drag().on("dragstart")
 
-            function test() {
-                console.log('test');
-            }
-            var keyboard = d3.keybinding()
-                            .on('delete', deleteItem)
-                            .on('←', test)
-                            .on('↑', test)
-                            .on('→', test)
-                            .on('↓', test);
+            // function test() {
+            //     console.log('test');
+            // }
+            // var keyboard = d3.keybinding()
+            //                 .on('delete', deleteItem)
+            //                 .on('←', test)
+            //                 .on('↑', test)
+            //                 .on('→', test)
+            //                 .on('↓', test);
             
-            d3.select('body').call(keyboard);
+            // d3.select('body').call(keyboard);
             outer = d3.select("#" + id)
                         .append("svg:svg")
                         .attr("width", width)
