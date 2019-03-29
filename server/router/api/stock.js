@@ -18,6 +18,13 @@ module.exports = {
             }).catch((err) => {
                 res.status(500).send(err);
             })
+        },
+        "data" : function(req,res,next) {
+            khan.model.past_stock.selectData(req.query.id).then((data) => {
+                res.status(200).send(data);
+            }).catch((err) => {
+                res.status(500).send(err);
+            })
         }
     },
     post: {

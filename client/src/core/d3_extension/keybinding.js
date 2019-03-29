@@ -1,5 +1,3 @@
-const d3 = require('d3');
-
 d3.rebind = function(target, source) {
     var i = 1, n = arguments.length, method;
     while (++i < n) target[method = arguments[i]] = d3_rebind(target, source, source[method]);

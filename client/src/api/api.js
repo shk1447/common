@@ -13,6 +13,12 @@ export default {
             return res;
         })
     },
+    getData: function(id) {
+        var url = "/stock/data?id=" + id;
+        return http.get(url).then(function(res) {
+            return res;
+        })
+    },
     setTopology: function(data) {
         var url = "/topology/save";
         return http.post(url, data).then(function(res) {

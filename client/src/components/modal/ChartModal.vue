@@ -14,7 +14,7 @@
     @closed="closedModal"
     draggable=".modal-header">
     <div class="modal-header">
-        <h5>Chart</h5>
+        <h5>{{param.name}}</h5>
         <a class="close-modal-btn" role="button" @click="beforeModalClose()"><i class="el-icon-error"></i></a>
     </div>
     <div class="modal-body">
@@ -28,16 +28,19 @@
 
 <script>
 
+import api from '../../api/api.js'
+
 export default {
     data () {
         return {
-            
+            param : {}
         }
     },
     components:{
     },
     methods: {
         show(d) {
+            this.param = d;
             this.$modal.show('chart-modal');
         },
         beforeModalClose() {
@@ -45,9 +48,14 @@ export default {
         },
         openedModal() {
             common.chart.init('chart-space');
+            api.getData(this.param.id).then(function(data) {
+                common.chart.load(data);
+            })
         },
         closedModal() {
+            this.param = {};
             common.chart.uninit();
+            common.events.emit('view.zoom_reset', {});
         }
     },
     beforeCreate(){
@@ -80,7 +88,7 @@ export default {
 
 
     body {
-        font: 10px sans-serif;
+        font: 11px sans-serif;
     }
 
     text {
@@ -119,7 +127,7 @@ export default {
     }
 
     path.volume {
-        fill: #EEEEEE;
+        fill: #DDDDDD;
     }
 
     path.line {
@@ -145,6 +153,65 @@ export default {
 
     .crosshair .axisannotation path {
         fill: #DDDDDD;
+    }
+
+
+    .supstance path {
+        stroke: blue;
+        stroke-width: 0.8;
+        stroke-dasharray: 2, 2;
+    }
+
+    .mouseover .supstance path {
+        stroke-width: 1.5;
+    }
+
+    .dragging .supstance path {
+        stroke: darkblue;
+    }
+
+    .axisannotation path {
+        fill: darkblue;
+    }
+
+    .axisannotation text {
+        fill: #fff;
+    }
+
+    path.tradearrow {
+        stroke: none;
+    }
+
+    path.tradearrow.buy {
+        fill: #0000FF;
+    }
+
+    path.tradearrow.buy-pending {
+        fill-opacity: 0.2;
+        stroke: #0000FF;
+        stroke-width: 1.5;
+    }
+
+    path.tradearrow.sell {
+        fill: #9900FF;
+    }
+
+    .tradearrow path.highlight {
+        fill: none;
+        stroke-width: 2;
+    }
+
+    .tradearrow path.highlight.buy,.tradearrow path.highlight.buy-pending {
+        stroke: #0000FF;
+    }
+
+    .tradearrow path.highlight.buy-pending {
+        fill: #0000FF;
+        fill-opacity: 0.3;
+    }
+
+    .tradearrow path.highlight.sell {
+        stroke: #9900FF;
     }
 
 #chart-space {

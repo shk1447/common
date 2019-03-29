@@ -111,5 +111,13 @@ PastStock.prototype.selectRecommends = function(params) {
     })
 }
 
+PastStock.prototype.selectData = function(category) {
+    var query = "SELECT column_get(rawdata, '시가' as double) as `Open`, column_get(rawdata, '고가' as double) as `High`, column_get(rawdata, '저가' as double) as `Low`, column_get(rawdata, '종가' as double) as `Close`,column_get(rawdata, '거래량' as double) as `Volume`,unixtime FROM past_stock WHERE category = '"+category+"'";
+
+    return khan.database.raw(query).then((rows) => {
+        return rows[0];
+    })
+}
+
 instance = instance ? instance : new PastStock();
 module.exports = instance;

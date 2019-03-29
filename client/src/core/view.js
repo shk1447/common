@@ -2,9 +2,7 @@
 const _ = require('lodash');
 const randomColor = require('randomcolor');
 
-// require('./d3_extension/keybinding');
-// require('./d3_extension/d3-tip.js');
-import api from '../api/api.js';
+require('./d3_extension/keybinding');
 
 common.view = (function() {
     var width, height, container_div;
@@ -178,17 +176,21 @@ common.view = (function() {
                     k = d3.min([kw,kh])/4;
                     x = container_div.clientWidth / 2 - d.x * k;
                     y = container_div.clientHeight / 2 - d.y * k;
-                    var test = d3.zoomIdentity.translate(x,y).scale(k);
-                    outer.transition().duration(1200).call(zoom.transform, test)
+                    var focusing = d3.zoomIdentity.translate(x,y).scale(k);
+                    outer_transform = focusing;
+                    outer.transition().duration(1200).call(zoom.transform, focusing)
+                        .on("end", function() {
+                            common.events.emit('popup', {
+                                name : 'chartModal',
+                                params : d
+                            });
+                        })
                 })
                 .on('click', (function() { var node = d; return function(d,i) { nodeClicked(d3.select(this),node) }})())
                 .on('contextmenu', function() {
-                    common.events.emit('popup', {
-                        name : 'chartModal',
-                        params : d
-                    });
-                    d3.event.stopPropagation();
-                    d3.event.preventDefault();
+                    console.log(d);
+                    // d3.event.stopPropagation();
+                    // d3.event.preventDefault();
                 })
                 .call(d3.drag()
                     .on('start', dragstarted)
@@ -460,59 +462,15 @@ common.view = (function() {
                 })
             });
             redraw();
-        },
-        setMap: function(root, underlay,overlay) {
-            var grid_width = Math.ceil(Math.sqrt(root.length));
-            _.each(root, function(v,i) {
-                var root_x,  root_y;
-                
-                var grid_x = i % grid_width;
-                var grid_y = Math.floor(i / grid_width);
-                console.log(grid_x, grid_y);
-                root_x = (container_div.clientWidth/2) + container_div.clientWidth*grid_x;
-                root_y = (container_div.clientHeight/2) + container_div.clientHeight*grid_y;
-                v["x"] = root_x;
-                v["y"] = root_y;
-                v["type"] = "SDN";
-                activeNodes.push(v)
-                
-                var count = 0;
-                var total_count = Object.keys(underlay[v.id]).length;
-                _.each(underlay[v.id], function(data, type) {
-                    _.each(data, function(item, index) {
-                        var area_width = root_x / total_count;
-                        var x = root_x - (area_width * count) - (area_width/2)
-                        var y = root_y + (((index % 2 === 1) ? -node_size : node_size) * Math.ceil(index/2)*3)
-                        item["x"] = x;
-                        item["y"] = y;
-                        item["type"] = type;
-                        activeNodes.push(item);
-                        if(item.links && item.links.length > 0) {
-                            activeLinks = activeLinks.concat(item.links);
-                        }
-                    })
-                    count++;
-                })
-
-                count = 0;
-                total_count = Object.keys(overlay[v.id]).length;
-                _.each(overlay[v.id], function(data,type) {
-                    _.each(data, function(item, index) {
-                        var area_width = root_x / total_count;
-                        var x = root_x + (area_width * count) + (area_width/2)
-                        var y = root_y + (((index % 2 === 1) ? -node_size : node_size) * Math.ceil(index/2)*3)
-                        item["x"] = x;
-                        item["y"] = y;
-                        item["type"] = type;
-                        activeNodes.push(item);
-                        if(item.links && item.links.length > 0) {
-                            activeLinks = activeLinks.concat(item.links);
-                        }
-                    })
-                    count++;
-                })
-            });
-            redraw();
+            // var visual_box = vis.node().getBoundingClientRect();
+            // var kw = visual_box.width / container_div.clientWidth;
+            // var kh = visual_box.height / container_div.clientHeight;
+            // var k = d3.min([kw,kh]);
+            // var x = - visual_box.x * k;
+            // var y = - visual_box.y * k;
+            // var focusing = d3.zoomIdentity.translate(x,y).scale(k);
+            // outer_transform = focusing ;
+            // outer.transition().duration(1200).call(zoom.transform, focusing)
         },
         clear: function() {
             activeNodes = [];
@@ -520,8 +478,13 @@ common.view = (function() {
             redraw();
         },
         zoom_reset: function(evt) {
+            outer_transform = d3.zoomIdentity;
             outer.transition().duration(750).call(zoom.transform, d3.zoomIdentity);
             redraw();
+        },
+        zoom_scope: function(evt) {
+            // var focusing = d3.zoomIdentity.translate(0,0).scale(k);
+            // outer.transition().duration(1200).call(zoom.transform, focusing);
         },
         reload:reload,
         init: function(id) {
@@ -531,19 +494,18 @@ common.view = (function() {
             height = container_div.clientHeight;
             console.log(types);
             zoom = d3.zoom().on("zoom", zoomed)
-            // var drag = d3.drag().on("dragstart")
 
-            // function test() {
-            //     console.log('test');
-            // }
-            // var keyboard = d3.keybinding()
-            //                 .on('delete', deleteItem)
-            //                 .on('←', test)
-            //                 .on('↑', test)
-            //                 .on('→', test)
-            //                 .on('↓', test);
+            function test() {
+                console.log('test');
+            }
+            var keyboard = d3.keybinding()
+                            .on('delete', deleteItem)
+                            .on('←', test)
+                            .on('↑', test)
+                            .on('→', test)
+                            .on('↓', test);
             
-            // d3.select('body').call(keyboard);
+            d3.select('body').call(keyboard);
             outer = d3.select("#" + id)
                         .append("svg:svg")
                         .attr("width", width)
@@ -596,6 +558,7 @@ common.view = (function() {
             addDrawDropShadow();
 
             common.events.on('onAddNode', addNodes)
+            common.events.on('view.zoom_reset', this.zoom_scope)
 
             redraw();
         },
@@ -625,6 +588,7 @@ common.view = (function() {
             node_type = {};
 
             common.events.off('onAddNode', addNodes);
+            common.events.off('view.zoom_reset', this.zoom_scope);
             redraw();
         }
     }
