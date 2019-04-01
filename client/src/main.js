@@ -5,17 +5,6 @@ import ElementUI from "element-ui";
 import locale from 'element-ui/lib/locale/lang/en'
 import './assets/style/style.css';
 
-// Icon
-import { library } from '@fortawesome/fontawesome-svg-core'
-import { faUserSecret, faDoorOpen, faWonSign, faAngleUp, faAngleDown } from '@fortawesome/free-solid-svg-icons'
-import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-library.add(faUserSecret)
-library.add(faDoorOpen)
-library.add(faWonSign);
-library.add(faAngleDown);
-library.add(faAngleUp)
-Vue.component('font-awesome-icon', FontAwesomeIcon)
-
 // Menu
 import VueSidebarMenu from 'vue-sidebar-menu'
 import 'vue-sidebar-menu/dist/vue-sidebar-menu.css'

@@ -1,6 +1,28 @@
 const _ = require('lodash');
 
 common.chart = (function() {
+    function canvasContextMenu() {
+        common.events.emit('contextmenu', {
+            active:true,
+            left : d3.event.pageX,
+            top : d3.event.pageY,
+            params : {
+                event:d3.event
+            }
+        });
+        d3.event.stopPropagation();
+        d3.event.preventDefault();
+    }
+
+    function canvasMouseDown() {
+        common.events.emit('contextmenu', {
+            active:false,
+            x : d3.event.pageX,
+            y : d3.event.pageY,
+            params : {}
+        });
+    }
+
     function brushed() {
         var s = d3.event.selection || x2.range();
         var zoomable = x.zoomable(),
@@ -107,12 +129,15 @@ common.chart = (function() {
         init:function(id) {
                 container_div = document.getElementById(id);
 
-                margin = {top: 20, right: 20, bottom: 100, left: 50},
-                margin2 = {top: 420, right: 20, bottom: 20, left: 50}
+                var margin_side = container_div.clientWidth/30 < 80 ? 80 : container_div.clientWidth/30;
+                margin = {top: 20, right: margin_side, bottom: 100, left: margin_side};
 
                 width = container_div.clientWidth - margin.left - margin.right,
-                height = container_div.clientHeight - margin.top - margin.bottom,
+                height = container_div.clientHeight - margin.top - margin.bottom;
+
+                margin2 = {top: height + 20, right: margin.right, bottom: 20, left: margin.left}
                 height2 = container_div.clientHeight - margin2.top - margin2.bottom;
+                console.log(width,height,height2);
 
                 parseDate = d3.timeParse("%Y-%m-%dT%H:%M:%S.%LZ");
 
@@ -154,7 +179,9 @@ common.chart = (function() {
                 outer = d3.select("#" + id)
                 .append("svg:svg")
                 .attr("width", width + margin.left + margin.right)
-                .attr("height", height + margin.top + margin.bottom);
+                .attr("height", height + margin.top + margin.bottom)
+                .on('contextmenu', canvasContextMenu)
+                .on('click', canvasMouseDown);
 
                 defs = outer.append("defs");
 

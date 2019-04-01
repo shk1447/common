@@ -1,21 +1,16 @@
 <template>
-<div id="workspace" style="
-    text-align: center;
-    display: table;
-">
-    <div style="
-    display: table-cell;
-    vertical-align: middle;
-">Comming Soon!</div>
+<div id="workspace" :class="collapsed ? 'content-wrapper' : 'content-wrapper show'">
 </div>
 </template>
 
 <script>
 
+import api from '../../api/api.js'
+
 export default {
     data () {
         return {
-            
+            collapsed:true
         }
     },
     components:{
@@ -34,6 +29,10 @@ export default {
     },
     mounted() {
         console.log('mounted');
+        common.chart.init('workspace');
+        api.getData('140070').then(function(data) {
+            common.chart.load(data);
+        })
     },
     beforeUpdate() {
 
@@ -53,7 +52,6 @@ export default {
   
 #workspace {
     user-select: none;
-    width:100%;
     height:100%;
 }
 </style>

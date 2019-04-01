@@ -1,6 +1,6 @@
 <template>
 <div style="height:100%; overflow:auto">
-    <el-tree class="demo" show-checkbox :data="data" :props="defaultProps" node-key="id" @check="check">
+    <el-tree class="demo" ref="tree" show-checkbox :data="data" :props="defaultProps" node-key="id" @check="check">
             <!-- draggable :allow-drag="allowDrag" :allow-drop="allowDrop"  -->
         <span class="custom-tree-node" slot-scope="{ node, data }">
             <span><i :class="data.id === 'daily' ? 'el-icon-date' : 'el-icon-star-off'"></i>   {{ node.label }}</span>
@@ -28,7 +28,10 @@ export default {
             }],
             defaultProps: {
                 children: 'children',
-                label: 'name'
+                label: 'name',
+                disabled:function(data, node) {
+                    return data.type === 'folder';
+                }
             },
             selected_controllers :[]
         }
@@ -43,22 +46,18 @@ export default {
             common.view.clear();
             var checked_list = nodes.checkedNodes.filter(function(d) { return d.type !== 'folder' });
             var params = checked_list.map(function(d) { return {id : d.id, name:d.name,prev_id: d.prev_id}})
-            console.log(params);
+            
             if(params.length > 0) {
-                
-                api.getRecommends(params).then(function(map) {
-                    common.view.setRecommends(params, map);
+                if(params.length < 4) {
+                    api.getRecommends(params).then(function(map) {
+                        common.view.setRecommends(params, map);
+                        me.$loading({}).close();
+                    })
+                } else {
+                    this.$refs.tree.setCheckedKeys([]);
+                    common.events.emit('message', {type:'warning' , message:'Too many checked!'})
                     me.$loading({}).close();
-                })
-                
-                // api.getUnderlay(params).then(function(underlay) {
-                //     api.getOverlay(params).then(function(overlay) {
-                //         console.log(underlay, overlay);
-                //         common.view.setMap(params,underlay, overlay);
-                //         me.$loading({}).close();
-                //     })
-                // })
-                
+                }
             } else {
                 me.$loading({}).close();
             }

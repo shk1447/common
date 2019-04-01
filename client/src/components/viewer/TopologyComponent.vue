@@ -1,15 +1,15 @@
 <template>
-<div style="width:100%;height:calc(100% - 58px);">
-<div class="test">
-    <div :class="open ? 'sub_menu show' : 'sub_menu'" ref="left_panel">
-        <sub-menu ref="sub_menu"></sub-menu>
+<div :class="collapsed ? 'content-wrapper' : 'content-wrapper show'">
+    <div class="handle-wrapper">
+        <div :class="open ? 'sub_menu show' : 'sub_menu'" ref="left_panel">
+            <sub-menu ref="sub_menu"></sub-menu>
+        </div>
+        <div class="handle" @click="handlePanelSlide">
+            <i :class="open ? 'el-icon-caret-left' : 'el-icon-caret-right'" style="vertical-align: middle;"></i>
+        </div>
     </div>
-    <div class="handle" @click="handlePanelSlide">
-        <i :class="open ? 'el-icon-caret-left' : 'el-icon-caret-right'" style="vertical-align: middle;"></i>
+    <div id="workspace">
     </div>
-</div>
-<div id="workspace">
-</div>
 </div>
 </template>
 
@@ -20,7 +20,8 @@ import api from '../../api/api.js'
 export default {
     data () {
         return {
-            open:false
+            open:false,
+            collapsed:true
         }
     },
     components:{
@@ -159,6 +160,25 @@ export default {
     width:300px;
 }
 
+.content-wrapper {
+    position: fixed;
+    left: 50px;
+    width:calc(100% - 50px);
+    height:100%;
+    overflow: hidden;
+    -webkit-transition: left .3s, width .3s;
+    transition: left .3s, width .3s;
+}
+
+.content-wrapper.show {
+    width:calc(100% - 350px);
+    left:350px;
+}
+
+.handle-wrapper {
+    position: absolute;
+    height:100%;
+}
 
 .handle {
   float: left;
@@ -166,11 +186,6 @@ export default {
   height: 100%;
   cursor: pointer;
   display: flex; justify-content: center; align-items: center;
-}
-
-.test {
-    position: absolute;
-    height:calc(100% - 58px);
 }
 
 </style>

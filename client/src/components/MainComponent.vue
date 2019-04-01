@@ -1,22 +1,10 @@
 <template>
 <div id="app-main">
-    <div class="content">
-        <div class="header">
-            <div class="header-bar">
-                <section class="top_nav">
-                    <ul class="header_nav" style="margin:0;padding:0;">
-                        <li class="btn_logout">
-                            <a style="display: inline-block;" @click="handleLogout">
-                                <font-awesome-icon icon="door-open"/>
-                            </a>
-                        </li>
-                    </ul>
-                </section>
-            </div>
-        </div>
-        <topology-component v-if="activeIndex === '1'"></topology-component>
-    </div>
-    <main-menu></main-menu>
+    
+    <topology-component ref="view_content" v-if="active_content === 'view'"></topology-component>
+    <chart-component ref="chart_content" v-if="active_content === 'chart'"></chart-component>
+    
+    <main-menu :collapse="onCollapse" :itemClick="onItemClick"></main-menu>
     
     <create-node-modal ref="createNodeModal"></create-node-modal>
     <detail-node-modal ref="detailNodeModal"></detail-node-modal>
@@ -28,7 +16,7 @@
 <script>
 import { setTimeout } from 'timers';
 import TopologyComponent from './viewer/TopologyComponent.vue'
-import AlarmComponent from './viewer/AlarmComponent.vue'
+import ChartComponent from './viewer/ChartComponent.vue'
 import CreateNodeModal from './modal/CreateNodeModal.vue'
 import DetailNodeModal from './modal/DetailNodeModal.vue'
 import ChartModal from './modal/ChartModal.vue'
@@ -40,13 +28,13 @@ import api from '../api/api.js'
 export default {
     data () {
         return {
-            activeIndex:'1',
+            active_content:'view',
             open:true
         }
     },
     components:{
         "topology-component" : TopologyComponent,
-        "alarm-component" : AlarmComponent,
+        "chart-component" : ChartComponent,
         "create-node-modal" : CreateNodeModal,
         "detail-node-modal" : DetailNodeModal,
         "chart-modal" : ChartModal,
@@ -54,6 +42,12 @@ export default {
         "main-menu" : MainMenuPanel
     },
     methods: {
+        onCollapse(collapsed) {
+            this.$refs[this.active_content + "_content"].collapsed = collapsed;
+        },
+        onItemClick(event, item) {
+            this.active_content = item.title.toLowerCase();
+        },
         handleLogout() {
             var me = this;
             me.$confirm("로그아웃 하시겠습니까?", "로그아웃", {
@@ -116,22 +110,6 @@ export default {
 }
 </script>
 <style>
-
-.header {
-    width:100%; height:58px;
-}
-
-#workspace {
-    user-select: none;
-    width:100%;
-    height:100%;
-    border:1px solid #d3d8de;
-}
-
-.content {
-  height: calc(100%);
-  overflow: hidden;
-}
 
 #app-main {
     width:100%;

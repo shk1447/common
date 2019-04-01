@@ -177,7 +177,7 @@ export default {
     .scope-supstance.result path {
         stroke: blue;
         stroke-width: 2;
-        stroke-dasharray: 1, 1;
+        stroke-dasharray: 3, 3;
     }
 
     .mouseover .supstance path {
