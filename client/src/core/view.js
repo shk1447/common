@@ -199,7 +199,7 @@ common.view = (function() {
             node.w = node_size;
             node.h = node_size;
             
-            if(!d.status) {
+            if(/*!d.status*/ false) {
                 var anim_alarm = node.append("circle")
                                 .attr("r", node_size)
                                 .attr("fill", "rgba(255,0,0,0)")
@@ -482,9 +482,9 @@ common.view = (function() {
             outer.transition().duration(750).call(zoom.transform, d3.zoomIdentity);
             redraw();
         },
-        zoom_scope: function(evt) {
-            // var focusing = d3.zoomIdentity.translate(0,0).scale(k);
-            // outer.transition().duration(1200).call(zoom.transform, focusing);
+        focus_target: function(d) {
+            var focusing = d3.zoomIdentity.translate((container_div.clientWidth/2)-d.x, (container_div.clientHeight/2)-d.y).scale(1);
+            outer.transition().duration(1200).call(zoom.transform, focusing);
         },
         reload:reload,
         init: function(id) {
@@ -558,7 +558,7 @@ common.view = (function() {
             addDrawDropShadow();
 
             common.events.on('onAddNode', addNodes)
-            common.events.on('view.zoom_reset', this.zoom_scope)
+            common.events.on('view.focus_target', this.focus_target)
 
             redraw();
         },
@@ -588,7 +588,7 @@ common.view = (function() {
             node_type = {};
 
             common.events.off('onAddNode', addNodes);
-            common.events.off('view.zoom_reset', this.zoom_scope);
+            common.events.off('view.focus_target', this.focus_target);
             redraw();
         }
     }

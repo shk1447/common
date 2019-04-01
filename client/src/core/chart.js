@@ -22,7 +22,7 @@ common.chart = (function() {
         focus.select("g.x.axis").call(xAxis);
         focus.select("g.y.axis").call(yAxis);
 
-        focus.selectAll("g.supstances").datum(supstanceData).call(supstance).call(supstance.drag);
+        focus.selectAll("g.supstances").datum(supstanceData).call(supstance).call(supstance.drag).call(supstances_type);
         focus.selectAll("g.tradearrow").datum(trades).call(tradearrow);
     }
 
@@ -30,7 +30,32 @@ common.chart = (function() {
         var accessor = candlestick.accessor(),
             timestart = Date.now();
 
+        supstanceData = [];
+        trades = [];
+        var prev_datum;
+        var result_money = 0;
+        var result_volume = 0;
         data = data.map(function(d) {
+            if(prev_datum) {
+                //console.log(d.support_count, d.regist_count, d.total_state, d.current_state)
+                if(d.total_state) {
+                    if((prev_datum.total_state === '횡보' || prev_datum.total_state === '하락') && d.total_state === '상승' && d.current_state === '상승'
+                        && d.regist_count < d.support_count && prev_datum.regist_count > d.regist_count && prev_datum.Volume < d.Volume) {
+                        trades.push({date:parseDate(d.unixtime), type:'buy', price:d.Low, quantity:1})
+                        var up_price = (d.Low + d.High) / 2
+                        var down_price = (d.Close + d.Low) / 2;
+                        supstanceData.push({value:up_price, type:'support'})
+                        supstanceData.push({value:down_price, type:'support'});
+                        result_money += down_price * d.Volume;
+                        result_volume += d.Volume;
+                        //supstanceData.push({value:(up_price+down_price)/2});
+                    }
+                    if((prev_datum.total_state === '횡보' || prev_datum.total_state === '상승') && d.total_state === '하락' && d.current_state === '하락') {
+                        trades.push({date:parseDate(d.unixtime), type:'sell', price:d.High, quantity:1})
+                    }
+                }
+            }
+            prev_datum = d;
             return {
                 date: parseDate(d.unixtime),
                 open: d.Open === 0 ? d.Close : +d.Open,
@@ -40,6 +65,8 @@ common.chart = (function() {
                 volume: d.Open === 0 ? d.Close : +d.Volume
             };
         }).sort(function(a, b) { return d3.ascending(accessor.d(a), accessor.d(b)); });
+        supstanceData.push({value:result_money / result_volume, type:'result'})
+        
 
         x.domain(data.map(accessor.d));
         x2.domain(x.domain());
@@ -58,15 +85,21 @@ common.chart = (function() {
 
         x.zoomable().domain(x2.zoomable().domain());
 
-        supstanceData = [{ value: 5000 }];
         focus.append("g").attr("class", "supstances").attr("clip-path", "url(#supstanceClip)");
-
-        trades = [{ date: data[10].date, type: "buy", price: data[10].low, quantity: 1000 }];
         focus.append("g").attr("class", "tradearrow");
+
+        focus.append('g').attr("class", "crosshair").call(crosshair);
 
         draw();
 
         console.log("Render time: " + (Date.now()-timestart));
+    }
+
+    function supstances_type(node) {
+        node.selectAll('.scope-supstance').each(function(d) {
+            var supstance_node = d3.select(this);
+            supstance_node.classed(d.type, true);
+        })
     }
 
     return {
@@ -112,11 +145,11 @@ common.chart = (function() {
                 timeAnnotation = techan.plot.axisannotation().axis(xAxis).orient('bottom').format(d3.timeFormat('%Y-%m-%d'))
                         .width(65).translate([0, height]);
 
+                crosshair = techan.plot.crosshair().xScale(x).yScale(y).xAnnotation(timeAnnotation).yAnnotation(ohlcAnnotation);
+                
                 supstance = techan.plot.supstance().xScale(x).yScale(y).annotation([ohlcAnnotation]);
 
                 tradearrow = techan.plot.tradearrow().xScale(x).yScale(y).orient(function(d) { return d.type.startsWith("buy") ? "up" : "down"; })
-
-                crosshair = techan.plot.crosshair().xScale(x).yScale(y).xAnnotation(timeAnnotation).yAnnotation(ohlcAnnotation);
 
                 outer = d3.select("#" + id)
                 .append("svg:svg")
@@ -172,10 +205,6 @@ common.chart = (function() {
                 .attr("y", 6)
                 .attr("dy", ".71em")
                 .style("text-anchor", "end");
-
-                focus.append('g')
-                .attr("class", "crosshair")
-                .call(crosshair);
 
                 context = outer.append("g")
                 .attr("class", "context")

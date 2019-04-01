@@ -60,6 +60,8 @@ function Topology() {
                     })
                 })
             }
+        }).catch((err) => {
+            console.log(this.table_name , ": initialize error")
         })
     }
 }

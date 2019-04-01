@@ -53,9 +53,9 @@ export default {
             })
         },
         closedModal() {
-            this.param = {};
             common.chart.uninit();
-            common.events.emit('view.zoom_reset', {});
+            common.events.emit('view.focus_target', this.param);
+            this.param = {};
         }
     },
     beforeCreate(){
@@ -157,9 +157,27 @@ export default {
 
 
     .supstance path {
-        stroke: blue;
+        stroke: black;
         stroke-width: 0.8;
         stroke-dasharray: 2, 2;
+    }
+
+    .scope-supstance.support path {
+        stroke: green;
+        stroke-width: 0.8;
+        stroke-dasharray: 2, 2;
+    }
+
+    .scope-supstance.regist path {
+        stroke: red;
+        stroke-width: 0.8;
+        stroke-dasharray: 2, 2;
+    }
+
+    .scope-supstance.result path {
+        stroke: blue;
+        stroke-width: 2;
+        stroke-dasharray: 1, 1;
     }
 
     .mouseover .supstance path {
@@ -171,7 +189,7 @@ export default {
     }
 
     .axisannotation path {
-        fill: darkblue;
+        fill: black;
     }
 
     .axisannotation text {
@@ -181,9 +199,16 @@ export default {
     path.tradearrow {
         stroke: none;
     }
+    .tradearrow path.highlight {
+        fill: none;
+        stroke-width: 2;
+    }
 
     path.tradearrow.buy {
-        fill: #0000FF;
+        fill: #FF0000;
+    }
+    .tradearrow path.highlight.buy {
+        stroke: #FF0000;
     }
 
     path.tradearrow.buy-pending {
@@ -195,24 +220,24 @@ export default {
     path.tradearrow.sell {
         fill: #9900FF;
     }
-
+/* 
     .tradearrow path.highlight {
         fill: none;
         stroke-width: 2;
     }
 
     .tradearrow path.highlight.buy,.tradearrow path.highlight.buy-pending {
-        stroke: #0000FF;
+        stroke: #000000;
     }
 
     .tradearrow path.highlight.buy-pending {
-        fill: #0000FF;
+        fill: #000000;
         fill-opacity: 0.3;
     }
 
     .tradearrow path.highlight.sell {
-        stroke: #9900FF;
-    }
+        stroke: #000000;
+    } */
 
 #chart-space {
     width:100%;

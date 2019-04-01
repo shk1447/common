@@ -64,6 +64,8 @@ function User() {
                     })
                 })
             }
+        }).catch((err) => {
+            console.log(this.table_name , ": initialize error")
         })
     }
 }

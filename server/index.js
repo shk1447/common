@@ -45,10 +45,10 @@ module.exports = function(config) {
     })
     khan.model = model();
 
-    khan.session_store = new KnexSessionStore({
-        knex:khan.database,
-        tablename:"sessions"
-    })
+    // khan.session_store = new KnexSessionStore({
+    //     knex:khan.database,
+    //     tablename:"sessions"
+    // })
 
     ClusterServer = {
         name: 'ClusterServer',
@@ -68,6 +68,7 @@ module.exports = function(config) {
                 // var test = JSON.parse(fs.readFileSync(stats_path,'utf8'));
                 // var webpack_analyzer = require('webpack-bundle-analyzer')
                 // webpack_analyzer.start(test);
+                
                 _.each(khan.model, (d,i) => {
                     d.initialize();
                 })
