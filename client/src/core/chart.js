@@ -108,7 +108,7 @@ common.chart = (function() {
         x.zoomable().domain(x2.zoomable().domain());
 
         focus.append("g").attr("class", "supstances").attr("clip-path", "url(#supstanceClip)");
-        focus.append("g").attr("class", "tradearrow");
+        focus.append("g").attr("class", "tradearrow").attr("clip-path", "url(#supstanceClip)");
 
         focus.append('g').attr("class", "crosshair").call(crosshair);
 
