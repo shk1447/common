@@ -72,28 +72,30 @@ PastStock.prototype.selectByCategory = function(param) {
 
 PastStock.prototype.selectDaily = function() {
     var ret = [];
+    var prev_row;
     return khan.database(this.table_name).select(khan.database.raw('unixtime'))
     .where(khan.database.raw("category = '005930' AND column_get(rawdata, '전체상태' as char) IS NOT NULL")).orderBy("unixtime", "desc").map((row) => {
         var monent_time = moment(row.unixtime);
         var parent_id = monent_time.format("YYYY-MM")
         var parent_folder = ret.find((d) => { return d.id === parent_id})
-        if(parent_folder) {
-            parent_folder.children[parent_folder.children.length - 1]['prev_id'] = monent_time.format("YYYY-MM-DD")
-            parent_folder.children.push({
-                id : monent_time.format("YYYY-MM-DD"),
-                name : monent_time.format("YYYY-MM-DD")
+        if(prev_row) {
+            var prev_time = moment(prev_row.unixtime);
+            var prev_folder = ret.find((d) => { return d.id === prev_time.format("YYYY-MM")});
+            prev_folder.children.push({
+                id:prev_time.format("YYYY-MM-DD"),
+                name:prev_time.format("YYYY-MM-DD"),
+                prev_id:monent_time.format("YYYY-MM-DD")
             })
-        } else {
+        }
+        if(!parent_folder) {
             ret.push({
                 id : parent_id,
                 name : parent_id,
                 type:'folder',
-                children:[{
-                    id : monent_time.format("YYYY-MM-DD"),
-                    name : monent_time.format("YYYY-MM-DD")
-                }]
+                children:[]
             });
         }
+        prev_row = row;
     }).then(() => {
         return ret;
     })

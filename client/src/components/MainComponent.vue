@@ -16,6 +16,7 @@
         </div>
         <topology-component v-if="activeIndex === '1'"></topology-component>
     </div>
+    <main-menu></main-menu>
     
     <create-node-modal ref="createNodeModal"></create-node-modal>
     <detail-node-modal ref="detailNodeModal"></detail-node-modal>
