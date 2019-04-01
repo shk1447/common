@@ -30,7 +30,7 @@ export default {
     mounted() {
         console.log('mounted');
         common.chart.init('workspace');
-        api.getData('140070').then(function(data) {
+        api.getData('121600').then(function(data) {
             common.chart.load(data);
         })
     },

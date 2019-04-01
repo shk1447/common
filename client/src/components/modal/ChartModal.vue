@@ -239,6 +239,47 @@ export default {
         stroke: #000000;
     } */
 
+    .ichimoku path {
+        fill: none;
+        stroke-width: 0.8;
+    }
+
+    .ichimoku path {
+        stroke: #000000;
+    }
+
+    .ichimoku path.chikouspan {
+        stroke: #BF5FFF;
+    }
+
+    .ichimoku path.tenkansen {
+        stroke: #0033FF;
+    }
+
+    .ichimoku path.kijunsen {
+        stroke: #FBB117;
+    }
+
+    .ichimoku path.kumo {
+        opacity: 0.1;
+    }
+
+    .ichimoku path.kumo.up {
+        fill: #00AA00;
+    }
+
+    .ichimoku path.kumo.down {
+        fill: #FF0000;
+    }
+
+    .ichimoku path.senkouspana {
+        stroke: #006600;
+    }
+
+    .ichimoku path.senkouspanb {
+        stroke: #FF0000;
+    }
+
 #chart-space {
     width:100%;
     height:100%;

@@ -44,8 +44,16 @@ common.chart = (function() {
         focus.select("g.x.axis").call(xAxis);
         focus.select("g.y.axis").call(yAxis);
 
-        focus.selectAll("g.supstances").datum(supstanceData).call(supstance).call(supstance.drag).call(supstances_type);
+        //focus.selectAll("g.supstances").datum(supstanceData).call(supstance).call(supstance.drag).call(supstances_type);
         focus.selectAll("g.tradearrow").datum(trades).call(tradearrow);
+
+        // var ichimokuData = ichimokuIndicator(data);
+        // x.domain(data.map(ichimokuIndicator.accessor().d));
+        // // Calculate the y domain for visible data points (ensure to include Kijun Sen additional data offset)
+        // y.domain(techan.scale.plot.ichimoku(ichimokuData.slice(indicatorPreRoll-ichimokuIndicator.kijunSen())).domain());
+        // // Logic to ensure that at least +KijunSen displacement is applied to display cloud plotted ahead of ohlc
+        // x.zoomable().clamp(false).domain([indicatorPreRoll, data.length+ichimokuIndicator.kijunSen()]);
+        // focus.selectAll("g.ichimoku").datum(ichimokuData).call(ichimoku);
     }
 
     function load(data) {
@@ -112,6 +120,10 @@ common.chart = (function() {
 
         focus.append('g').attr("class", "crosshair").call(crosshair);
 
+        // focus.append("g")
+        //         .attr("class", "ichimoku")
+        //         .attr("clip-path", "url(#supstanceClip)");
+
         draw();
 
         console.log("Render time: " + (Date.now()-timestart));
@@ -154,6 +166,12 @@ common.chart = (function() {
                         .on("end", brushed);
 
                 candlestick = techan.plot.candlestick().xScale(x).yScale(y);
+
+                ichimoku = techan.plot.ichimoku().xScale(x).yScale(y);
+
+                ichimokuIndicator = techan.indicator.ichimoku();
+                // Don't show where indicators don't have data
+                indicatorPreRoll = ichimokuIndicator.kijunSen()+ichimokuIndicator.senkouSpanB();
 
                 volume = techan.plot.volume().xScale(x).yScale(yVolume);
 
