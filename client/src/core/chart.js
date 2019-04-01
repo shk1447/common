@@ -129,8 +129,8 @@ common.chart = (function() {
         init:function(id) {
                 container_div = document.getElementById(id);
 
-                var margin_side = container_div.clientWidth/30 < 80 ? 80 : container_div.clientWidth/30;
-                margin = {top: 20, right: margin_side, bottom: 100, left: margin_side};
+                var margin_side = container_div.clientWidth/25 < 60 ? 60 : container_div.clientWidth/25;
+                margin = {top: 20, right: margin_side/2, bottom: 100, left: margin_side};
 
                 width = container_div.clientWidth - margin.left - margin.right,
                 height = container_div.clientHeight - margin.top - margin.bottom;
