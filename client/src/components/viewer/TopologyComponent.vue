@@ -8,7 +8,7 @@
             <i :class="open ? 'el-icon-caret-left' : 'el-icon-caret-right'" style="vertical-align: middle;"></i>
         </div>
     </div>
-    <div id="workspace">
+    <div id="view-space">
     </div>
 </div>
 </template>
@@ -47,7 +47,7 @@ export default {
         me.$loading({});
         console.log('mounted');
         setTimeout(function() {
-            common.view.init('workspace');
+            common.view.init('view-space');
             me.$loading({}).close();
         },500)
     },
@@ -186,6 +186,11 @@ export default {
   height: 100%;
   cursor: pointer;
   display: flex; justify-content: center; align-items: center;
+}
+
+#view-space {
+    height: 100%;
+    user-select: none;
 }
 
 </style>

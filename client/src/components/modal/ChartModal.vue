@@ -18,7 +18,7 @@
         <a class="close-modal-btn" role="button" @click="beforeModalClose()"><i class="el-icon-error"></i></a>
     </div>
     <div class="modal-body">
-        <div id="chart-space"></div>
+        <div id="chart-modal-space"></div>
     </div>
     <div class="modal-footer">
         <el-button size="mini" @click="beforeModalClose()">CONFIRM</el-button>
@@ -47,7 +47,7 @@ export default {
             this.$modal.hide('chart-modal');
         },
         openedModal() {
-            common.chart.init('chart-space');
+            common.chart.init('chart-modal-space');
             api.getData(this.param.id).then(function(data) {
                 common.chart.load(data);
             })
@@ -280,7 +280,7 @@ export default {
         stroke: #FF0000;
     }
 
-#chart-space {
+#chart-modal-space {
     width:100%;
     height:100%;
 }
