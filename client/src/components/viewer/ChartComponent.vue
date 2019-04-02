@@ -113,10 +113,7 @@ export default {
     },
     mounted() {
         console.log('mounted');
-        common.chart.init('chart-space');
-        api.getData(this.selected_item.category).then(function(data) {
-            common.chart.load(data);
-        })
+        common.chart.init('chart-space', {signal:this.signal});
     },
     beforeUpdate() {
 

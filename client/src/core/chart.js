@@ -66,6 +66,7 @@ common.chart = (function() {
         trades = [];
         var prev_datum;
         var result_money = 0;
+        var result_money2 = 0;
         var result_volume = 0;
         var end_date = end_date ? new Date(end_date) : new Date();
         data = data.map(function(d) {
@@ -75,10 +76,11 @@ common.chart = (function() {
                     if((prev_datum.total_state === '횡보' || prev_datum.total_state === '하락') && d.total_state === '상승' && d.current_state === '상승'
                         && d.regist_count < d.support_count && prev_datum.regist_count > d.regist_count && prev_datum.Volume < d.Volume) {
                         trades.push({date:parseDate(d.unixtime), type:'buy', price:d.Low, quantity:1})
-                        var up_price = (d.Low + d.High) / 2
+                        var up_price = (d.Close + d.High) / 2
                         var down_price = (d.Close + d.Low) / 2;
-                        supstanceData.push({value:(up_price+down_price)/2, type:'support'});
-                        result_money += (up_price+down_price)/2 * d.Volume;
+                        result_money2 += up_price * d.Volume;
+                        //supstanceData.push({value:(up_price+down_price)/2, type:'support'});
+                        result_money += down_price * d.Volume;
                         result_volume += d.Volume;
                         //supstanceData.push({value:(up_price+down_price)/2});
                     }
@@ -88,6 +90,7 @@ common.chart = (function() {
                 }
             }
             prev_datum = d;
+            
             return {
                 date: parseDate(d.unixtime),
                 open: d.Open === 0 ? d.Close : +d.Open,
@@ -98,6 +101,7 @@ common.chart = (function() {
             };
         }).sort(function(a, b) { return d3.ascending(accessor.d(a), accessor.d(b)); });
         supstanceData.push({value:result_money / result_volume, type:'result'})
+        supstanceData.push({value:result_money2 / result_volume, type:'result'})
         
 
         x.domain(data.map(accessor.d));
