@@ -67,6 +67,7 @@ common.chart = (function() {
         var prev_datum;
         var result_money = 0;
         var result_money2 = 0;
+        var loss_moeny = 0;
         var result_volume = 0;
         var end_date = end_date ? new Date(end_date) : new Date();
         data = data.map(function(d) {
@@ -78,9 +79,11 @@ common.chart = (function() {
                         trades.push({date:parseDate(d.unixtime), type:'buy', price:d.Low, quantity:1})
                         var up_price = (d.Close + d.High) / 2
                         var down_price = (d.Close + d.Low) / 2;
+                        var low_price = d.Low;
                         result_money2 += up_price * d.Volume;
                         //supstanceData.push({value:(up_price+down_price)/2, type:'support'});
                         result_money += down_price * d.Volume;
+                        loss_moeny += low_price * d.Volume;
                         result_volume += d.Volume;
                         //supstanceData.push({value:(up_price+down_price)/2});
                     }
@@ -102,6 +105,7 @@ common.chart = (function() {
         }).sort(function(a, b) { return d3.ascending(accessor.d(a), accessor.d(b)); });
         supstanceData.push({value:result_money / result_volume, type:'result'})
         supstanceData.push({value:result_money2 / result_volume, type:'result'})
+        supstanceData.push({value:loss_moeny / result_volume, type:'loss'})
         
 
         x.domain(data.map(accessor.d));
@@ -150,7 +154,7 @@ common.chart = (function() {
             options = opt;
             container_div = document.getElementById(id);
 
-            var margin_side = container_div.clientWidth/25 < 60 ? 60 : container_div.clientWidth/25;
+            var margin_side = container_div.clientWidth/20 < 100 ? 100 : container_div.clientWidth/20;
             margin = {top: 20, right: margin_side/2, bottom: 100, left: margin_side};
 
             width = container_div.clientWidth - margin.left - margin.right,

@@ -186,6 +186,12 @@ export default {
         stroke-dasharray: 3, 3;
     }
 
+    .scope-supstance.loss path {
+        stroke: red;
+        stroke-width: 2;
+        stroke-dasharray: 3, 3;
+    }
+
     .mouseover .supstance path {
         stroke-width: 1.5;
     }
