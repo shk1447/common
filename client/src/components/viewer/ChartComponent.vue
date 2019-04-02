@@ -2,13 +2,16 @@
 <div :class="collapsed ? 'content-wrapper' : 'content-wrapper show'">
     <div class="toolbar-wrapper">
         <div class="tool left">
-            <el-autocomplete class="auto-input-custom"
-            v-model="selected_item.name"
-            value-key="name"
-            :fetch-suggestions="querySearchAsync"
-            placeholder="종목코드 및 종목명"
-            @select="handleSelect"
-            ></el-autocomplete>
+            <el-autocomplete class="auto-input-custom" v-model="selected_item.name" value-key="name" :fetch-suggestions="querySearchAsync"
+            placeholder="종목코드 및 종목명" @select="handleSelect">
+                <i class="el-icon-search el-input__icon" slot="suffix"></i>
+                <template slot-scope="{ item }">
+                    <div style="display:flex;">
+                        <div style="display:flex; flex:1 1 100%;">{{ item.name }}</div>
+                        <div style="display:flex; flex:0 0 auto; padding:1em;"><i class="far fa-star"></i></div>
+                    </div>
+                </template>
+            </el-autocomplete>
         </div>
         <!-- <div :class="signal ? 'tool left signal' : 'tool left'" @click="onSignal">
             <span style="font-size:1.2em;">
@@ -69,6 +72,7 @@ export default {
         },
         handleSelect(item) {
             this.selected_item = item;
+            this.refresh();
         },
         querySearchAsync(queryString, cb) {
             api.getList(queryString).then(function(data) {
@@ -86,6 +90,16 @@ export default {
             api.getList(this.category).then(function(data) {
                 console.log(data);
             })
+        },
+        refresh() {
+            var me = this;
+            setTimeout(function() {
+                common.chart.uninit('chart-space');
+                common.chart.init('chart-space', {signal:me.signal});
+                api.getData(me.selected_item.category).then(function(data) {
+                    common.chart.load(data);
+                })
+            },400)
         }
     },
     beforeCreate(){
@@ -108,14 +122,7 @@ export default {
 
     },
     updated() {
-        var me = this;
-        setTimeout(function() {
-            common.chart.uninit('chart-space');
-            common.chart.init('chart-space', {signal:me.signal});
-            api.getData(me.selected_item.category).then(function(data) {
-                common.chart.load(data);
-            })
-        },400)
+        
     },
     beforeDestroy() {
 
@@ -160,4 +167,5 @@ export default {
     border:none;
     background-color: transparent;
 }
+
 </style>

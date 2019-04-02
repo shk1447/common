@@ -180,6 +180,7 @@ common.view = (function() {
                     outer_transform = focusing;
                     outer.transition().duration(1200).call(zoom.transform, focusing)
                         .on("end", function() {
+                            console.log(d);
                             common.events.emit('popup', {
                                 name : 'chartModal',
                                 params : d

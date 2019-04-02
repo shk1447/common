@@ -50,6 +50,7 @@ export default {
             this.$nextTick(function () {
                 this.$refs[this.active_content + "_content"].selected_item.category = d.params.id;
                 this.$refs[this.active_content + "_content"].selected_item.name = d.params.name;
+                this.$refs[this.active_content + "_content"].refresh();
             })
         },
         onItemClick(event, item) {

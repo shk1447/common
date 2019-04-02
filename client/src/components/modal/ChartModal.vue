@@ -52,9 +52,10 @@ export default {
             this.$modal.hide('chart-modal');
         },
         openedModal() {
+            var me = this;
             common.chart.init('chart-modal-space',{signal:true});
             api.getData(this.param.id).then(function(data) {
-                common.chart.load(data);
+                common.chart.load(data, me.param.unixtime);
             })
         },
         closedModal() {
