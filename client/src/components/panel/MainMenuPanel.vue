@@ -20,7 +20,7 @@ export default {
                 },
                 {
                     title: 'VIEW',
-                    icon: 'fa fa-project-diagram fa-xs'
+                    icon: 'fa fa-code-branch'
                 },
                 {
                     title: 'CHART',

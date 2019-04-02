@@ -19,6 +19,12 @@ export default {
             return res;
         })
     },
+    getList: function(id) {
+        var url = "/stock/search?id=" + id;
+        return http.get(url).then(function(res) {
+            return res;
+        })
+    },
     setTopology: function(data) {
         var url = "/topology/save";
         return http.post(url, data).then(function(res) {

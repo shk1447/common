@@ -21,7 +21,7 @@
         <div id="chart-modal-space"></div>
     </div>
     <div class="modal-footer">
-        <el-button size="mini" @click="beforeModalClose()">CONFIRM</el-button>
+        <el-button size="mini" @click="onGotoChart()">GO TO CHART</el-button>
     </div>
 </modal>
 </template>
@@ -43,11 +43,16 @@ export default {
             this.param = d;
             this.$modal.show('chart-modal');
         },
+        onGotoChart() {
+            console.log(this.param);
+            common.events.emit('onHandlePage', {page_name:'chart', params:this.param});
+            this.$modal.hide('chart-modal');
+        },
         beforeModalClose() {
             this.$modal.hide('chart-modal');
         },
         openedModal() {
-            common.chart.init('chart-modal-space');
+            common.chart.init('chart-modal-space',{signal:true});
             api.getData(this.param.id).then(function(data) {
                 common.chart.load(data);
             })

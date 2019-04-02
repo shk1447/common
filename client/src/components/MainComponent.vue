@@ -45,6 +45,13 @@ export default {
         onCollapse(collapsed) {
             this.$refs[this.active_content + "_content"].collapsed = collapsed;
         },
+        onHandlePage(d) {
+            this.active_content = d.page_name;
+            this.$nextTick(function () {
+                this.$refs[this.active_content + "_content"].selected_item.category = d.params.id;
+                this.$refs[this.active_content + "_content"].selected_item.name = d.params.name;
+            })
+        },
         onItemClick(event, item) {
             this.active_content = item.title.toLowerCase();
         },
@@ -89,7 +96,8 @@ export default {
         var me = this;
         common.events.on('popup', me.handlePopup);
         common.events.on('message', me.handleMessage);
-        common.events.on('notify', me.handleNotify);
+        common.events.on('notify', me.onhandleNotify);
+        common.events.on('onHandlePage', me.onHandlePage)
     },
     beforeUpdate() {
 
@@ -105,6 +113,7 @@ export default {
         common.events.off('popup', me.handlePopup);
         common.events.off('message', me.handleMessage);
         common.events.off('notify', me.handleNotify);
+        common.events.off('onHandlePage', me.onHandlePage)
         console.log('destroyed')
     }
 }

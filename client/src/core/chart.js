@@ -44,8 +44,10 @@ common.chart = (function() {
         focus.select("g.x.axis").call(xAxis);
         focus.select("g.y.axis").call(yAxis);
 
-        //focus.selectAll("g.supstances").datum(supstanceData).call(supstance).call(supstance.drag).call(supstances_type);
-        focus.selectAll("g.tradearrow").datum(trades).call(tradearrow);
+        if(options.signal) {
+            focus.selectAll("g.supstances").datum(supstanceData).call(supstance).call(supstance.drag).call(supstances_type);
+            focus.selectAll("g.tradearrow").datum(trades).call(tradearrow);
+        }
 
         // var ichimokuData = ichimokuIndicator(data);
         // x.domain(data.map(ichimokuIndicator.accessor().d));
@@ -74,9 +76,8 @@ common.chart = (function() {
                         trades.push({date:parseDate(d.unixtime), type:'buy', price:d.Low, quantity:1})
                         var up_price = (d.Low + d.High) / 2
                         var down_price = (d.Close + d.Low) / 2;
-                        supstanceData.push({value:up_price, type:'support'})
-                        supstanceData.push({value:down_price, type:'support'});
-                        result_money += down_price * d.Volume;
+                        supstanceData.push({value:(up_price+down_price)/2, type:'support'});
+                        result_money += (up_price+down_price)/2 * d.Volume;
                         result_volume += d.Volume;
                         //supstanceData.push({value:(up_price+down_price)/2});
                     }
@@ -115,8 +116,10 @@ common.chart = (function() {
 
         x.zoomable().domain(x2.zoomable().domain());
 
-        focus.append("g").attr("class", "supstances").attr("clip-path", "url(#supstanceClip)");
-        focus.append("g").attr("class", "tradearrow").attr("clip-path", "url(#supstanceClip)");
+        if(options.signal) {
+            focus.append("g").attr("class", "supstances").attr("clip-path", "url(#supstanceClip)");
+            focus.append("g").attr("class", "tradearrow").attr("clip-path", "url(#supstanceClip)");
+        }
 
         focus.append('g').attr("class", "crosshair").call(crosshair);
 
@@ -138,136 +141,137 @@ common.chart = (function() {
 
     return {
         load: load,
-        init:function(id) {
-                container_div = document.getElementById(id);
+        init:function(id, opt) {
+            options = opt;
+            container_div = document.getElementById(id);
 
-                var margin_side = container_div.clientWidth/25 < 60 ? 60 : container_div.clientWidth/25;
-                margin = {top: 20, right: margin_side/2, bottom: 100, left: margin_side};
+            var margin_side = container_div.clientWidth/25 < 60 ? 60 : container_div.clientWidth/25;
+            margin = {top: 20, right: margin_side/2, bottom: 100, left: margin_side};
 
-                width = container_div.clientWidth - margin.left - margin.right,
-                height = container_div.clientHeight - margin.top - margin.bottom;
+            width = container_div.clientWidth - margin.left - margin.right,
+            height = container_div.clientHeight - margin.top - margin.bottom;
 
-                margin2 = {top: height + 20, right: margin.right, bottom: 20, left: margin.left}
-                height2 = container_div.clientHeight - margin2.top - margin2.bottom;
-                console.log(width,height,height2);
+            margin2 = {top: height + 20, right: margin.right, bottom: 20, left: margin.left}
+            height2 = container_div.clientHeight - margin2.top - margin2.bottom;
+            console.log(width,height,height2);
 
-                parseDate = d3.timeParse("%Y-%m-%dT%H:%M:%S.%LZ");
+            parseDate = d3.timeParse("%Y-%m-%dT%H:%M:%S.%LZ");
 
-                x = techan.scale.financetime().range([0, width]);
-                y = d3.scaleLinear().range([height, 0]);
+            x = techan.scale.financetime().range([0, width]);
+            y = d3.scaleLinear().range([height, 0]);
 
-                yVolume = d3.scaleLinear().range([y(0), y(0.3)]);
+            yVolume = d3.scaleLinear().range([y(0), y(0.3)]);
 
-                x2 = techan.scale.financetime().range([0, width]);
-                y2 = d3.scaleLinear().range([height2, 0]);
+            x2 = techan.scale.financetime().range([0, width]);
+            y2 = d3.scaleLinear().range([height2, 0]);
 
-                brush = d3.brushX().extent([[0, 0], [width, height2]])
-                        .on("brush", brushed)
-                        .on("end", brushed);
+            brush = d3.brushX().extent([[0, 0], [width, height2]])
+                    .on("brush", brushed)
+                    .on("end", brushed);
 
-                candlestick = techan.plot.candlestick().xScale(x).yScale(y);
+            candlestick = techan.plot.candlestick().xScale(x).yScale(y);
 
-                ichimoku = techan.plot.ichimoku().xScale(x).yScale(y);
+            ichimoku = techan.plot.ichimoku().xScale(x).yScale(y);
 
-                ichimokuIndicator = techan.indicator.ichimoku();
-                // Don't show where indicators don't have data
-                indicatorPreRoll = ichimokuIndicator.kijunSen()+ichimokuIndicator.senkouSpanB();
+            ichimokuIndicator = techan.indicator.ichimoku();
+            // Don't show where indicators don't have data
+            indicatorPreRoll = ichimokuIndicator.kijunSen()+ichimokuIndicator.senkouSpanB();
 
-                volume = techan.plot.volume().xScale(x).yScale(yVolume);
+            volume = techan.plot.volume().xScale(x).yScale(yVolume);
 
-                close = techan.plot.close().xScale(x2).yScale(y2);
+            close = techan.plot.close().xScale(x2).yScale(y2);
 
-                xAxis = d3.axisBottom(x);
-                yAxis = d3.axisLeft(y);
+            xAxis = d3.axisBottom(x);
+            yAxis = d3.axisLeft(y);
 
-                xAxis2 = d3.axisBottom(x2);
-                yAxis2 = d3.axisLeft(y2).ticks(0);
+            xAxis2 = d3.axisBottom(x2);
+            yAxis2 = d3.axisLeft(y2).ticks(0);
 
-                ohlcAnnotation = techan.plot.axisannotation().axis(yAxis).orient('left').format(d3.format(',.2f'));
+            ohlcAnnotation = techan.plot.axisannotation().axis(yAxis).orient('left').format(d3.format(',.2f'));
 
-                timeAnnotation = techan.plot.axisannotation().axis(xAxis).orient('bottom').format(d3.timeFormat('%Y-%m-%d'))
-                        .width(65).translate([0, height]);
+            timeAnnotation = techan.plot.axisannotation().axis(xAxis).orient('bottom').format(d3.timeFormat('%Y-%m-%d'))
+                    .width(65).translate([0, height]);
 
-                crosshair = techan.plot.crosshair().xScale(x).yScale(y).xAnnotation(timeAnnotation).yAnnotation(ohlcAnnotation);
-                
-                supstance = techan.plot.supstance().xScale(x).yScale(y).annotation([ohlcAnnotation]);
+            crosshair = techan.plot.crosshair().xScale(x).yScale(y).xAnnotation(timeAnnotation).yAnnotation(ohlcAnnotation);
+            
+            supstance = techan.plot.supstance().xScale(x).yScale(y).annotation([ohlcAnnotation]);
 
-                tradearrow = techan.plot.tradearrow().xScale(x).yScale(y).orient(function(d) { return d.type.startsWith("buy") ? "up" : "down"; })
+            tradearrow = techan.plot.tradearrow().xScale(x).yScale(y).orient(function(d) { return d.type.startsWith("buy") ? "up" : "down"; })
 
-                outer = d3.select("#" + id)
-                .append("svg:svg")
-                .attr("width", width + margin.left + margin.right)
-                .attr("height", height + margin.top + margin.bottom)
-                .on('contextmenu', canvasContextMenu)
-                .on('click', canvasMouseDown);
+            outer = d3.select("#" + id)
+            .append("svg:svg")
+            .attr("width", width + margin.left + margin.right)
+            .attr("height", height + margin.top + margin.bottom)
+            .on('contextmenu', canvasContextMenu)
+            .on('click', canvasMouseDown);
 
-                defs = outer.append("defs");
+            defs = outer.append("defs");
 
-                defs.append("clipPath")
-                .attr("id", "ohlcClip")
-                .append("rect")
-                .attr("x", 0)
-                .attr("y", 0)
-                .attr("width", width)
-                .attr("height", height);
+            defs.append("clipPath")
+            .attr("id", "ohlcClip")
+            .append("rect")
+            .attr("x", 0)
+            .attr("y", 0)
+            .attr("width", width)
+            .attr("height", height);
 
-                defs.append("clipPath")
-                .attr("id", "supstanceClip")
-                .append("rect")
-                .attr("x", -margin.left)
-                .attr("y", 0)
-                .attr("width", width+margin.left)
-                .attr("height", height);
+            defs.append("clipPath")
+            .attr("id", "supstanceClip")
+            .append("rect")
+            .attr("x", -margin.left)
+            .attr("y", 0)
+            .attr("width", width+margin.left)
+            .attr("height", height);
 
-                focus = outer.append("g")
-                .attr("class", "focus")
-                .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+            focus = outer.append("g")
+            .attr("class", "focus")
+            .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-                focus.append("clipPath")
-                .attr("id", "clip")
-                .append("rect")
-                .attr("x", 0)
-                .attr("y", y(1))
-                .attr("width", width)
-                .attr("height", y(0) - y(1));
+            focus.append("clipPath")
+            .attr("id", "clip")
+            .append("rect")
+            .attr("x", 0)
+            .attr("y", y(1))
+            .attr("width", width)
+            .attr("height", y(0) - y(1));
 
-                focus.append("g")
-                .attr("class", "volume")
-                .attr("clip-path", "url(#clip)");
+            focus.append("g")
+            .attr("class", "volume")
+            .attr("clip-path", "url(#clip)");
 
-                focus.append("g")
-                .attr("class", "candlestick")
-                .attr("clip-path", "url(#clip)");
+            focus.append("g")
+            .attr("class", "candlestick")
+            .attr("clip-path", "url(#clip)");
 
-                focus.append("g")
-                .attr("class", "x axis")
-                .attr("transform", "translate(0," + height + ")");
+            focus.append("g")
+            .attr("class", "x axis")
+            .attr("transform", "translate(0," + height + ")");
 
-                focus.append("g")
-                .attr("class", "y axis")
-                .append("text")
-                .attr("transform", "rotate(-90)")
-                .attr("y", 6)
-                .attr("dy", ".71em")
-                .style("text-anchor", "end");
+            focus.append("g")
+            .attr("class", "y axis")
+            .append("text")
+            .attr("transform", "rotate(-90)")
+            .attr("y", 6)
+            .attr("dy", ".71em")
+            .style("text-anchor", "end");
 
-                context = outer.append("g")
-                .attr("class", "context")
-                .attr("transform", "translate(" + margin2.left + "," + margin2.top + ")");
+            context = outer.append("g")
+            .attr("class", "context")
+            .attr("transform", "translate(" + margin2.left + "," + margin2.top + ")");
 
-                context.append("g")
-                .attr("class", "close");
+            context.append("g")
+            .attr("class", "close");
 
-                context.append("g")
-                .attr("class", "pane");
+            context.append("g")
+            .attr("class", "pane");
 
-                context.append("g")
-                .attr("class", "x axis")
-                .attr("transform", "translate(0," + height2 + ")");
+            context.append("g")
+            .attr("class", "x axis")
+            .attr("transform", "translate(0," + height2 + ")");
 
-                context.append("g")
-                .attr("class", "y axis")
-                .call(yAxis2);
+            context.append("g")
+            .attr("class", "y axis")
+            .call(yAxis2);
         },
         uninit:function() {
             console.log(container_div);

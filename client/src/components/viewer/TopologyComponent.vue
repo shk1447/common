@@ -1,5 +1,26 @@
 <template>
 <div :class="collapsed ? 'content-wrapper' : 'content-wrapper show'">
+    <div class="toolbar-wrapper">
+        <div class="tool left">
+            <el-date-picker class="picker-custom"
+            v-model="collection_date"
+            type="date"
+            @change="onChangeDate"
+            placeholder="주가 분석날짜 선택">
+            </el-date-picker>
+        </div>
+        <div class="tool left">
+            <span style="font-size:1.2em;">
+                <i class="far fa-play-circle"></i>
+            </span>
+        </div>
+        <div style="flex:1 1 100%; "></div>
+        <div class="tool right" v-on:click="onFullScreen">
+            <span style="font-size:1.2em;">
+                <i class="fas fa-expand"></i>
+            </span>
+        </div>
+    </div>
     <div class="handle-wrapper">
         <div :class="open ? 'sub_menu show' : 'sub_menu'" ref="left_panel">
             <sub-menu ref="sub_menu"></sub-menu>
@@ -21,16 +42,27 @@ export default {
     data () {
         return {
             open:false,
-            collapsed:true
+            collapsed:true,
+            collection_date:new Date()
         }
     },
     components:{
         "sub-menu" :SubLeftMenuPanel
     },
     methods: {
+        onFullScreen() {
+            if(document.webkitIsFullScreen) {
+                document.webkitCancelFullScreen();
+            } else {
+                document.documentElement.webkitRequestFullScreen();
+            }
+        },
         handlePanelSlide() {
             var me = this;
             me.open = !me.open;
+        },
+        onChangeDate() {
+            console.log(this.collection_date);
         }
     },
     beforeCreate(){
@@ -177,20 +209,33 @@ export default {
 
 .handle-wrapper {
     position: absolute;
-    height:100%;
+    height: calc(100% - 50px);
 }
 
 .handle {
   float: left;
   width: 15px;
-  height: 100%;
+  height: calc(100% - 50px);
   cursor: pointer;
   display: flex; justify-content: center; align-items: center;
 }
 
 #view-space {
-    height: 100%;
+    height: calc(100% - 50px);
     user-select: none;
+}
+
+.picker-custom {
+    background-color:transparent;
+}
+.picker-custom>input {
+    border:none;
+    background-color:transparent;
+}
+
+.picker-custom>input:hover {
+    border:none;
+    background-color:transparent;
 }
 
 </style>

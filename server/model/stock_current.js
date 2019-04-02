@@ -69,6 +69,11 @@ CurrentStock.prototype.selectByCategory = function(param) {
     return khan.database(this.table_name).select(khan.database.raw('category, column_json(rawdata) as rawdata, unixtime')).where({category:param});
 };
 
+CurrentStock.prototype.selectByParam = function(param) {
+    return khan.database(this.table_name).select(khan.database.raw("category, column_get(rawdata, '종목명' as char) as name, unixtime"))
+        .where(khan.database.raw("column_get(rawdata,'종목명' as char) like '%" + param + "%' OR category like '%"+param+"%'"));
+};
+
 CurrentStock.prototype.selectAll = function() {
     return khan.database(this.table_name).select(khan.database.raw('category, column_json(rawdata) as rawdata, unixtime')).map((row) => {
         row.rawdata = JSON.parse(row.rawdata);
