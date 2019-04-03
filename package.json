@@ -25,6 +25,8 @@
     "helmet": "^3.14.0",
     "http": "0.0.0",
     "https": "^1.0.0",
+    "jquery-ui": "^1.12.1",
+    "jquery-ui-bundle": "^1.12.1-migrate",
     "knex": "^0.15.2",
     "lodash": "^4.17.11",
     "moment": "^2.24.0",

@@ -1,5 +1,5 @@
 <template>
-<div :class="collapsed ? 'content-wrapper' : 'content-wrapper show'">
+<div :class="collapsed ? 'content-wrapper' : 'content-wrapper show'" ref="content_wrapper">
     <div class="toolbar-wrapper">
         <div class="tool left">
             <el-autocomplete class="auto-input-custom" v-model="selected_item.name" value-key="name" :fetch-suggestions="querySearchAsync"
@@ -13,27 +13,24 @@
                 </template>
             </el-autocomplete>
         </div>
-        <!-- <div :class="signal ? 'tool left signal' : 'tool left'" @click="onSignal">
-            <span style="font-size:1.2em;">
-                SIGNAL
-            </span>
-        </div> -->
         <div style="flex:1 1 100%; "></div>
-        <div class="tool right">
+        <div class="tool right" @click="onAlarm">
             <span style="font-size:1.2em;">
-                <i class="far fa-bell"></i>
+                <i :class="alarm ? 'far fa-bell' : 'far fa-bell-slash'"></i>
             </span>
         </div>
-        <div class="tool right">
+        <div class="tool right" @click="onFavorite">
             <span style="font-size:1.2em;">
-                <i class="far fa-star"></i>
+                <i :class="favorite ? 'fas fa-star' : 'far fa-star'"></i>
             </span>
         </div>
-        <div class="tool right">
-            <span style="font-size:1.2em;">
-                <i class="fas fa-cloud-upload-alt"></i>
-                Save
-            </span>
+        <div class="tool right" @click="onSave">
+            <el-badge is-dot class="item">
+                <span style="font-size:1.2em;">
+                    <i class="fas fa-cloud-upload-alt"></i>
+                    Save
+                </span>
+            </el-badge>
         </div>
         <div class="tool right" v-on:click="onFullScreen">
             <span style="font-size:1.2em;">
@@ -41,7 +38,9 @@
             </span>
         </div>
     </div>
-    <div id="chart-space">
+    <div id="sidebar" ref="sidebar"></div>
+    <div id="sidebar-separator" class="ui-draggable"></div>
+    <div id="chart-space" ref="chart_space">
     </div>
 </div>
 </template>
@@ -60,13 +59,36 @@ export default {
                 category:"",
                 name:""
             },
-            signal:true
+            signal:true,
+            alarm:false,
+            favorite:false
         }
     },
     components:{
         
     },
     methods: {
+        onSave() {
+            if(this.selected_item.category) {
+                //this.alarm = !this.alarm;
+            } else {
+                common.events.emit('message', {type:'warning' , message:'검색 후 저장할 수 있습니다.'})
+            }
+        },
+        onAlarm() {
+            if(this.selected_item.category) {
+                this.alarm = !this.alarm;
+            } else {
+                common.events.emit('message', {type:'warning' , message:'검색 후 설정가능합니다.'})
+            }
+        },
+        onFavorite() {
+            if(this.selected_item.category) {
+                this.favorite = !this.favorite;
+            } else {
+                common.events.emit('message', {type:'warning' , message:'검색 후 설정가능합니다.'})
+            }
+        },
         onSignal() {
             this.signal = !this.signal;
         },
@@ -112,7 +134,47 @@ export default {
 
     },
     mounted() {
+        var me = this;
         console.log('mounted');
+        var sidebar =  {};
+        $('#sidebar-separator').draggable({
+            axis:"x",
+            start:function(event, ui) {
+                sidebar.closing = false;
+                sidebar.start = ui.position.left;
+                sidebar.width = me.$refs.content_wrapper.clientWidth - ui.position.left - 12;
+            },
+            drag: function(event, ui) {
+                var sidebar_width = me.$refs.content_wrapper.clientWidth - ui.position.left - 12;
+                var chart_space_width = ui.position.left - 2;
+                
+                me.$refs.sidebar.style.width = sidebar_width + 'px';
+                me.$refs.chart_space.style.width = chart_space_width + 'px';
+                me.$refs.sidebar.style.border = 'none';
+            
+                if(sidebar_width < 200) {
+                    sidebar.closing = true;
+                } else {
+                    sidebar.closing = false;
+                }
+                if(sidebar.closing) {
+                    me.$refs.sidebar.style.border = '1px dashed rgb(80, 80, 80)';
+                }
+                
+            },
+            stop: function(event, ui) {
+                if(sidebar.closing) {
+                    var origin_width = me.$refs.content_wrapper.clientWidth - 12;
+                    me.$refs.chart_space.style.width = origin_width + 'px';
+                    me.$refs.sidebar.style.width = '0px';
+                    me.$refs.sidebar.style.border = 'none';
+                }
+                $("#sidebar-separator").css("left","auto");
+                $("#sidebar-separator").css("right",($("#sidebar").width())+"px");
+                
+                if(me.selected_item.category) me.refresh();
+            }
+        });
         common.chart.init('chart-space', {signal:this.signal});
     },
     beforeUpdate() {
@@ -163,6 +225,31 @@ export default {
 .auto-input-custom>.el-input>input {
     border:none;
     background-color: transparent;
+}
+
+#sidebar-separator {
+    position: absolute;
+    top:50px !important;
+    left:auto;
+    right:0px;
+    bottom:0px;
+    width:10px;
+    cursor: col-resize;
+    z-index: 10;
+    background: #f3f3f3;
+    border-left:1px solid #e0e3eb;
+    border-right:1px solid #e0e3eb;
+}
+
+#sidebar {
+    position: absolute;
+    top:50px !important;
+    right:0px;
+    bottom:0px;
+    width:0px;
+    background: #ffffff;
+    z-index:11;
+    box-sizing: border-box;
 }
 
 </style>

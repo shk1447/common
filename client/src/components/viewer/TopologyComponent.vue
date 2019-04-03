@@ -175,23 +175,6 @@ export default {
     pointer-events: none;
 }
 
-
-	
-.sub_menu {
-  float: left;
-  width: 0px;
-  height: 100%;
-  overflow: hidden;
-  -webkit-transition: width .4s;
-  transition: width .4s;
-  background-color: rgb(253,253,253);
-  border: 1px solid #d8dce5;
-  box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.12), 0 0 6px 0 rgba(0, 0, 0, 0.04);
-}
-.sub_menu.show {
-    width:300px;
-}
-
 .content-wrapper {
     position: fixed;
     left: 50px;
@@ -211,13 +194,28 @@ export default {
     position: absolute;
     height: calc(100% - 50px);
 }
-
 .handle {
   float: left;
   width: 15px;
-  height: calc(100% - 50px);
+  height: 100%;
   cursor: pointer;
   display: flex; justify-content: center; align-items: center;
+}
+
+
+.sub_menu {
+  float: left;
+  width: 0px;
+  height: 100%;
+  overflow: hidden;
+  -webkit-transition: width .4s;
+  transition: width .4s;
+  background-color: rgb(253,253,253);
+  border: 1px solid #d8dce5;
+  box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.12), 0 0 6px 0 rgba(0, 0, 0, 0.04);
+}
+.sub_menu.show {
+    width:300px;
 }
 
 #view-space {

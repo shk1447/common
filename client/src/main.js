@@ -24,6 +24,8 @@ Vue.use(ElementUI, { locale });
 import App from './App';
 
 import 'expose-loader?$!expose-loader?jQuery!jquery';
+import 'jquery-ui-bundle';
+import 'jquery-ui-bundle/jquery-ui.css';
 // import $ from "jquery";
 // window.$ = $;
 
