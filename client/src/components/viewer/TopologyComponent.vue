@@ -35,8 +35,8 @@
 </template>
 
 <script>
-import SubLeftMenuPanel from '../panel/SubLeftMenuPanel.vue';
 import api from '../../api/api.js'
+import SubLeftMenuPanel from '../panel/SubLeftMenuPanel.vue';
 
 export default {
     data () {
@@ -76,12 +76,11 @@ export default {
     },
     mounted() {
         var me = this;
-        me.$loading({});
         console.log('mounted');
-        setTimeout(function() {
-            common.view.init('view-space');
-            me.$loading({}).close();
-        },500)
+        common.view.init('view-space');
+        // setTimeout(function() {
+        //     me.$loading({}).close();
+        // },500)
     },
     beforeUpdate() {
 
@@ -90,11 +89,10 @@ export default {
 
     },
     beforeDestroy() {
-
+        common.view.uninit();
     },
     destroyed() {
         console.log('destroyed')
-        common.view.uninit();
     }
 }
 </script>

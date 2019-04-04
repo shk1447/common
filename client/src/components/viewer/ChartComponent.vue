@@ -184,7 +184,7 @@ export default {
         
     },
     beforeDestroy() {
-
+        common.chart.uninit();
     },
     destroyed() {
         console.log('destroyed')

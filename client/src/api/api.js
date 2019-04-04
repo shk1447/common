@@ -1,6 +1,24 @@
 import http from "../core/utils/http.js";
 
 export default {
+    logout: function() {
+        var url = "/auth/logout";
+        return http.get(url).then(function(res) {
+            return res;
+        })
+    },
+    authCheck: function() {
+        var url = "/auth/check";
+        return http.get(url).then(function(res) {
+            return res;
+        })
+    },
+    authGoogle: function() {
+        var url = "/auth/google";
+        return http.get(url).then(function(res) {
+            return res;
+        })
+    },
     getDaily: function() {
         var url = "/stock/daily";
         return http.get(url).then(function(res) {

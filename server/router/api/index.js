@@ -1,9 +1,9 @@
 
-const user = require('./user.js');
+const auth = require('./auth.js');
 const file = require('./file.js');
 const stock = require('./stock.js');
 module.exports = {
-    user:user,
+    auth:auth,
     file:file,
     stock:stock
 }

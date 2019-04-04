@@ -43,12 +43,11 @@ module.exports = function(config) {
         connection : config.database[config.database.type],
         pool: {min:0,max:10}
     })
+    khan.session_store = new KnexSessionStore({
+        knex:khan.database,
+        tablename:"tb_sessions"
+    })
     khan.model = model();
-
-    // khan.session_store = new KnexSessionStore({
-    //     knex:khan.database,
-    //     tablename:"sessions"
-    // })
 
     ClusterServer = {
         name: 'ClusterServer',
@@ -110,9 +109,26 @@ module.exports = function(config) {
 
     var app = express();
 
+    // app.use(function(req,res,next) {
+    //     res.header('Access-Control-Allow-Credentials', true);
+    //     res.header('Access-Control-Allow-Origin', '*');
+    //     res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
+    //     res.header('Access-Control-Allow-Headers', 'X-Requested-With, X-HTTP-Method-Override, Content-Type, Accept');
+    //     if ('OPTIONS' == req.method) {
+    //         res.send(200);
+    //     } else {
+    //         next();
+    //     }
+    // })
+
     // middle-ware performance check!
     app.set('view cache', true);
-    app.use('/', express.static(process.env.root_path));
+    app.use('/css', express.static(path.resolve(process.env.root_path,'./css')));
+    app.use('/icons', express.static(path.resolve(process.env.root_path,'./icons')));
+    app.use('/js', express.static(path.resolve(process.env.root_path,'./js')));
+    app.use('/libs', express.static(path.resolve(process.env.root_path,'./libs')));
+    app.use('/static', express.static(path.resolve(process.env.root_path,'./static')));
+    app.use('/vendor', express.static(path.resolve(process.env.root_path,'./vendor')));
     app.use(helmet());
     app.use(helmet.xssFilter());
     app.disable('x-powered-by');

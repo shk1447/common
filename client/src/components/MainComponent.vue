@@ -54,7 +54,11 @@ export default {
             })
         },
         onItemClick(event, item) {
-            this.active_content = item.title.toLowerCase();
+            if(item.type === 'content') {
+                this.active_content = item.title.toLowerCase();
+            } else if(item.type === 'action') {
+                item.action();
+            }
         },
         handleLogout() {
             var me = this;
@@ -89,6 +93,12 @@ export default {
         
     },
     created() {
+        var me = this;
+        api.authCheck().then(function() {
+            
+        }).catch(function() {
+            me.$router.push('/');
+        })
     },
     beforeRouteUpdate(to,from){
 

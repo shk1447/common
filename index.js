@@ -11,6 +11,14 @@ cmd.option('-m, --mode [mode]', 'set mode', 'production')
 var relative_path = path.relative(__dirname , './');
 var config = JSON.parse(fs.readFileSync(path.resolve(cmd.conf), 'utf8'));
 
+if(fs.existsSync(path.resolve('./google.json'))) {
+    var auth_info = JSON.parse(fs.readFileSync(path.resolve('./google.json'), 'utf8'))
+    config["google_auth"] = auth_info;
+}
+
+process.env.google_id = config.google_auth.id;
+process.env.google_secret = config.google_auth.secret;
+
 process.env.mode = cmd.mode;
 process.env.port = config.port;
 process.env.project = config.project.name;

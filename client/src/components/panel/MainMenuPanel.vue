@@ -6,6 +6,10 @@
 
 import api from '../../api/api.js'
 
+const separator = {
+  template: `<hr style="border-color: rgba(0, 0, 0, 0.1); margin: 20px;">`
+}
+
 export default {
     props: {
         collapse: { type : Function },
@@ -16,15 +20,46 @@ export default {
             menu: [
                 {
                     header: true,
-                    title: 'STOKER'
+                    title: 'STOCK'
                 },
                 {
                     title: 'VIEW',
+                    type:'content',
                     icon: 'fa fa-code-branch'
                 },
                 {
                     title: 'CHART',
+                    type:'content',
                     icon: 'fa fa-chart-line'
+                },
+                {
+                    header: true,
+                    component: separator,
+                    visibleOnCollapse: true
+                },
+                {
+                    header: true,
+                    title: 'USER'
+                },
+                {
+                    title: 'Accounts',
+                    type:'content',
+                    icon: 'fas fa-users',
+                    badge: {
+                        text: 'new',
+                        class: 'badge-danger'
+                    }
+                },
+                {
+                    title: 'Logout',
+                    type:'action',
+                    icon: 'fas fa-sign-out-alt',
+                    action: function() {
+                        var me = this;
+                        api.logout().then(function() {
+                            location.href = '/';
+                        })
+                    }
                 }
             ]
         }

@@ -7,24 +7,18 @@ function User() {
             type:'increments',
             comment:"index field"
         },
-        id : {
+        email : {
             type :'string',
             unique:true,
             length: 50,
-            index : ['index_id_password'],
+            index : ['index_email'],
             comment:"id field"
         },
-        password : {
+        name : {
             type : 'string',
             length: 50,
-            index : ['index_id_password'],
-            comment:"password field"
-        },
-        type : {
-            type : 'string',
-            length: 10,
-            index : ['index_type'],
-            comment:"user type [admin, user]"
+            index : ['index_id_name'],
+            comment:"name field"
         },
         created_at : {
             type : 'timestamp',
@@ -70,13 +64,12 @@ function User() {
     }
 }
 
-User.prototype.select = function() {
-    return khan.database(this.table_name).select('*');
+User.prototype.selectByEmail = function(param) {
+    return khan.database(this.table_name).select('*').where({email:param});
 };
 
-User.prototype.upsert = function() {
-    var query = "INSERT INTO " + this.table_name + " "
-    khan.database.raw()
+User.prototype.insert = function(row) {
+    return khan.database(this.table_name).insert(row);
 }
 
 instance = instance ? instance : new User();
