@@ -45,7 +45,8 @@ module.exports = function(config) {
     })
     khan.session_store = new KnexSessionStore({
         knex:khan.database,
-        tablename:"tb_sessions"
+        createtable :false,
+        tablename:"sessions"
     })
     khan.model = model();
 
