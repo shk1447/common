@@ -44,7 +44,6 @@ export default {
             this.$modal.show('chart-modal');
         },
         onGotoChart() {
-            console.log(this.param);
             common.events.emit('onHandlePage', {page_name:'chart', params:this.param});
             this.$modal.hide('chart-modal');
         },
@@ -175,7 +174,7 @@ export default {
     }
 
     .scope-supstance.regist path {
-        stroke: red;
+        stroke: blue;
         stroke-width: 0.8;
         stroke-dasharray: 2, 2;
     }

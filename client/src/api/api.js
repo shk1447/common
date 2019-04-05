@@ -1,6 +1,12 @@
 import http from "../core/utils/http.js";
 
 export default {
+    setFavorite: function(params) {
+        var url = "/favorite/set";
+        return http.post(url, params).then(function(res) {
+            return res;
+        })
+    },
     logout: function() {
         var url = "/auth/logout";
         return http.get(url).then(function(res) {

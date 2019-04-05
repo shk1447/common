@@ -103,8 +103,8 @@ common.chart = (function() {
                 volume: d.Open === 0 ? d.Close : +d.Volume
             };
         }).sort(function(a, b) { return d3.ascending(accessor.d(a), accessor.d(b)); });
-        supstanceData.push({value:result_money / result_volume, type:'result'})
-        supstanceData.push({value:result_money2 / result_volume, type:'result'})
+        supstanceData.push({value:result_money / result_volume, type:'support'})
+        supstanceData.push({value:result_money2 / result_volume, type:'regist'})
         supstanceData.push({value:loss_moeny / result_volume, type:'loss'})
         
 
@@ -149,6 +149,9 @@ common.chart = (function() {
     }
 
     return {
+        getSupstances: function() {
+            return supstanceData;
+        },
         load: load,
         init:function(id, opt) {
             options = opt;

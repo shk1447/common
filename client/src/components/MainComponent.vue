@@ -94,8 +94,8 @@ export default {
     },
     created() {
         var me = this;
-        api.authCheck().then(function() {
-            
+        api.authCheck().then(function(data) {
+            sessionStorage.setItem("user", data.user);
         }).catch(function() {
             me.$router.push('/');
         })

@@ -3,7 +3,7 @@
     <el-tree class="demo" ref="tree" show-checkbox :data="data" :props="defaultProps" node-key="id" @check="check">
             <!-- draggable :allow-drag="allowDrag" :allow-drop="allowDrop"  -->
         <span class="custom-tree-node" slot-scope="{ node, data }">
-            <span><i :class="data.id === 'daily' ? 'el-icon-date' : 'el-icon-star-off'"></i>   {{ node.label }}</span>
+            <span><i :class="data.type === 'folder' ? 'fas fa-folder-plus' : (data.type === 'date' ? 'fas fa-calendar-alt' : (data.type === 'favorite' ? 'fas fa-star' : 'far fa-star'))"></i>   {{ node.label }}</span>
             <!-- <span v-if="data.id !== 'fluid'">
                 <i class="el-icon-circle-plus-outline action" @click="append(data,$event)"></i>
                 <i v-if="data.id !== 'fluid'" class="el-icon-delete action" @click="remove(node,data,$event)"></i>
@@ -25,6 +25,11 @@ export default {
                 name: '일별 추천 리스트',
                 type:'folder',
                 children: []
+            },{
+                id:'favorite',
+                name: '유저별 관심 종목',
+                type:'folder',
+                children: []
             }],
             defaultProps: {
                 children: 'children',
@@ -44,7 +49,7 @@ export default {
             var me = this;
             me.$loading({});
             common.view.clear();
-            var checked_list = nodes.checkedNodes.filter(function(d) { return d.type !== 'folder' });
+            var checked_list = nodes.checkedNodes.filter(function(d) { return d.type === 'date' });
             var params = checked_list.map(function(d) { return {id : d.id, name:d.name,prev_id: d.prev_id}})
             
             if(params.length > 0) {
@@ -76,6 +81,11 @@ export default {
         var me = this;
         api.getDaily().then(function(data) {
             me.data[0].children = data;
+            me.data[1].children.push({
+                id:sessionStorage.getItem("user"),
+                name: sessionStorage.getItem("user"),
+                type:'favorite'
+            })
         })
         console.log('mounted');
     },

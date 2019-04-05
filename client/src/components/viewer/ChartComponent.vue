@@ -70,6 +70,24 @@ export default {
     methods: {
         onSave() {
             if(this.selected_item.category) {
+                var supstances = common.chart.getSupstances();
+                var rawdata = {};
+                supstances.map(function(v) {
+                    rawdata[v.type] = v.value
+                })
+                var param = {
+                    category: this.selected_item.category,
+                    email:sessionStorage.getItem('user'),
+                    rawdata:rawdata,
+                    favorite:this.favorite,
+                    alarm:this.alarm
+                }
+                console.log(supstances);
+                api.setFavorite(param).then(function(){
+                    console.log('set favorite success.')
+                }).catch(function(err) {
+                    console.log('set favorite fail.')
+                })
                 //this.alarm = !this.alarm;
             } else {
                 common.events.emit('message', {type:'warning' , message:'검색 후 저장할 수 있습니다.'})

@@ -2,7 +2,6 @@ var passport = require('passport');
 var GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
 
 passport.serializeUser(function(user, done) {
-    console.log(user)
     if(user.emails.length > 0) {
         khan.model.user.selectByEmail(user.emails[0].value).then((rows) => {
             if(rows.length > 0) {
@@ -43,7 +42,7 @@ module.exports = {
     get : {
         "check": function(req,res,next) {
             if(req.isAuthenticated()) {
-                res.status(200).send();
+                res.status(200).send({user:req.session.passport.user._json.email});
             } else {
                 res.status(401).send();
             }

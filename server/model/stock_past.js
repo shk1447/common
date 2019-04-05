@@ -84,7 +84,8 @@ PastStock.prototype.selectDaily = function() {
             prev_folder.children.push({
                 id:prev_time.format("YYYY-MM-DD"),
                 name:prev_time.format("YYYY-MM-DD"),
-                prev_id:monent_time.format("YYYY-MM-DD")
+                prev_id:monent_time.format("YYYY-MM-DD"),
+                type:'date'
             })
         }
         if(!parent_folder) {

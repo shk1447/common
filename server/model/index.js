@@ -5,6 +5,7 @@ module.exports = function() {
         sessions:require('./sessions'),
         topology:require('./topology'),
         current_stock: require('./stock_current'),
-        past_stock: require('./stock_past')
+        past_stock: require('./stock_past'),
+        favorite:require('./favorite')
     }
 }
