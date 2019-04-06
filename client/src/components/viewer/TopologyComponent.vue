@@ -29,7 +29,7 @@
             <i :class="open ? 'el-icon-caret-left' : 'el-icon-caret-right'" style="vertical-align: middle;"></i>
         </div>
     </div>
-    <div id="view-space">
+    <div id="view-space" @dragover="dragover" @drop="drop">
     </div>
 </div>
 </template>
@@ -50,6 +50,22 @@ export default {
         "sub-menu" :SubLeftMenuPanel
     },
     methods: {
+        dragover(e) {
+            e.preventDefault();
+        },
+        drop(e) {
+            e.preventDefault();
+            var me = this;
+            me.$loading({})
+            var transfer_data = e.dataTransfer.getData("node");
+            var data = JSON.parse(transfer_data);
+            api.getRecommend(data).then(function(map) {
+                common.view.setRecommend(data, map, e);
+                me.$loading({}).close();
+            }).catch(function(err) {
+                me.$loading({}).close();
+            })
+        },
         onFullScreen() {
             if(document.webkitIsFullScreen) {
                 document.webkitCancelFullScreen();

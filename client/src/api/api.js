@@ -1,6 +1,12 @@
 import http from "../core/utils/http.js";
 
 export default {
+    getFavorite: function(email) {
+        var url = "/favorite/list?email=" + email;
+        return http.get(url).then(function(res) {
+            return res;
+        })
+    },
     setFavorite: function(params) {
         var url = "/favorite/set";
         return http.post(url, params).then(function(res) {
@@ -28,6 +34,12 @@ export default {
     getDaily: function() {
         var url = "/stock/daily";
         return http.get(url).then(function(res) {
+            return res;
+        })
+    },
+    getRecommend: function(params) {
+        var url = "/stock/recommend";
+        return http.post(url, params).then(function(res) {
             return res;
         })
     },

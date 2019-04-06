@@ -24,6 +24,8 @@ common.view = (function() {
     var types = [];
     var node_type = {};
 
+    var current_pos = { x:0,y:0 };
+
     var color_define = {
         "speed" : {
             "1G":"#008000",
@@ -68,7 +70,8 @@ common.view = (function() {
     }
 
     function canvasMouseMove() {
-        
+        // current_pos.x = Math.round((d3.event.offsetX - outer_transform.x) / outer_transform.k);
+        // current_pos.y = Math.round((d3.event.offsetY - outer_transform.y) / outer_transform.k);
     }
 
     function canvasDblClick() {
@@ -430,6 +433,29 @@ common.view = (function() {
     }
 
     return {
+        setRecommend:function(root,recommends,event) {
+            var isExists = activeNodes.find(function(d) { return d.id === root.id});
+            if(!isExists) {
+                var x = Math.round((event.offsetX - outer_transform.x) / outer_transform.k);
+                var y = Math.round((event.offsetY - outer_transform.y) / outer_transform.k);
+                root["x"] = x;
+                root["y"] = y;
+                activeNodes.push(root);
+                _.each(recommends, function(item,index) {
+                    item["x"] = x + node_size * (index + 1) * 6;
+                    item["y"] = y;
+                    activeNodes.push(item);
+                    activeLinks.push({
+                        source:root.id,
+                        target:item.id,
+                        volume_percent:item.volume_percent
+                    })
+                })
+                redraw();
+            } else {
+                common.events.emit("notify", {message:'이미 화면에 보여지고 있습니다.', type:'warning'});
+            }
+        },
         setRecommends:function(root,recommends) {
             var grid_width = Math.ceil(Math.sqrt(root.length));
             _.each(root, function(v,i) {

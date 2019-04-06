@@ -107,7 +107,7 @@ export default {
         var me = this;
         common.events.on('popup', me.handlePopup);
         common.events.on('message', me.handleMessage);
-        common.events.on('notify', me.onhandleNotify);
+        common.events.on('notify', me.handleNotify);
         common.events.on('onHandlePage', me.onHandlePage)
     },
     beforeUpdate() {

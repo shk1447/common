@@ -1,6 +1,7 @@
 <template>
 <div style="height:100%; overflow:auto">
-    <el-tree class="demo" ref="tree" show-checkbox :data="data" :props="defaultProps" node-key="id" @check="check">
+    <el-tree class="demo" ref="tree" draggable :data="data" :props="defaultProps" node-key="id" :allow-drag="allowDrag" :allow-drop="allowDrop"
+        @node-drag-start="onNodeDragStart">
             <!-- draggable :allow-drag="allowDrag" :allow-drop="allowDrop"  -->
         <span class="custom-tree-node" slot-scope="{ node, data }">
             <span><i :class="data.type === 'folder' ? 'fas fa-folder-plus' : (data.type === 'date' ? 'fas fa-calendar-alt' : (data.type === 'favorite' ? 'fas fa-star' : 'far fa-star'))"></i>   {{ node.label }}</span>
@@ -45,6 +46,22 @@ export default {
         
     },
     methods: {
+        onNodeDragStart(node,e) {
+            var transfer_data = {
+                id:node.data.id,
+                name:node.data.name,
+                prev_id:node.data.prev_id,
+                type:node.data.type
+            }
+            e.dataTransfer.setData("node", JSON.stringify(transfer_data));
+        },
+        allowDrop(dragNode, dropNode, type) {
+            return false;
+        },
+        allowDrag(node) {
+
+            return true;
+        },
         check(node,nodes) {
             var me = this;
             me.$loading({});

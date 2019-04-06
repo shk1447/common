@@ -25,12 +25,12 @@
             </span>
         </div>
         <div class="tool right" @click="onSave">
-            <el-badge is-dot class="item">
+            <!-- <el-badge is-dot class="item"> -->
                 <span style="font-size:1.2em;">
                     <i class="fas fa-cloud-upload-alt"></i>
                     Save
                 </span>
-            </el-badge>
+            <!-- </el-badge> -->
         </div>
         <div class="tool right" v-on:click="onFullScreen">
             <span style="font-size:1.2em;">
