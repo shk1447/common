@@ -139,7 +139,7 @@ export default {
             common.socket.on('collection.getlist', function(data) {
                 if(data.result.length > 0) {
                     me.init = true;
-                    me.collection_date = JSON.parse(data.result[0].options).date
+                    me.collection_date = data.result[0].options.date
                     me.collection_status = data.result[0].status;
                     me.$refs.sub_menu.refresh();
                 } else {

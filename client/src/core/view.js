@@ -442,7 +442,9 @@ common.view = (function() {
                 _.each(favorites, function(item,index) {
                     item["x"] = x + node_size * (index + 1) * 6;
                     item["y"] = y;
-                    activeNodes.push(item);
+                    if(!activeNodes.find(function(d) { return d.id === item.id})) {
+                        activeNodes.push(item);
+                    }
                     activeLinks.push({
                         source:root.id,
                         target:item.id,
@@ -465,7 +467,9 @@ common.view = (function() {
                 _.each(recommends, function(item,index) {
                     item["x"] = x + node_size * (index + 1) * 6;
                     item["y"] = y;
-                    activeNodes.push(item);
+                    if(!activeNodes.find(function(d) { return d.id === item.id})) {
+                        activeNodes.push(item);
+                    }
                     activeLinks.push({
                         source:root.id,
                         target:item.id,
