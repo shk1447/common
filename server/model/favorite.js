@@ -76,7 +76,7 @@ function Favorite() {
 }
 
 Favorite.prototype.selectByEmail = function(param) {
-    return khan.database(this.table_name).select(khan.database.raw('`category` as `id`, column_get(`rawdata`, "name" as char) as `name`')).where({email:param});
+    return khan.database(this.table_name).select(khan.database.raw('`category` as `id`, column_get(`rawdata`, "name" as char) as `name`,column_json(`rawdata`) as `props`')).where({email:param});
 };
 
 Favorite.prototype.insert = function(param) {

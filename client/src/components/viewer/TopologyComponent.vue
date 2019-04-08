@@ -159,7 +159,6 @@ export default {
             })
             
             me.$nextTick(function(){
-                console.log('testtest');
                 var data = {"broadcast":false,"target":"collection", "method":"getlist", "parameters":{}};
                 common.socket.emit('fromclient', data);
             })

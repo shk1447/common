@@ -134,11 +134,6 @@ export default {
                 document.documentElement.webkitRequestFullScreen();
             }
         },
-        onSearchCategory(e) {
-            api.getList(this.category).then(function(data) {
-                console.log(data);
-            })
-        },
         refresh() {
             var me = this;
             setTimeout(function() {

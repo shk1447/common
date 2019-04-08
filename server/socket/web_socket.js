@@ -5,11 +5,9 @@ var request = require('request');
 module.exports = function(httpServer,khan) {
     var io = socket_io.listen(httpServer, { 'destroy buffer size': Infinity });
     io.sockets.on('connection', function(socket){
-        console.log(process.env.wsUrl);
         var ws = new WebSocket(process.env.wsUrl);
         ws.binaryType = "arraybuffer";
         ws.on('open', function() {
-            console.log('test');
             socket.emit('connected', 'ok');
         });
         ws.on('message', function(message) {
