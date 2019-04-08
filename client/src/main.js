@@ -35,6 +35,10 @@ import router from './router';
 
 import './core';
 
+window.onbeforeunload = function(e){
+  console.log('before unload')
+  common.socket.disconnect();
+}
 
 new Vue({
   el: '#app',

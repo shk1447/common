@@ -8,7 +8,7 @@
                 <template slot-scope="{ item }">
                     <div style="display:flex;">
                         <div style="display:flex; flex:1 1 100%;">{{ item.name }}</div>
-                        <div style="display:flex; flex:0 0 auto; padding:1em;"><i class="far fa-star"></i></div>
+                        <div style="display:flex; flex:0 0 auto; padding:1em;"><i :class="item.favorite_type ? 'fas fa-star' : 'far fa-star'"></i></div>
                     </div>
                 </template>
             </el-autocomplete>
@@ -75,6 +75,7 @@ export default {
                 supstances.map(function(v) {
                     rawdata[v.type] = v.value
                 })
+                rawdata["name"] = this.selected_item.name;
                 var param = {
                     category: this.selected_item.category,
                     email:sessionStorage.getItem('user'),
@@ -84,9 +85,9 @@ export default {
                 }
                 console.log(supstances);
                 api.setFavorite(param).then(function(){
-                    console.log('set favorite success.')
+                    common.events.emit('message', {type:'success' , message:'저장 성공'})
                 }).catch(function(err) {
-                    console.log('set favorite fail.')
+                    common.events.emit('message', {type:'fail' , message:'저장 실패'})
                 })
                 //this.alarm = !this.alarm;
             } else {
@@ -111,6 +112,13 @@ export default {
             this.signal = !this.signal;
         },
         handleSelect(item) {
+            if(item.favorite_type) {
+                this.favorite = true;
+                this.alarm = item.favorite_type === 'alarm' ? true : false;
+            } else {
+                this.favorite = false;
+                this.alarm = false;
+            }
             this.selected_item = item;
             this.refresh();
         },

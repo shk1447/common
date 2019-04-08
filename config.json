@@ -7,7 +7,10 @@
     "port": 1000,
     "tcp_port":2000,
     "session_time":30,
-    "external_url":"http://localhost:1447/",
+    "external":{
+        "wsUrl" : "ws://localhost:1448/diservice",
+        "httpUrl" : "http://localhost:1447"
+    },
     "database": {
       "type": "mysql",
       "mysql": {

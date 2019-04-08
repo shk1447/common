@@ -24,8 +24,6 @@ common.view = (function() {
     var types = [];
     var node_type = {};
 
-    var current_pos = { x:0,y:0 };
-
     var color_define = {
         "speed" : {
             "1G":"#008000",
@@ -335,23 +333,23 @@ common.view = (function() {
                 thisLink.attr('stroke', color_define.speed[d.speed] ? color_define.speed[d.speed] : '#ff7f0e');
             }
         })
-        var anim_links = link_group.selectAll('.link_anim');
-        anim_links.each(function(d,i) {
-            var thisLink = d3.select(this);
-            var path_data = lineGenerator([[d.sourceNode.x, d.sourceNode.y],[d.targetNode.x, d.targetNode.y]])
-            thisLink.attr("d", path_data).attr("stroke-width", node_size/4)
-                .attr('stroke', 'rgb(221,221,221)');
-            var totalLength = thisLink.node().getTotalLength();
-            thisLink.attr("stroke-dasharray", totalLength/8 + " " + totalLength);
-            function repeat() {
-                thisLink.attr('stroke-dashoffset', totalLength + (totalLength/4));
-                thisLink.transition()
-                    .duration(20000/d.volume_percent)
-                    .attr("stroke-dashoffset", totalLength/8)
-                .on("end", repeat)
-            }
-            repeat();
-        })
+        // var anim_links = link_group.selectAll('.link_anim');
+        // anim_links.each(function(d,i) {
+        //     var thisLink = d3.select(this);
+        //     var path_data = lineGenerator([[d.sourceNode.x, d.sourceNode.y],[d.targetNode.x, d.targetNode.y]])
+        //     thisLink.attr("d", path_data).attr("stroke-width", node_size/4)
+        //         .attr('stroke', 'rgb(221,221,221)');
+        //     var totalLength = thisLink.node().getTotalLength();
+        //     thisLink.attr("stroke-dasharray", totalLength/8 + " " + totalLength);
+        //     function repeat() {
+        //         thisLink.attr('stroke-dashoffset', totalLength + (totalLength/4));
+        //         thisLink.transition()
+        //             .duration(20000/d.volume_percent)
+        //             .attr("stroke-dashoffset", totalLength/8)
+        //         .on("end", repeat)
+        //     }
+        //     repeat();
+        // })
     }
 
     function deleteItem() {
@@ -433,6 +431,29 @@ common.view = (function() {
     }
 
     return {
+        setFavorite:function(root,favorites,event) {
+            var isExists = activeNodes.find(function(d) { return d.id === root.id});
+            if(!isExists) {
+                var x = Math.round((event.offsetX - outer_transform.x) / outer_transform.k);
+                var y = Math.round((event.offsetY - outer_transform.y) / outer_transform.k);
+                root["x"] = x;
+                root["y"] = y;
+                activeNodes.push(root);
+                _.each(favorites, function(item,index) {
+                    item["x"] = x + node_size * (index + 1) * 6;
+                    item["y"] = y;
+                    activeNodes.push(item);
+                    activeLinks.push({
+                        source:root.id,
+                        target:item.id,
+                        volume_percent:0
+                    })
+                })
+                redraw();
+            } else {
+                common.events.emit("notify", {message:'이미 화면에 보여지고 있습니다.', type:'warning'});
+            }
+        },
         setRecommend:function(root,recommends,event) {
             var isExists = activeNodes.find(function(d) { return d.id === root.id});
             if(!isExists) {
@@ -455,49 +476,6 @@ common.view = (function() {
             } else {
                 common.events.emit("notify", {message:'이미 화면에 보여지고 있습니다.', type:'warning'});
             }
-        },
-        setRecommends:function(root,recommends) {
-            var grid_width = Math.ceil(Math.sqrt(root.length));
-            _.each(root, function(v,i) {
-                var root_x,  root_y;
-                
-                var grid_x = i % grid_width;
-                var grid_y = Math.floor(i / grid_width);
-                console.log(grid_x, grid_y);
-                root_x = (container_div.clientWidth/2) + container_div.clientWidth*grid_x;
-                root_y = (container_div.clientHeight/2) + container_div.clientHeight*grid_y;
-                v["x"] = root_x;
-                v["y"] = root_y;
-
-                activeNodes.push(v);
-
-                // var count = 0;
-                var node_width = Math.ceil(Math.sqrt(recommends[i].length));
-                _.each(recommends[i], function(item, index) {
-                    var node_x = index % node_width;
-                    var node_y = Math.floor(index / node_width);
-                    var x = (root_x + (node_size*6)) + (node_size * node_x * 6)
-                    var y = (root_y + (node_size*6)) + (node_size * node_y * 6)
-                    item["x"] = x;
-                    item["y"] = y;
-                    activeNodes.push(item);
-                    activeLinks.push({
-                        source:v.id,
-                        target:item.id,
-                        volume_percent:item.volume_percent
-                    })
-                })
-            });
-            redraw();
-            // var visual_box = vis.node().getBoundingClientRect();
-            // var kw = visual_box.width / container_div.clientWidth;
-            // var kh = visual_box.height / container_div.clientHeight;
-            // var k = d3.min([kw,kh]);
-            // var x = - visual_box.x * k;
-            // var y = - visual_box.y * k;
-            // var focusing = d3.zoomIdentity.translate(x,y).scale(k);
-            // outer_transform = focusing ;
-            // outer.transition().duration(1200).call(zoom.transform, focusing)
         },
         clear: function() {
             activeNodes = [];

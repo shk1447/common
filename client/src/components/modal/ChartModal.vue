@@ -21,6 +21,7 @@
         <div id="chart-modal-space"></div>
     </div>
     <div class="modal-footer">
+        <el-button size="mini" @click="onSetAlarm()">SET ALARM</el-button>
         <el-button size="mini" @click="onGotoChart()">GO TO CHART</el-button>
     </div>
 </modal>
@@ -39,6 +40,26 @@ export default {
     components:{
     },
     methods: {
+        onSetAlarm() {
+            var supstances = common.chart.getSupstances();
+            var rawdata = {};
+            supstances.map(function(v) {
+                rawdata[v.type] = v.value
+            })
+            rawdata["name"] = this.param.name;
+            var param = {
+                category: this.param.category,
+                email:sessionStorage.getItem('user'),
+                rawdata:rawdata,
+                favorite:true,
+                alarm:true
+            }
+            api.setFavorite(param).then(function(){
+                common.events.emit('message', {type:'success' , message:'저장 성공'})
+            }).catch(function(err) {
+                common.events.emit('message', {type:'fail' , message:'저장 실패'})
+            })
+        },
         show(d) {
             this.param = d;
             this.$modal.show('chart-modal');

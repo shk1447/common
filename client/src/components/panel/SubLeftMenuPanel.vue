@@ -5,10 +5,6 @@
             <!-- draggable :allow-drag="allowDrag" :allow-drop="allowDrop"  -->
         <span class="custom-tree-node" slot-scope="{ node, data }">
             <span><i :class="data.type === 'folder' ? 'fas fa-folder-plus' : (data.type === 'date' ? 'fas fa-calendar-alt' : (data.type === 'favorite' ? 'fas fa-star' : 'far fa-star'))"></i>   {{ node.label }}</span>
-            <!-- <span v-if="data.id !== 'fluid'">
-                <i class="el-icon-circle-plus-outline action" @click="append(data,$event)"></i>
-                <i v-if="data.id !== 'fluid'" class="el-icon-delete action" @click="remove(node,data,$event)"></i>
-            </span> -->
         </span>
     </el-tree>
 </div>
@@ -59,30 +55,19 @@ export default {
             return false;
         },
         allowDrag(node) {
-
             return true;
         },
-        check(node,nodes) {
+        refresh() {
+            console.log('refresh')
             var me = this;
-            me.$loading({});
-            common.view.clear();
-            var checked_list = nodes.checkedNodes.filter(function(d) { return d.type === 'date' });
-            var params = checked_list.map(function(d) { return {id : d.id, name:d.name,prev_id: d.prev_id}})
-            
-            if(params.length > 0) {
-                if(params.length < 4) {
-                    api.getRecommends(params).then(function(map) {
-                        common.view.setRecommends(params, map);
-                        me.$loading({}).close();
-                    })
-                } else {
-                    this.$refs.tree.setCheckedKeys([]);
-                    common.events.emit('message', {type:'warning' , message:'Too many checked!'})
-                    me.$loading({}).close();
-                }
-            } else {
-                me.$loading({}).close();
-            }
+            api.getDaily().then(function(data) {
+                me.data[0].children = data;
+                me.data[1].children =[{
+                    id:sessionStorage.getItem("user"),
+                    name: sessionStorage.getItem("user"),
+                    type:'favorite'
+                }]
+            })
         }
     },
     beforeCreate(){
@@ -95,15 +80,6 @@ export default {
 
     },
     mounted() {
-        var me = this;
-        api.getDaily().then(function(data) {
-            me.data[0].children = data;
-            me.data[1].children.push({
-                id:sessionStorage.getItem("user"),
-                name: sessionStorage.getItem("user"),
-                type:'favorite'
-            })
-        })
         console.log('mounted');
     },
     beforeUpdate() {

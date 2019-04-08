@@ -10,14 +10,15 @@ export default {
         }
     },
     created() {
-        console.log(this.$event);
         console.log('created')
     },
     mounted() {
         console.log('mounted')
     },
+    beforeDestroy() {
+        
+    },
     destroyed() {
-        this.$socket.disconnect();
         console.log('destroyed')
     }
 }

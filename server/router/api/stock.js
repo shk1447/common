@@ -20,7 +20,8 @@ module.exports = {
             })
         },
         "search" : function(req,res,next) {
-            khan.model.current_stock.selectByParam(req.query.id).then((data) => {
+            var session_user = req.session.passport.user._json.email;
+            khan.model.current_stock.selectJoinFavorite(req.query.id, session_user).then((data) => {
                 res.status(200).send(data);
             }).catch((err) => {
                 res.status(500).send(err);

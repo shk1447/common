@@ -1,7 +1,7 @@
 <template>
 <div :class="collapsed ? 'content-wrapper' : 'content-wrapper show'">
     <div class="toolbar-wrapper">
-        <div class="tool left">
+        <div class="tool left" v-if="init">
             <el-date-picker class="picker-custom"
             v-model="collection_date"
             type="date"
@@ -9,9 +9,9 @@
             placeholder="주가 분석날짜 선택">
             </el-date-picker>
         </div>
-        <div class="tool left">
-            <span style="font-size:1.2em;">
-                <i class="far fa-play-circle"></i>
+        <div class="tool left" @click="onStartCollection">
+            <span style="font-size:1em;color:#2a2a2e;">
+                <i :class="collection_status === 'stop' ? 'fas fa-play' : 'fas fa-pause'"></i>
             </span>
         </div>
         <div style="flex:1 1 100%; "></div>
@@ -35,21 +35,30 @@
 </template>
 
 <script>
+
+import moment from 'moment';
 import api from '../../api/api.js'
 import SubLeftMenuPanel from '../panel/SubLeftMenuPanel.vue';
 
 export default {
     data () {
         return {
+            init:true,
             open:false,
             collapsed:true,
-            collection_date:new Date()
+            collection_date:new Date(),
+            collection_status:'stop'
         }
     },
     components:{
         "sub-menu" :SubLeftMenuPanel
     },
     methods: {
+        onStartCollection() {
+            var param = {name:'stock',command:this.collection_status == 'stop' ? 'start':'stop'};
+            var data = {"broadcast":false,"target":"collection", "method":"execute", "parameters":param};
+            common.socket.emit('fromclient', data);
+        },
         dragover(e) {
             e.preventDefault();
         },
@@ -59,12 +68,21 @@ export default {
             me.$loading({})
             var transfer_data = e.dataTransfer.getData("node");
             var data = JSON.parse(transfer_data);
-            api.getRecommend(data).then(function(map) {
+            if(data.type === 'date') {
+                api.getRecommend(data).then(function(map) {
                 common.view.setRecommend(data, map, e);
-                me.$loading({}).close();
-            }).catch(function(err) {
-                me.$loading({}).close();
-            })
+                    me.$loading({}).close();
+                }).catch(function(err) {
+                    me.$loading({}).close();
+                })
+            } else {
+                api.getFavorite(sessionStorage.getItem('user')).then(function(map) {
+                    common.view.setFavorite(data,map,e);
+                    me.$loading({}).close();
+                }).catch(function(err) {
+                    me.$loading({}).close();
+                })
+            }
         },
         onFullScreen() {
             if(document.webkitIsFullScreen) {
@@ -78,7 +96,21 @@ export default {
             me.open = !me.open;
         },
         onChangeDate() {
-            console.log(this.collection_date);
+            var date_text = moment(this.collection_date).format("YYYY-MM-DD")
+            var param = {
+                "target":"collection",
+                "method":"modify",
+                "parameters":{
+                    "name":"stock",
+                    "module_name":"Finance.dll",
+                    "method_name":"CurrentStockInformation",
+                    "action_type":"once",
+                    "options":{
+                        "date":date_text
+                    }
+                }
+            };
+            common.socket.emit('fromclient', param);
         }
     },
     beforeCreate(){
@@ -94,9 +126,47 @@ export default {
         var me = this;
         console.log('mounted');
         common.view.init('view-space');
-        // setTimeout(function() {
-        //     me.$loading({}).close();
-        // },500)
+        common.socket.connect().then(function(data) {
+            console.log('connected');
+            common.socket.on('collection.execute', function(data) {
+                var data = {"broadcast":true,"target":"collection", "method":"getlist", "parameters":{}};
+                common.socket.emit('fromclient', data);
+            })
+            common.socket.on('collection.modify', function(data) {
+                var data = {"broadcast":true,"target":"collection", "method":"getlist", "parameters":{}};
+                common.socket.emit('fromclient', data);
+            })
+            common.socket.on('collection.getlist', function(data) {
+                if(data.result.length > 0) {
+                    me.init = true;
+                    me.collection_date = JSON.parse(data.result[0].options).date
+                    me.collection_status = data.result[0].status;
+                    me.$refs.sub_menu.refresh();
+                } else {
+                    me.init = false;
+                    var param = {
+                        "target":"collection",
+                        "method":"create",
+                        "parameters":{
+                            "name":"stock",
+                            "module_name":"Finance.dll",
+                            "method_name":"AllStockInformation",
+                            "action_type":"once"
+                        }
+                    }
+                    common.socket.emit('fromclient', param);
+                }
+            })
+            
+            me.$nextTick(function(){
+                console.log('testtest');
+                var data = {"broadcast":false,"target":"collection", "method":"getlist", "parameters":{}};
+                common.socket.emit('fromclient', data);
+            })
+        }).catch(function(err) {
+            console.log(err);
+        })
+
     },
     beforeUpdate() {
 
@@ -105,6 +175,8 @@ export default {
 
     },
     beforeDestroy() {
+        common.socket.off('collection.modify').off('collection.getlist');
+        common.socket.disconnect();
         common.view.uninit();
     },
     destroyed() {
