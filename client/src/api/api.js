@@ -1,6 +1,12 @@
 import http from "../core/utils/http.js";
 
 export default {
+    getFavoriteView: function(email,date) {
+        var url = "/favorite/view?email=" + email + "&date=" + date;
+        return http.get(url).then(function(res) {
+            return res;
+        })
+    },
     getFavorite: function(email) {
         var url = "/favorite/list?email=" + email;
         return http.get(url).then(function(res) {

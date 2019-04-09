@@ -11,6 +11,18 @@ module.exports = {
             }).catch((err) => {
                 res.status(500).send();
             })
+        },
+        "view": function(req,res,next) {
+            khan.model.favorite.selectForView({email:req.query.email, date:req.query.date}).then((rows) => {
+                rows = rows.map((d) => {
+                    d.total_state = d.total_state.split(',');
+                    d.current_state = d.current_state.split(',');
+                    return d;
+                })
+                res.status(200).send(rows);
+            }).catch((err) => {
+                res.status(500).send();
+            })
         }
     },
     post: {

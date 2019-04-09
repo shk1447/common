@@ -48,7 +48,7 @@ export default {
             })
             rawdata["name"] = this.param.name;
             var param = {
-                category: this.param.category,
+                category: this.param.id,
                 email:sessionStorage.getItem('user'),
                 rawdata:rawdata,
                 favorite:true,

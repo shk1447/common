@@ -201,22 +201,22 @@ common.view = (function() {
             node.w = node_size;
             node.h = node_size;
             
-            if(/*!d.status*/ false) {
+            if(d.status) {
                 var anim_alarm = node.append("circle")
                                 .attr("r", node_size)
                                 .attr("fill", "rgba(255,0,0,0)")
-                                .style("stroke", "red")
+                                .style("stroke", d.status > 0 ? "red" : 'blue')
                                 .style("stroke-width", 0)
                 var anim_alarm2 = node.append("circle")
                                 .attr("r", node_size)
                                 .attr("fill", "rgba(255,0,0,0)")
-                                .style("stroke", "red")
+                                .style("stroke", d.status > 0 ? "red" : 'blue')
                                 .style("stroke-width", 0)
                 
                 var anim_alarm3 = node.append("circle")
                                 .attr("r", node_size)
                                 .attr("fill", "rgba(255,0,0,0)")
-                                .style("stroke", "red")
+                                .style("stroke", d.status > 0 ? "red" : 'blue')
                                 .style("stroke-width", 0)
 
                 function repeat() {
@@ -259,7 +259,24 @@ common.view = (function() {
             }
             d.node.style("cursor", "pointer")
                 .attr("class", "node")
-                .attr("fill",function(d) { return node_type[d.type] ? node_type[d.type].color : 'rgb(166, 187, 207)' })
+                .attr("fill",function(d) { 
+                    var color = 'rgb(166, 187, 207)';
+                    if(d.total_status === "상승") {
+                        color = 'rgb(200, 150, 150, 0.9)';
+                    } else if(d.total_status === "하락") {
+                        color = 'rgb(150, 150, 200, 0.9)';
+                    }
+                    return color;
+                })
+                .attr('stroke', function(d) {
+                    var color = '#999';
+                    if(d.last_state === "상승") {
+                        color = 'red'
+                    } else if(d.last_state === "하락") {
+                        color = 'blue'
+                    }
+                    return color;
+                })
             
             // var icon_url = "/icons/server.svg";
             
@@ -281,6 +298,7 @@ common.view = (function() {
                 d.node.classed('selected', false)
                 d.node.attr('filter', null );
             }
+            console.log(thisNode);
         });
 
         var link = link_group.selectAll(".link").data(activeLinks, function(d) { return d.source+":"+d.target });
@@ -442,18 +460,55 @@ common.view = (function() {
                 _.each(favorites, function(item,index) {
                     item["x"] = x + node_size * (index + 1) * 6;
                     item["y"] = y;
+                    var status = 0;
+                    var prev_state;
+                    item.current_state.forEach(function(d, i) {
+                        if(prev_state) {
+                            if(prev_state === "하락" && d === "상승") {
+                                status++;
+                            } else if(prev_state === "상승" && d === "하락") {
+                                status--;
+                            }
+                        }
+                        prev_state = d;
+                        item["total_status"] = item["total_state"][i];
+                    });
+                    item["status"] = status;
+                    item["last_state"] = prev_state;
                     if(!activeNodes.find(function(d) { return d.id === item.id})) {
                         activeNodes.push(item);
                     }
                     activeLinks.push({
                         source:root.id,
                         target:item.id,
-                        volume_percent:0
+                        volume_percent:status
                     })
                 })
                 redraw();
             } else {
-                common.events.emit("notify", {message:'이미 화면에 보여지고 있습니다.', type:'warning'});
+                _.each(favorites, function(item,index) {
+                    var status = 0;
+                    var prev_state;
+                    item.current_state.forEach(function(d) {
+                        if(prev_state) {
+                            if(prev_state === "하락" && d === "상승") {
+                                status++;
+                            } else if(prev_state === "상승" && d === "하락") {
+                                status--;
+                            }
+                        }
+                        prev_state = d;
+                    });
+                    item["status"] = status;
+                    item["last_state"] = prev_state;
+                    activeNodes.forEach(function(d) {
+                        if(d.id === item.id) {
+                            d.status = item.status;
+                            d.last_state = item.last_state
+                        }
+                    });
+                })
+                redraw();
             }
         },
         setRecommend:function(root,recommends,event) {

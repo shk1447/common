@@ -76,7 +76,7 @@ export default {
                     me.$loading({}).close();
                 })
             } else {
-                api.getFavorite(sessionStorage.getItem('user')).then(function(map) {
+                api.getFavoriteView(sessionStorage.getItem('user'), moment(this.collection_date).format("YYYY-MM-DD")).then(function(map) {
                     common.view.setFavorite(data,map,e);
                     me.$loading({}).close();
                 }).catch(function(err) {
@@ -139,7 +139,8 @@ export default {
             common.socket.on('collection.getlist', function(data) {
                 if(data.result.length > 0) {
                     me.init = true;
-                    me.collection_date = data.result[0].options.date
+                    me.collection_date = typeof data.result[0].options === 'object' ? data.result[0].options.date : 
+                    (JSON.parse(data.result[0].options).date.includes("Invalid") ? new Date() :JSON.parse(data.result[0].options).date);
                     me.collection_status = data.result[0].status;
                     me.$refs.sub_menu.refresh();
                 } else {
@@ -212,7 +213,6 @@ export default {
 }
 
 .node {
-    stroke:#999;
     cursor:move;
 }
 
