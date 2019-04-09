@@ -39,11 +39,12 @@
 import moment from 'moment';
 import api from '../../api/api.js'
 import SubLeftMenuPanel from '../panel/SubLeftMenuPanel.vue';
+import { setTimeout } from 'timers';
 
 export default {
     data () {
         return {
-            init:true,
+            init:false,
             open:false,
             collapsed:true,
             collection_date:new Date(),
@@ -111,6 +112,24 @@ export default {
                 }
             };
             common.socket.emit('fromclient', param);
+        },
+        autoAnalysis() {
+            this.collection_date = moment(this.collection_date).add(1, 'day');
+            var date_text = moment(this.collection_date).format("YYYY-MM-DD")
+            var param = {
+                "target":"collection",
+                "method":"modify",
+                "parameters":{
+                    "name":"stock",
+                    "module_name":"Finance.dll",
+                    "method_name":"CurrentStockInformation",
+                    "action_type":"once",
+                    "options":{
+                        "date":date_text
+                    }
+                }
+            };
+            common.socket.emit('fromclient', param);
         }
     },
     beforeCreate(){
@@ -128,6 +147,14 @@ export default {
         common.view.init('view-space');
         common.socket.connect().then(function(data) {
             console.log('connected');
+            common.socket.on('collection.complete', function(data) {
+                me.autoAnalysis();
+                if(this.collection_date <= new Date()) {
+                    setTimeout(function(){
+                        me.onStartCollection();
+                    },500)
+                }
+            })
             common.socket.on('collection.execute', function(data) {
                 var data = {"broadcast":true,"target":"collection", "method":"getlist", "parameters":{}};
                 common.socket.emit('fromclient', data);
@@ -138,11 +165,16 @@ export default {
             })
             common.socket.on('collection.getlist', function(data) {
                 if(data.result.length > 0) {
-                    me.init = true;
-                    me.collection_date = typeof data.result[0].options === 'object' ? data.result[0].options.date : 
-                    (JSON.parse(data.result[0].options).date.includes("Invalid") ? new Date() :JSON.parse(data.result[0].options).date);
-                    me.collection_status = data.result[0].status;
-                    me.$refs.sub_menu.refresh();
+                    if(data.result[0].method_name === "CurrentStockInformation") {
+                        me.init = true;
+                        me.collection_date = typeof data.result[0].options === 'object' ? data.result[0].options.date : 
+                        (JSON.parse(data.result[0].options).date.includes("Invalid") ? new Date() :JSON.parse(data.result[0].options).date);
+                        me.collection_status = data.result[0].status;
+                        me.$refs.sub_menu.refresh();
+                    } else {
+                        me.init = true;
+                        me.collection_status = data.result[0].status;
+                    }
                 } else {
                     me.init = false;
                     var param = {
