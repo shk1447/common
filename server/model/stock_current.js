@@ -21,7 +21,6 @@ function CurrentStock() {
         unixtime : {
             type : 'timestamp',
             length: 6,
-            unique: true,
             index : ["idx_columns","idx_unixtime"],
             default : khan.database.fn.now()
         }
