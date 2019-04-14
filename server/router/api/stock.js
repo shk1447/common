@@ -38,7 +38,12 @@ module.exports = {
     post: {
         "recommend" : function(req,res,next) {
             khan.model.past_stock.selectRecommend(req.body).then((data) => {
-                res.status(200).send(data[0]);
+                var rows = data[0].map((d) => {
+                    d.total_state = d.total_state.split(',');
+                    d.current_state = d.current_state.split(',');
+                    return d;
+                })
+                res.status(200).send(rows);
             }).catch((err) => {
                 res.status(500).send(err);
             })

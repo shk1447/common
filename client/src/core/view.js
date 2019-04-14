@@ -298,7 +298,6 @@ common.view = (function() {
                 d.node.classed('selected', false)
                 d.node.attr('filter', null );
             }
-            console.log(thisNode);
         });
 
         var link = link_group.selectAll(".link").data(activeLinks, function(d) { return d.source+":"+d.target });
@@ -485,30 +484,6 @@ common.view = (function() {
                     })
                 })
                 redraw();
-            } else {
-                _.each(favorites, function(item,index) {
-                    var status = 0;
-                    var prev_state;
-                    item.current_state.forEach(function(d) {
-                        if(prev_state) {
-                            if(prev_state === "하락" && d === "상승") {
-                                status++;
-                            } else if(prev_state === "상승" && d === "하락") {
-                                status--;
-                            }
-                        }
-                        prev_state = d;
-                    });
-                    item["status"] = status;
-                    item["last_state"] = prev_state;
-                    activeNodes.forEach(function(d) {
-                        if(d.id === item.id) {
-                            d.status = item.status;
-                            d.last_state = item.last_state
-                        }
-                    });
-                })
-                redraw();
             }
         },
         setRecommend:function(root,recommends,event) {
@@ -522,6 +497,22 @@ common.view = (function() {
                 _.each(recommends, function(item,index) {
                     item["x"] = x + node_size * (index + 1) * 6;
                     item["y"] = y;
+                    var status = 0;
+                    var prev_state;
+                    item.current_state.forEach(function(d, i) {
+                        if(prev_state) {
+                            if(prev_state === "하락" && d === "상승") {
+                                status++;
+                            } else if(prev_state === "상승" && d === "하락") {
+                                status--;
+                            }
+                        }
+                        prev_state = d;
+                        item["total_status"] = item["total_state"][i];
+                    });
+                    item["status"] = status;
+                    item["last_state"] = prev_state;
+
                     if(!activeNodes.find(function(d) { return d.id === item.id})) {
                         activeNodes.push(item);
                     }

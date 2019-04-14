@@ -71,7 +71,7 @@ export default {
             var data = JSON.parse(transfer_data);
             if(data.type === 'date') {
                 api.getRecommend(data).then(function(map) {
-                common.view.setRecommend(data, map, e);
+                    common.view.setRecommend(data, map, e);
                     me.$loading({}).close();
                 }).catch(function(err) {
                     me.$loading({}).close();
