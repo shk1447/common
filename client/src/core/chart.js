@@ -69,6 +69,7 @@ common.chart = (function() {
         var result_money2 = 0;
         var loss_moeny = 0;
         var result_volume = 0;
+        var result_volume2 = 0;
         var end_date = end_date ? new Date(end_date) : new Date();
         data = data.map(function(d) {
             if(prev_datum) {
@@ -79,15 +80,16 @@ common.chart = (function() {
                         trades.push({date:parseDate(d.unixtime), type:'buy', price:d.Low, quantity:1})
                         //supstanceData.push({value:(up_price+down_price)/2, type:'support'});
                         //supstanceData.push({value:(up_price+down_price)/2});
-                    }
-                    if((prev_datum.current_state === '하락' && d.current_state === '상승') || ((prev_datum.total_state === '횡보' || prev_datum.total_state === '하락') && d.total_state === '상승')) {
-                        var up_price = (d.High + d.Close) / 2;
-                        var down_price = (((d.High + d.Low) / 2) + ((d.Close + d.Low) / 2)) /2;
+                        var down_price = ((d.High + d.Low) / 2);
                         var low_price = d.Low;
-                        result_money2 += up_price * d.Volume;
                         result_money += down_price * d.Volume;
                         loss_moeny += low_price * d.Volume;
                         result_volume += d.Volume;
+                    }
+                    if((prev_datum.current_state === '하락' && d.current_state === '상승')) {
+                        var up_price = (d.Low + d.Close) / 2;
+                        result_money2 += up_price * d.Volume;
+                        result_volume2 += d.Volume;
                     }
                     if(prev_datum.current_state === '상승' && d.total_state === '하락' && d.current_state === '하락') {
                         trades.push({date:parseDate(d.unixtime), type:'sell', price:d.High, quantity:1})
@@ -106,7 +108,7 @@ common.chart = (function() {
             };
         }).sort(function(a, b) { return d3.ascending(accessor.d(a), accessor.d(b)); });
         supstanceData.push({value:result_money / result_volume, type:'support'})
-        supstanceData.push({value:result_money2 / result_volume, type:'regist'})
+        supstanceData.push({value:result_money2 / result_volume2, type:'regist'})
         supstanceData.push({value:loss_moeny / result_volume, type:'loss'})
         
 
