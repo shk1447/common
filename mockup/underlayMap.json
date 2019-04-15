@@ -1,0 +1,659 @@
+{
+  "LEAF_SWITCH" : [ {
+    "opCodeType" : "LIST",
+    "fluidObjectType" : "LEAF_SWITCH",
+    "links" : null,
+    "ports" : [ {
+      "uuid" : "29d988a0-90cc-3f6c-b0ad-b0e4aed5cac2",
+      "name" : "port-12",
+      "status" : "UP"
+    }, {
+      "uuid" : "7c500a37-e708-3cb2-b4ea-c8bc4032a8f4",
+      "name" : "port-2",
+      "status" : "UP"
+    }, {
+      "uuid" : "0a9c8cb1-a3f3-32bd-afb0-141924584da4",
+      "name" : "port-8",
+      "status" : "UP"
+    }, {
+      "uuid" : "f54fa66c-8556-3cb5-a93b-3a0c69193b36",
+      "name" : "port-5",
+      "status" : "UP"
+    }, {
+      "uuid" : "acbf7933-6c30-32df-a6b0-171b416bbd56",
+      "name" : "port-3",
+      "status" : "UP"
+    }, {
+      "uuid" : "2819c95a-9e61-3ef6-9b22-32ec253d9477",
+      "name" : "port-7",
+      "status" : "UP"
+    }, {
+      "uuid" : "a4bf12b5-120b-3f3c-9aef-b44eb21863fe",
+      "name" : "port-1",
+      "status" : "UP"
+    }, {
+      "uuid" : "dd6c08f0-57fe-3d6a-8110-078de0cb8d13",
+      "name" : "port-10",
+      "status" : "UP"
+    }, {
+      "uuid" : "241a57e4-fb5c-3c72-bbc4-773d9db178bf",
+      "name" : "port-20",
+      "status" : "UP"
+    }, {
+      "uuid" : "be46d913-d674-3775-b7fa-030be149ca0b",
+      "name" : "port-4",
+      "status" : "UP"
+    }, {
+      "uuid" : "dc14185b-bd53-369b-bc49-d0bbbd771bf9",
+      "name" : "port-6",
+      "status" : "UP"
+    }, {
+      "uuid" : "c4489abf-c02a-30ec-b5b3-fd2ec8503a7f",
+      "name" : "port-13",
+      "status" : "UP"
+    }, {
+      "uuid" : "7e981724-5eb2-3eb5-aa38-85518162b7d9",
+      "name" : "port-24",
+      "status" : "UP"
+    }, {
+      "uuid" : "96e41ac0-7f5f-3f54-8c8e-f11e5fdaa208",
+      "name" : "port-19",
+      "status" : "UP"
+    }, {
+      "uuid" : "8b82382f-8a27-3b44-a2f3-e5112cf4b94d",
+      "name" : "port-21",
+      "status" : "UP"
+    }, {
+      "uuid" : "bfc0b25f-ec58-30cc-9263-c862f639c86f",
+      "name" : "port-23",
+      "status" : "UP"
+    }, {
+      "uuid" : "a4ebf667-2de5-3020-afe4-6a78c04933f9",
+      "name" : "port-15",
+      "status" : "UP"
+    }, {
+      "uuid" : "89abbfa7-9971-3d62-ab09-7ce9330d2339",
+      "name" : "port-0",
+      "status" : "UP"
+    }, {
+      "uuid" : "64c970d8-eca4-3eeb-8bf5-2e55120e6791",
+      "name" : "port-22",
+      "status" : "UP"
+    }, {
+      "uuid" : "9e454384-f594-32b4-a658-0f93dbb783eb",
+      "name" : "port-18",
+      "status" : "UP"
+    }, {
+      "uuid" : "11053912-19e2-3e1e-b64c-cc9edf1084f0",
+      "name" : "port-9",
+      "status" : "UP"
+    }, {
+      "uuid" : "0d9a1a61-a165-3085-b25c-bc5774cb6b1f",
+      "name" : "port-17",
+      "status" : "UP"
+    }, {
+      "uuid" : "5eeeb665-2ada-3a34-a173-1cd1113c0071",
+      "name" : "port-11",
+      "status" : "UP"
+    }, {
+      "uuid" : "3f33ef79-2813-3f3f-8319-167bf93b698a",
+      "name" : "port-16",
+      "status" : "UP"
+    }, {
+      "uuid" : "db2026c5-9a80-38da-96f5-55c2132833b7",
+      "name" : "port-14",
+      "status" : "UP"
+    } ],
+    "uuid" : "aa8f484a-8421-37f4-89c9-713602d2129b",
+    "name" : "leafSwitch4",
+    "status" : "ACTIVE",
+    "desc" : null
+  }, {
+    "opCodeType" : "LIST",
+    "fluidObjectType" : "LEAF_SWITCH",
+    "links" : null,
+    "ports" : [ {
+      "uuid" : "f3214370-ecc0-3db4-aedd-0c1773297435",
+      "name" : "port-7",
+      "status" : "UP"
+    }, {
+      "uuid" : "6b483b58-6874-3bb9-915a-6dd395818e54",
+      "name" : "port-15",
+      "status" : "UP"
+    }, {
+      "uuid" : "42be68a6-7e68-3146-810d-7bf88a36405b",
+      "name" : "port-2",
+      "status" : "UP"
+    }, {
+      "uuid" : "4a875430-33fa-3896-944e-0c3280bc9ec9",
+      "name" : "port-22",
+      "status" : "UP"
+    }, {
+      "uuid" : "f6045d15-f081-38ed-9a92-6babd0ba6aa3",
+      "name" : "port-4",
+      "status" : "UP"
+    }, {
+      "uuid" : "ad97406f-646d-364a-8d6c-0c6d5202df21",
+      "name" : "port-19",
+      "status" : "UP"
+    }, {
+      "uuid" : "01bd3a71-c187-3104-86fc-a7a579376a8e",
+      "name" : "port-3",
+      "status" : "UP"
+    }, {
+      "uuid" : "84f1cf28-ec09-37ea-b8c5-ed46ec14fa45",
+      "name" : "port-24",
+      "status" : "UP"
+    }, {
+      "uuid" : "e966af08-3963-3e3d-aa18-f93e0c4d1be9",
+      "name" : "port-1",
+      "status" : "UP"
+    }, {
+      "uuid" : "7ce225c1-94b0-3dde-b93c-50acaf61a13e",
+      "name" : "port-10",
+      "status" : "UP"
+    }, {
+      "uuid" : "27fde0a9-0dd9-3d37-9c12-2084e05a8529",
+      "name" : "port-5",
+      "status" : "UP"
+    }, {
+      "uuid" : "4bf3298a-9d6b-370d-93ec-5238423abd34",
+      "name" : "port-21",
+      "status" : "UP"
+    }, {
+      "uuid" : "d8e8e95a-b0fd-35e4-ab6f-582aa9dc3e02",
+      "name" : "port-12",
+      "status" : "UP"
+    }, {
+      "uuid" : "a48ab704-32a3-3ca3-b86a-5ed52a83098a",
+      "name" : "port-23",
+      "status" : "UP"
+    }, {
+      "uuid" : "a91f9200-e5c8-351b-9e91-2b5fed63dbf0",
+      "name" : "port-0",
+      "status" : "UP"
+    }, {
+      "uuid" : "65b84afe-7cb8-37b1-a5db-627c22795431",
+      "name" : "port-9",
+      "status" : "UP"
+    }, {
+      "uuid" : "64cc9f8e-5944-3e65-8134-fc00999338df",
+      "name" : "port-8",
+      "status" : "UP"
+    }, {
+      "uuid" : "fa5eed2a-dd4f-316f-b02f-5dd2304bdf7d",
+      "name" : "port-17",
+      "status" : "UP"
+    }, {
+      "uuid" : "1a78a90b-343a-3e70-be9f-af97625c201b",
+      "name" : "port-18",
+      "status" : "UP"
+    }, {
+      "uuid" : "bed677bb-02ab-3248-b5d6-fb8649bee821",
+      "name" : "port-6",
+      "status" : "UP"
+    }, {
+      "uuid" : "770a14ed-0ee1-330e-8d6d-f86b476bb667",
+      "name" : "port-13",
+      "status" : "UP"
+    }, {
+      "uuid" : "aefd9585-5011-3bc7-8cc1-30df928562ab",
+      "name" : "port-20",
+      "status" : "UP"
+    }, {
+      "uuid" : "b27b903a-639e-3311-9386-595ecade2978",
+      "name" : "port-11",
+      "status" : "UP"
+    }, {
+      "uuid" : "f30d8ab6-16bc-3669-aeb0-163c7e09f2da",
+      "name" : "port-16",
+      "status" : "UP"
+    }, {
+      "uuid" : "170b7efc-2b35-3d36-bc0f-cfa317487a9c",
+      "name" : "port-14",
+      "status" : "UP"
+    } ],
+    "uuid" : "6a46a6a4-1452-37a8-acfd-e71043e3a276",
+    "name" : "leafSwitch1",
+    "status" : "ACTIVE",
+    "desc" : null
+  }, {
+    "opCodeType" : "LIST",
+    "fluidObjectType" : "LEAF_SWITCH",
+    "links" : null,
+    "ports" : [ {
+      "uuid" : "8558c419-5418-305e-b14e-64cf8ed9181d",
+      "name" : "port-18",
+      "status" : "UP"
+    }, {
+      "uuid" : "31d3f7d8-7673-35a1-b7c5-ddce77494b56",
+      "name" : "port-6",
+      "status" : "UP"
+    }, {
+      "uuid" : "271b5b8a-e0bb-371b-a4ad-3ec713aaff6b",
+      "name" : "port-13",
+      "status" : "UP"
+    }, {
+      "uuid" : "50217c9a-d674-3351-bd8c-4acc6588ebf3",
+      "name" : "port-12",
+      "status" : "UP"
+    }, {
+      "uuid" : "d9faab76-c600-3597-aadb-582936f045b5",
+      "name" : "port-17",
+      "status" : "UP"
+    }, {
+      "uuid" : "ad91ba50-a43d-3790-9517-b1a406778c51",
+      "name" : "port-0",
+      "status" : "UP"
+    }, {
+      "uuid" : "86a65ff6-91f8-345f-b13a-cc963cbebc00",
+      "name" : "port-23",
+      "status" : "UP"
+    }, {
+      "uuid" : "88883a31-23d7-3ed0-97c1-7e675169135a",
+      "name" : "port-9",
+      "status" : "UP"
+    }, {
+      "uuid" : "8cfa4e08-5cd2-3499-92ab-ae81320cffc7",
+      "name" : "port-2",
+      "status" : "UP"
+    }, {
+      "uuid" : "8e278ca7-3205-32ef-a399-47b2846394a8",
+      "name" : "port-5",
+      "status" : "UP"
+    }, {
+      "uuid" : "dbe3a288-0791-317e-897a-c213f8cd3056",
+      "name" : "port-19",
+      "status" : "UP"
+    }, {
+      "uuid" : "085b16a8-1fbe-31a3-b82f-d1e27be3240a",
+      "name" : "port-22",
+      "status" : "UP"
+    }, {
+      "uuid" : "2cb18f62-ad9e-35ce-918d-afc18bdd8b2d",
+      "name" : "port-14",
+      "status" : "UP"
+    }, {
+      "uuid" : "2a6190a7-1905-3420-bf48-c9c2247274c4",
+      "name" : "port-11",
+      "status" : "UP"
+    }, {
+      "uuid" : "230c6505-7476-3698-89c4-7163465a4800",
+      "name" : "port-24",
+      "status" : "UP"
+    }, {
+      "uuid" : "8eeadd29-096f-30ba-9471-3329cb798f32",
+      "name" : "port-10",
+      "status" : "UP"
+    }, {
+      "uuid" : "8e0486d9-ce2e-3e9a-9cac-a0f96e21dbe1",
+      "name" : "port-20",
+      "status" : "UP"
+    }, {
+      "uuid" : "ea1ba0fa-13f9-3fa8-82c9-b5744edbaa2a",
+      "name" : "port-7",
+      "status" : "UP"
+    }, {
+      "uuid" : "4fe5e314-edc6-3bca-890c-9cfa2b2767c0",
+      "name" : "port-1",
+      "status" : "UP"
+    }, {
+      "uuid" : "00e73702-b2d4-3504-bd0b-ac2cbc227d65",
+      "name" : "port-4",
+      "status" : "UP"
+    }, {
+      "uuid" : "021f2fdc-986c-3a72-9498-2103a15a6979",
+      "name" : "port-3",
+      "status" : "UP"
+    }, {
+      "uuid" : "7fa52662-1924-33d7-98ae-6ac1a7693cde",
+      "name" : "port-8",
+      "status" : "UP"
+    }, {
+      "uuid" : "21918569-4fd0-304e-a808-b8afdbc67de1",
+      "name" : "port-15",
+      "status" : "UP"
+    }, {
+      "uuid" : "4f9da5af-6c2b-362e-bd9c-5eaf211bfa6d",
+      "name" : "port-16",
+      "status" : "UP"
+    }, {
+      "uuid" : "ea262c61-a425-3c20-a7c2-ee03e5f02ad1",
+      "name" : "port-21",
+      "status" : "UP"
+    } ],
+    "uuid" : "6aeae855-730c-3692-826d-d2a476a0df75",
+    "name" : "leafSwitch3",
+    "status" : "ACTIVE",
+    "desc" : null
+  }, {
+    "opCodeType" : "LIST",
+    "fluidObjectType" : "LEAF_SWITCH",
+    "links" : null,
+    "ports" : [ {
+      "uuid" : "27d47b73-204b-31e5-a846-069461cc3666",
+      "name" : "port-7",
+      "status" : "UP"
+    }, {
+      "uuid" : "e554bde4-2fa2-3cc4-a4c7-1abf176ac10c",
+      "name" : "port-16",
+      "status" : "UP"
+    }, {
+      "uuid" : "93babae1-ada0-38c4-bc59-ef1646dc6d70",
+      "name" : "port-19",
+      "status" : "UP"
+    }, {
+      "uuid" : "69529a42-dbfb-34d3-aec9-ab715aef2c80",
+      "name" : "port-11",
+      "status" : "UP"
+    }, {
+      "uuid" : "5e3c0c06-a4a5-31e1-82ff-e98d62f48791",
+      "name" : "port-1",
+      "status" : "UP"
+    }, {
+      "uuid" : "70dbd302-15c4-34ee-b8a4-49cf5742da60",
+      "name" : "port-13",
+      "status" : "UP"
+    }, {
+      "uuid" : "ba5e1aab-984b-3066-8b59-e18d4ce50ea2",
+      "name" : "port-14",
+      "status" : "UP"
+    }, {
+      "uuid" : "331f7773-f70b-385d-b251-a28fa1f25894",
+      "name" : "port-18",
+      "status" : "UP"
+    }, {
+      "uuid" : "d117bb6f-9f82-3e6a-8ac8-96db39f38d64",
+      "name" : "port-15",
+      "status" : "UP"
+    }, {
+      "uuid" : "509ede37-2060-3301-aafd-d09808b11a57",
+      "name" : "port-9",
+      "status" : "UP"
+    }, {
+      "uuid" : "24c3d8bb-f11d-32f0-969c-746d6766c8bc",
+      "name" : "port-3",
+      "status" : "UP"
+    }, {
+      "uuid" : "eafb5ee1-fd32-3c25-8064-f6eee399475c",
+      "name" : "port-20",
+      "status" : "UP"
+    }, {
+      "uuid" : "96de13a0-ef85-3bba-a422-f764066f2807",
+      "name" : "port-23",
+      "status" : "UP"
+    }, {
+      "uuid" : "950b1b2d-582c-3b44-99b8-69ca9454f3bf",
+      "name" : "port-22",
+      "status" : "UP"
+    }, {
+      "uuid" : "05518be7-20cd-3309-99ff-6c1dafbb2cc2",
+      "name" : "port-0",
+      "status" : "UP"
+    }, {
+      "uuid" : "db8ae391-8ed7-3aec-841c-d3a9236a59fd",
+      "name" : "port-10",
+      "status" : "UP"
+    }, {
+      "uuid" : "d6fbf303-ee92-367a-930c-3dd76943ebc2",
+      "name" : "port-6",
+      "status" : "UP"
+    }, {
+      "uuid" : "771c9dbc-38b7-311e-a2f3-690e030cd92b",
+      "name" : "port-24",
+      "status" : "UP"
+    }, {
+      "uuid" : "bd78970f-b590-3e2f-8cc9-52f85fcdc3f5",
+      "name" : "port-21",
+      "status" : "UP"
+    }, {
+      "uuid" : "f7fdc5c0-48b3-374d-9fb4-d1c47d8bb209",
+      "name" : "port-5",
+      "status" : "UP"
+    }, {
+      "uuid" : "ecc7afe6-f7fa-364d-a0be-46977b7f3470",
+      "name" : "port-2",
+      "status" : "UP"
+    }, {
+      "uuid" : "9f977237-c655-39c5-87a5-62d160449ab7",
+      "name" : "port-4",
+      "status" : "UP"
+    }, {
+      "uuid" : "a5636395-4d47-34ef-8c0a-1d94e22bf01e",
+      "name" : "port-12",
+      "status" : "UP"
+    }, {
+      "uuid" : "954cc87b-8d56-3119-806f-1eeb8d06d901",
+      "name" : "port-17",
+      "status" : "UP"
+    }, {
+      "uuid" : "37a576a0-f6f6-32ff-99ef-a66a1196ae0a",
+      "name" : "port-8",
+      "status" : "UP"
+    } ],
+    "uuid" : "37829098-e87a-3702-a848-aeb234be00df",
+    "name" : "leafSwitch2",
+    "status" : "ACTIVE",
+    "desc" : null
+  } ],
+  "SERVER" : [ ],
+  "SPINE_SWITCH" : [ {
+    "opCodeType" : "LIST",
+    "fluidObjectType" : "SPINE_SWITCH",
+    "links" : null,
+    "ports" : [ {
+      "uuid" : "e8a9d5ae-f116-340f-b312-9d0d0c1191a5",
+      "name" : "port-9",
+      "status" : "UP"
+    }, {
+      "uuid" : "2f7865f2-056d-3e43-9045-6fe74d8db717",
+      "name" : "port-16",
+      "status" : "UP"
+    }, {
+      "uuid" : "f9b84147-dec7-3541-92fb-e80da11fe929",
+      "name" : "port-0",
+      "status" : "UP"
+    }, {
+      "uuid" : "864c2ccb-5365-38df-bcac-7e7602f7d0fa",
+      "name" : "port-14",
+      "status" : "UP"
+    }, {
+      "uuid" : "f5779b7c-738c-301b-96a8-7cddc456bd7b",
+      "name" : "port-17",
+      "status" : "UP"
+    }, {
+      "uuid" : "d318a726-28fc-318d-9d9e-f9e2b4c46c4a",
+      "name" : "port-13",
+      "status" : "UP"
+    }, {
+      "uuid" : "97756f0d-5b99-36a6-8610-d1e75fc8edf0",
+      "name" : "port-7",
+      "status" : "UP"
+    }, {
+      "uuid" : "9afe01f9-1de8-37ce-a56d-bedef7dc0ac4",
+      "name" : "port-21",
+      "status" : "UP"
+    }, {
+      "uuid" : "6e3c0baf-869d-3773-9471-8c46c6fd7c7c",
+      "name" : "port-8",
+      "status" : "UP"
+    }, {
+      "uuid" : "aaa2a0fa-dcc3-32d8-afb4-8f8816d1741c",
+      "name" : "port-23",
+      "status" : "UP"
+    }, {
+      "uuid" : "7c93d11e-2e26-3d20-adfc-c8b3231b53d3",
+      "name" : "port-15",
+      "status" : "UP"
+    }, {
+      "uuid" : "c31f98a2-5236-39f8-8da3-bbe27758b14f",
+      "name" : "port-11",
+      "status" : "UP"
+    }, {
+      "uuid" : "d0cea57d-0d24-32e2-b8c6-48584ebbcbda",
+      "name" : "port-5",
+      "status" : "UP"
+    }, {
+      "uuid" : "595dea18-5333-34f5-955e-437f79011022",
+      "name" : "port-2",
+      "status" : "UP"
+    }, {
+      "uuid" : "6f4f7af0-2a96-3bce-8f05-dcc701f3c12a",
+      "name" : "port-6",
+      "status" : "UP"
+    }, {
+      "uuid" : "81429e23-87c5-3fcd-8b92-ec851a2f555b",
+      "name" : "port-19",
+      "status" : "UP"
+    }, {
+      "uuid" : "7b589d60-fa4e-398e-9826-39874e5bfa65",
+      "name" : "port-1",
+      "status" : "UP"
+    }, {
+      "uuid" : "57b44ed1-4231-32bb-8440-fabce18fc7bf",
+      "name" : "port-10",
+      "status" : "UP"
+    }, {
+      "uuid" : "ac12214e-4b3f-37d3-8ff6-685faebf5c76",
+      "name" : "port-24",
+      "status" : "UP"
+    }, {
+      "uuid" : "1544d3ef-438a-35c8-bcc4-40fdf423ba47",
+      "name" : "port-22",
+      "status" : "UP"
+    }, {
+      "uuid" : "ed840f44-29ca-3ece-95ba-bddd363a2f72",
+      "name" : "port-12",
+      "status" : "UP"
+    }, {
+      "uuid" : "0b20dc9f-2918-340d-b53b-64b7c64ae672",
+      "name" : "port-4",
+      "status" : "UP"
+    }, {
+      "uuid" : "051b332b-33b7-3f65-a4a4-8b19f4b901a3",
+      "name" : "port-3",
+      "status" : "UP"
+    }, {
+      "uuid" : "1f4c5b5a-b39b-3406-93bc-3da4fcc961be",
+      "name" : "port-20",
+      "status" : "UP"
+    }, {
+      "uuid" : "f9004623-4e34-3418-9c2d-c1b6fccfbd84",
+      "name" : "port-18",
+      "status" : "UP"
+    } ],
+    "uuid" : "d65e38f5-93f5-3667-9fa6-12bb05258aae",
+    "name" : "spineSwitch2",
+    "status" : "ACTIVE",
+    "desc" : null
+  }, {
+    "opCodeType" : "LIST",
+    "fluidObjectType" : "SPINE_SWITCH",
+    "links" : null,
+    "ports" : [ {
+      "uuid" : "26bf5a4c-94c0-36f1-b5d3-3f428b056f65",
+      "name" : "port-13",
+      "status" : "UP"
+    }, {
+      "uuid" : "b2dc89ec-40f3-3bac-b567-9fccb6b8b0b0",
+      "name" : "port-9",
+      "status" : "UP"
+    }, {
+      "uuid" : "64fc9fd2-b519-3b65-931e-3cc88a3071b2",
+      "name" : "port-3",
+      "status" : "UP"
+    }, {
+      "uuid" : "c8187dc9-6288-36a2-baa7-712b99d2dfdb",
+      "name" : "port-20",
+      "status" : "UP"
+    }, {
+      "uuid" : "49b1376b-f771-313e-aec6-0dff83183c6a",
+      "name" : "port-12",
+      "status" : "UP"
+    }, {
+      "uuid" : "016cacfa-a51f-3472-9775-48059379bd9f",
+      "name" : "port-1",
+      "status" : "UP"
+    }, {
+      "uuid" : "4f112ca7-de3e-3a64-818d-9f5becb0ef33",
+      "name" : "port-22",
+      "status" : "UP"
+    }, {
+      "uuid" : "36716425-a6cf-394f-bf78-2272ec17df29",
+      "name" : "port-16",
+      "status" : "UP"
+    }, {
+      "uuid" : "cdeedc15-ced1-3890-8eda-f86cfd11b4da",
+      "name" : "port-6",
+      "status" : "UP"
+    }, {
+      "uuid" : "92a8c54c-c63c-3116-b972-4214a6dd16eb",
+      "name" : "port-10",
+      "status" : "UP"
+    }, {
+      "uuid" : "40309f01-d071-37a1-9abb-fa2f261ccc1a",
+      "name" : "port-23",
+      "status" : "UP"
+    }, {
+      "uuid" : "f632b022-5be2-3d81-93a9-01afcc2699d6",
+      "name" : "port-19",
+      "status" : "UP"
+    }, {
+      "uuid" : "e0795deb-88d0-3012-ba1b-8653904cf532",
+      "name" : "port-7",
+      "status" : "UP"
+    }, {
+      "uuid" : "844d87eb-90ae-3fa7-b0f5-e1b3ec77123f",
+      "name" : "port-11",
+      "status" : "UP"
+    }, {
+      "uuid" : "5d34644d-d0a2-3764-8547-25cee013cad9",
+      "name" : "port-5",
+      "status" : "UP"
+    }, {
+      "uuid" : "c60818a7-6cb4-388e-9606-a1256bdd2fda",
+      "name" : "port-0",
+      "status" : "UP"
+    }, {
+      "uuid" : "7b52de74-0085-3f2a-9dce-90c35b319fcd",
+      "name" : "port-14",
+      "status" : "UP"
+    }, {
+      "uuid" : "c15e0824-85ca-32e5-a33c-12acaf9840e2",
+      "name" : "port-18",
+      "status" : "UP"
+    }, {
+      "uuid" : "0565632c-76b4-374a-a67f-4fa6996f26f2",
+      "name" : "port-4",
+      "status" : "UP"
+    }, {
+      "uuid" : "930c2a20-e4ac-3ef8-8b9a-0c9633be4986",
+      "name" : "port-8",
+      "status" : "UP"
+    }, {
+      "uuid" : "08d213b7-ac3e-34c6-8b94-3097bd7b4283",
+      "name" : "port-2",
+      "status" : "UP"
+    }, {
+      "uuid" : "772b1309-cb50-3d00-a4ba-59aacf5e4913",
+      "name" : "port-21",
+      "status" : "UP"
+    }, {
+      "uuid" : "e1ba8c1e-e5b7-3631-a64c-41b97763a1ef",
+      "name" : "port-15",
+      "status" : "UP"
+    }, {
+      "uuid" : "025e0d0c-24b8-3b20-ad08-bb5603134c78",
+      "name" : "port-17",
+      "status" : "UP"
+    }, {
+      "uuid" : "1f2dd2c8-08d7-3b3d-a0c7-c4e262207e02",
+      "name" : "port-24",
+      "status" : "UP"
+    } ],
+    "uuid" : "8305c7be-9d40-3ad0-b83f-4a2c98b8ca22",
+    "name" : "spineSwitch1",
+    "status" : "ACTIVE",
+    "desc" : null
+  } ]
+}

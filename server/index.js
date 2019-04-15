@@ -25,7 +25,6 @@ const knex = require('knex');
 
 const socket = require('./socket');
 const router = require('./router');
-const runtime = require('./runtime');
 
 const model = require('./model');
 
@@ -116,8 +115,6 @@ module.exports = function(config) {
 
     router(app,config);
     khan['app'] = app;
-    runtime.init(khan);
-    runtime.load();
 
     var server = config.https ? https.createServer({
         key:fs.readFileSync(path.resolve(process.env.root_path, './cert/key.pem')),

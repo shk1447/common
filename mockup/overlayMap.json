@@ -1,0 +1,356 @@
+{
+  "L2_SWITCH" : [ {
+    "opCodeType" : "DELETE",
+    "fluidObjectType" : "L2_SWITCH",
+    "links" : null,
+    "ports" : [ {
+      "uuid" : "2b8e4607-2ed9-345e-a1b4-5cd46c7e9d9a",
+      "name" : "port-5",
+      "status" : "UP"
+    }, {
+      "uuid" : "d7f3fb4c-6f26-3e59-9342-fb0d3535aa53",
+      "name" : "port-0",
+      "status" : "UP"
+    }, {
+      "uuid" : "98fa489a-a710-3c4f-998e-8ceec101c2de",
+      "name" : "port-2",
+      "status" : "UP"
+    }, {
+      "uuid" : "2efcfa80-0c6f-34c3-8f1d-c205bab4f80e",
+      "name" : "port-7",
+      "status" : "UP"
+    }, {
+      "uuid" : "37214a58-e027-3205-8ba7-73edd672a5a8",
+      "name" : "port-1",
+      "status" : "UP"
+    }, {
+      "uuid" : "aa81b77c-f062-3af7-bf18-330ebdac47b8",
+      "name" : "port-6",
+      "status" : "UP"
+    }, {
+      "uuid" : "ab1684f6-735a-3c74-a153-4619efc3160c",
+      "name" : "port-8",
+      "status" : "UP"
+    }, {
+      "uuid" : "e9ad42c8-1beb-308c-9246-d858c031abc4",
+      "name" : "port-4",
+      "status" : "UP"
+    }, {
+      "uuid" : "12915116-6b8e-3e1d-8d04-c62e7ef9cde5",
+      "name" : "port-3",
+      "status" : "UP"
+    }, {
+      "uuid" : "5c5b29c7-d07c-35df-9dc1-4b61486b4d21",
+      "name" : "port-11",
+      "status" : "UP"
+    }, {
+      "uuid" : "c4e9351f-303a-3ed0-ab80-9ab760b68d8c",
+      "name" : "port-9",
+      "status" : "UP"
+    }, {
+      "uuid" : "e345e0f4-657a-3236-9bfa-f3b8af3e0eb9",
+      "name" : "port-10",
+      "status" : "UP"
+    }, {
+      "uuid" : "ed6e95a0-a1b9-36ab-8307-b8ecc7488309",
+      "name" : "port-12",
+      "status" : "UP"
+    } ],
+    "uuid" : "4876e3af-f173-34e2-8757-c2b234782bb0",
+    "name" : "vSwitch3",
+    "status" : "ACTIVE",
+    "desc" : null
+  }, {
+    "opCodeType" : "DELETE",
+    "fluidObjectType" : "L2_SWITCH",
+    "links" : null,
+    "ports" : [ {
+      "uuid" : "68aace64-855b-35eb-94c5-f9109896f32e",
+      "name" : "port-11",
+      "status" : "UP"
+    }, {
+      "uuid" : "1f2cafc6-c76f-3398-ab35-4a4936bf1a04",
+      "name" : "port-5",
+      "status" : "UP"
+    }, {
+      "uuid" : "9bf9a095-d09d-317c-a6e9-ef20d605fb1f",
+      "name" : "port-2",
+      "status" : "UP"
+    }, {
+      "uuid" : "0c0d3c96-169e-3a04-8c1d-aa62d353bbf4",
+      "name" : "port-10",
+      "status" : "UP"
+    }, {
+      "uuid" : "2eec2e27-2a70-3acc-81a5-9f155c92c488",
+      "name" : "port-12",
+      "status" : "UP"
+    }, {
+      "uuid" : "889bf605-3ed8-3e74-a0b8-1f7e3f2e8e10",
+      "name" : "port-8",
+      "status" : "UP"
+    }, {
+      "uuid" : "803c85c0-f09f-3263-9849-7945226fe313",
+      "name" : "port-0",
+      "status" : "UP"
+    }, {
+      "uuid" : "41d83aa4-28d1-3786-ab8d-ea42fbc9678a",
+      "name" : "port-3",
+      "status" : "UP"
+    }, {
+      "uuid" : "c5557242-e06e-3841-a4d5-fcceae60c367",
+      "name" : "port-6",
+      "status" : "UP"
+    }, {
+      "uuid" : "0d5a06bd-7dba-3abf-bbc7-c61d4f77eb17",
+      "name" : "port-4",
+      "status" : "UP"
+    }, {
+      "uuid" : "5fa3addd-8703-3d44-b712-4ea428b76720",
+      "name" : "port-7",
+      "status" : "UP"
+    }, {
+      "uuid" : "dba8c967-0b7c-3022-a4d8-c6f81a6b28ca",
+      "name" : "port-9",
+      "status" : "UP"
+    }, {
+      "uuid" : "b104d118-8acf-3817-b3cb-165f2e857184",
+      "name" : "port-1",
+      "status" : "UP"
+    } ],
+    "uuid" : "236587af-8221-3ace-9e57-ea81a99a6059",
+    "name" : "vSwitch2",
+    "status" : "ACTIVE",
+    "desc" : null
+  }, {
+    "opCodeType" : "DELETE",
+    "fluidObjectType" : "L2_SWITCH",
+    "links" : null,
+    "ports" : [ {
+      "uuid" : "0ba85609-7b79-3755-a940-93d02dfa856e",
+      "name" : "port-4",
+      "status" : "UP"
+    }, {
+      "uuid" : "d28efa3b-f9da-373f-a689-d3689ffeba7b",
+      "name" : "port-1",
+      "status" : "UP"
+    }, {
+      "uuid" : "2da6ecad-f5ea-30a9-a398-0da112d3a57e",
+      "name" : "port-5",
+      "status" : "UP"
+    }, {
+      "uuid" : "44b729ab-676e-3ca6-92b5-a015f7d2019d",
+      "name" : "port-8",
+      "status" : "UP"
+    }, {
+      "uuid" : "b7752e28-d803-3931-bde2-2fb5130510f7",
+      "name" : "port-0",
+      "status" : "UP"
+    }, {
+      "uuid" : "39b71786-1e04-3dfa-870f-e9c15e6b65d8",
+      "name" : "port-9",
+      "status" : "UP"
+    }, {
+      "uuid" : "a8b69f0a-5d81-393e-9c7e-45d5f2a430f2",
+      "name" : "port-11",
+      "status" : "UP"
+    }, {
+      "uuid" : "475468d8-19b0-3a40-9c65-0969d6af8a60",
+      "name" : "port-12",
+      "status" : "UP"
+    }, {
+      "uuid" : "1dfc14f9-fed1-3340-9100-2d720c5f115c",
+      "name" : "port-3",
+      "status" : "UP"
+    }, {
+      "uuid" : "ffce8def-223a-3125-a374-5d641fc69e70",
+      "name" : "port-2",
+      "status" : "UP"
+    }, {
+      "uuid" : "c62a3354-8f2d-3106-b6d3-9b8a2b3c1b1b",
+      "name" : "port-6",
+      "status" : "UP"
+    }, {
+      "uuid" : "0255e177-6bbf-3a23-a90b-b13a38d8358c",
+      "name" : "port-7",
+      "status" : "UP"
+    }, {
+      "uuid" : "aaef029d-6730-3afb-9d6f-f95ea1eb5858",
+      "name" : "port-10",
+      "status" : "UP"
+    } ],
+    "uuid" : "8122279b-262d-3071-be56-b55aec930f4b",
+    "name" : "vSwitch1",
+    "status" : "ACTIVE",
+    "desc" : null
+  } ],
+  "SDN" : [ {
+    "opCodeType" : "LIST",
+    "fluidObjectType" : "SDN",
+    "links" : null,
+    "ports" : null,
+    "uuid" : "9e8e2e5c-30b9-3509-9116-43ea34d79f77",
+    "name" : "Kaloom Fabric",
+    "status" : "ACTIVE",
+    "desc" : null
+  } ],
+  "vNetwork" : [ {
+    "opCodeType" : "DELETE",
+    "fluidObjectType" : "vNetwork",
+    "links" : null,
+    "ports" : [ {
+      "uuid" : "07ddc2b6-e4d9-39f7-9673-528b93bda8ac",
+      "name" : "port-0",
+      "status" : "UP"
+    }, {
+      "uuid" : "7884afdd-c1b5-3c64-becd-90f005f30631",
+      "name" : "port-1",
+      "status" : "UP"
+    }, {
+      "uuid" : "cb163069-0b11-3c6f-b794-6382d810851c",
+      "name" : "port-5",
+      "status" : "UP"
+    }, {
+      "uuid" : "0b008ed0-2025-3a4c-9adc-adce08182cf1",
+      "name" : "port-7",
+      "status" : "UP"
+    }, {
+      "uuid" : "27d7fe0f-0c4f-3138-b6b2-d5a467dd391b",
+      "name" : "port-12",
+      "status" : "UP"
+    }, {
+      "uuid" : "d7e30b37-f294-3c4b-afe1-1b292689ad30",
+      "name" : "port-9",
+      "status" : "UP"
+    }, {
+      "uuid" : "0f8d0c3e-b009-3434-aceb-2aa0bcbde732",
+      "name" : "port-8",
+      "status" : "UP"
+    }, {
+      "uuid" : "4fa0ba7a-52a8-3878-9547-50b29f23a939",
+      "name" : "port-3",
+      "status" : "UP"
+    }, {
+      "uuid" : "c4a9baa7-1990-36a7-b156-9be9fa6f4351",
+      "name" : "port-2",
+      "status" : "UP"
+    }, {
+      "uuid" : "cbbf5f0e-bb66-35d7-ba4a-c72b2df3c601",
+      "name" : "port-4",
+      "status" : "UP"
+    }, {
+      "uuid" : "ef2f3c99-3af4-3466-adbf-705161a72a93",
+      "name" : "port-10",
+      "status" : "UP"
+    }, {
+      "uuid" : "602af9ff-1ed0-3963-bff9-1e5af61d48e4",
+      "name" : "port-11",
+      "status" : "UP"
+    }, {
+      "uuid" : "d16d64ca-0ee0-3ea2-ac8a-844d86e067a4",
+      "name" : "port-6",
+      "status" : "UP"
+    } ],
+    "uuid" : "df946703-563e-3187-9488-99ea7bb9cdd1",
+    "name" : "vNetwork2",
+    "status" : "ACTIVE",
+    "desc" : null
+  }, {
+    "opCodeType" : "DELETE",
+    "fluidObjectType" : "vNetwork",
+    "links" : null,
+    "ports" : [ {
+      "uuid" : "0b008ed0-2025-3a4c-9adc-adce08182cf1",
+      "name" : "port-7",
+      "status" : "UP"
+    }, {
+      "uuid" : "d7e30b37-f294-3c4b-afe1-1b292689ad30",
+      "name" : "port-9",
+      "status" : "UP"
+    }, {
+      "uuid" : "602af9ff-1ed0-3963-bff9-1e5af61d48e4",
+      "name" : "port-11",
+      "status" : "UP"
+    }, {
+      "uuid" : "4fa0ba7a-52a8-3878-9547-50b29f23a939",
+      "name" : "port-3",
+      "status" : "UP"
+    }, {
+      "uuid" : "cb163069-0b11-3c6f-b794-6382d810851c",
+      "name" : "port-5",
+      "status" : "UP"
+    }, {
+      "uuid" : "07ddc2b6-e4d9-39f7-9673-528b93bda8ac",
+      "name" : "port-0",
+      "status" : "UP"
+    }, {
+      "uuid" : "cbbf5f0e-bb66-35d7-ba4a-c72b2df3c601",
+      "name" : "port-4",
+      "status" : "UP"
+    }, {
+      "uuid" : "0f8d0c3e-b009-3434-aceb-2aa0bcbde732",
+      "name" : "port-8",
+      "status" : "UP"
+    }, {
+      "uuid" : "27d7fe0f-0c4f-3138-b6b2-d5a467dd391b",
+      "name" : "port-12",
+      "status" : "UP"
+    }, {
+      "uuid" : "7884afdd-c1b5-3c64-becd-90f005f30631",
+      "name" : "port-1",
+      "status" : "UP"
+    }, {
+      "uuid" : "c4a9baa7-1990-36a7-b156-9be9fa6f4351",
+      "name" : "port-2",
+      "status" : "UP"
+    }, {
+      "uuid" : "d16d64ca-0ee0-3ea2-ac8a-844d86e067a4",
+      "name" : "port-6",
+      "status" : "UP"
+    }, {
+      "uuid" : "ef2f3c99-3af4-3466-adbf-705161a72a93",
+      "name" : "port-10",
+      "status" : "UP"
+    } ],
+    "uuid" : "6ed81d7f-992b-311c-b907-62f084fe2bdc",
+    "name" : "vNetwork1",
+    "status" : "ACTIVE",
+    "desc" : null
+  } ],
+  "vServer" : [ {
+    "opCodeType" : "DELETE",
+    "fluidObjectType" : "vServer",
+    "links" : null,
+    "ports" : [ ],
+    "uuid" : "4ae577f7-8650-3782-85d2-8b1c5dfb2add",
+    "name" : "vServer3",
+    "status" : "ACTIVE",
+    "desc" : null
+  }, {
+    "opCodeType" : "DELETE",
+    "fluidObjectType" : "vServer",
+    "links" : null,
+    "ports" : [ ],
+    "uuid" : "fa707ed0-09a1-3ec7-ba66-ec097917d948",
+    "name" : "vServer2",
+    "status" : "ACTIVE",
+    "desc" : null
+  }, {
+    "opCodeType" : "DELETE",
+    "fluidObjectType" : "vServer",
+    "links" : null,
+    "ports" : [ ],
+    "uuid" : "ca16ccaf-7695-351e-88b4-2137ad775e05",
+    "name" : "vServer1",
+    "status" : "ACTIVE",
+    "desc" : null
+  }, {
+    "opCodeType" : "DELETE",
+    "fluidObjectType" : "vServer",
+    "links" : null,
+    "ports" : [ ],
+    "uuid" : "e432ed8d-d0d7-3b2a-9fd3-283ddf8e86b8",
+    "name" : "vServer4",
+    "status" : "ACTIVE",
+    "desc" : null
+  } ]
+}

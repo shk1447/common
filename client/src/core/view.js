@@ -347,6 +347,9 @@ common.view = (function() {
             if(d.uuid === selected_id) {
                 d.node.classed('selected', true)
                 d.node.attr('filter', 'url(#' + activeDropShadow + ')' );
+                if(d.ports && d.ports.length > 0) {
+                    console.log('port render');
+                }
             } else {
                 d.node.classed('selected', false)
                 d.node.attr('filter', null );
