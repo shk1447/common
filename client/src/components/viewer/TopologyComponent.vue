@@ -8,7 +8,7 @@
         <i :class="open ? 'el-icon-caret-left' : 'el-icon-caret-right'" style="vertical-align: middle;"></i>
     </div>
 </div>
-<div id="workspace">
+<div id="workspace" @dragover="dragover" @drop="drop">
 </div>
 </div>
 </template>
@@ -30,6 +30,24 @@ export default {
         handlePanelSlide() {
             var me = this;
             me.open = !me.open;
+        },
+        dragover(e) {
+            e.preventDefault();
+        },
+        drop(e) {
+            e.preventDefault();
+            var me = this;
+            me.$loading({})
+            var transfer_data = e.dataTransfer.getData("node");
+            var data = JSON.parse(transfer_data);
+            api.getUnderlay(data).then(function(underlay) {
+                api.getOverlay(data).then(function(overlay) {
+                    console.log(underlay, overlay);
+                    common.view.setMap(data,underlay, overlay, e);
+                    me.$loading({}).close();
+                })
+            })
+            me.$loading({}).close();
         }
     },
     beforeCreate(){

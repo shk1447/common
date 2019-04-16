@@ -8,7 +8,7 @@ import api from '../api/api.js';
 
 common.view = (function() {
     var width, height, container_div;
-    var outer, vis, outer_background, drag_group, link_group, node_types;
+    var outer, vis, outer_background, drag_group, link_group, node_types, plug_svg;
     var x, y, gX, gY, xAxis, yAxis, zoom;
     var node_size = 16;
     var outer_transform = {
@@ -23,7 +23,8 @@ common.view = (function() {
     var temp_link = {sourceUuid:null,targetUuid:null,source:null,target:null,speed:10};
     var activeNodes = [];
     var activeLinks = [];
-    var selected_id;
+
+    var selected_id = [];
 
     var types = [];
     var node_type = {};
@@ -71,7 +72,7 @@ common.view = (function() {
             drag_line.remove();
             drag_line = null;
         }
-        selected_id = "";
+        //selected_id = "";
         redraw();
     }
 
@@ -173,7 +174,11 @@ common.view = (function() {
     function nodeClicked(node, node_info) {
         d3.event.stopPropagation();
         d3.event.preventDefault();
-        selected_id = node_info.uuid;
+        if(selected_id.includes(node_info.uuid)) {
+            selected_id.splice(selected_id.indexOf(node_info.uuid), 1);
+        } else {
+            selected_id.push(node_info.uuid);
+        }
         redraw();
     }
 
@@ -192,7 +197,7 @@ common.view = (function() {
         temp_link.targetUuid = node.uuid;
         
         if(temp_link.sourceUuid && temp_link.targetUuid) {
-            temp_link.speed = Math.round(Math.random()*100);
+            temp_link.speed = "5G";
             activeLinks.push(temp_link);
             redraw();
         }
@@ -304,13 +309,27 @@ common.view = (function() {
                 repeat();
             }
 
-            if(d.ports && d.ports.length > 0) {
+            if(d.ports && Object.keys(d.ports).length > 0) {
                 d.node = node.append("rect")
                     .attr('rx', node_size/4)
                     .attr('x', -node_size)
                     .attr('y', -node_size)
                     .attr("width", node_size*2)
                     .attr("height", node_size*2)
+                d.inner_port = node.append('g').attr('class', 'inner_port');
+                d.inner_port.attr("transform", function(d) { return "translate(" + (node_size * 2) + "," + (-node_size*2) + ")"; });
+
+                d.inner_port.append("rect")
+                .attr('fill', 'white')
+                .attr('rx', node_size/8)
+                .attr('x', -node_size/2)
+                .attr('y', -node_size/2)
+                .attr("width", node_size)
+                .attr("height", node_size)
+                d.inner_port.append("image").attr("xlink:href", "/icons/green_plug.svg")
+                .attr('x', -node_size/4)
+                .attr('y', -node_size/4)
+                .attr("width", node_size/2).attr("height", node_size/2).attr("fill", "red");
             } else {
                 d.node = node.append("circle")
                     .attr("r", node_size)
@@ -322,8 +341,6 @@ common.view = (function() {
             var icon_url = "/icons/server.svg";
             
             node.append("image").attr("xlink:href", icon_url).attr("x", -node_size/2).attr("y", -node_size/2).attr("width", node_size).attr("height", node_size);
-
-                
             
             node.append("circle")
                 .attr("class", "port")
@@ -344,12 +361,9 @@ common.view = (function() {
             
             thisNode.attr("transform", function(d) { return "translate(" + (d.x) + "," + (d.y) + ")"; });
 
-            if(d.uuid === selected_id) {
+            if(selected_id.includes(d.uuid)) {
                 d.node.classed('selected', true)
                 d.node.attr('filter', 'url(#' + activeDropShadow + ')' );
-                if(d.ports && d.ports.length > 0) {
-                    console.log('port render');
-                }
             } else {
                 d.node.classed('selected', false)
                 d.node.attr('filter', null );
@@ -365,7 +379,7 @@ common.view = (function() {
             var l = d3.select(this);
             l.append("svg:path").attr("class", "link_background link_path")
                                 .on("click",function(d) {
-                                    selected_id = d.sourceUuid+":"+d.targetUuid;
+                                    selected_id.push(d.sourceUuid+":"+d.targetUuid);
                                     redraw();
                                 })
             var link = l.append("svg:path").attr('class', 'link_line link_path')
@@ -395,10 +409,10 @@ common.view = (function() {
             var id = d.source.uuid + ":" + d.target.uuid;
             var path_data = lineGenerator([[d.source.x, d.source.y],[d.target.x, d.target.y]])
             thisLink.attr("d", path_data).attr("stroke-width", node_size/4).attr('stroke','#888');
-            if(id === selected_id) {
+            if(selected_id.includes(id)) {
                 thisLink.attr('stroke', '#ff7f0e');
             }
-            if(d.source.uuid === selected_id || d.target.uuid === selected_id) {
+            if(selected_id.includes(d.source.uuid) || selected_id.includes(d.target.uuid)) {
                 var result = activeNodes.filter(function(a) {return a.uuid === d.source.uuid || a.uuid === d.target.uuid});
                 result.forEach(function(v,i) {
                     v.node.attr('filter', 'url(#' + activeDropShadow + ')' );
@@ -429,13 +443,13 @@ common.view = (function() {
     }
 
     function deleteItem() {
-        var node_index = activeNodes.findIndex(function(d) {return d.uuid === selected_id});
+        var node_index = activeNodes.findIndex(function(d) {return selected_id.includes(d.uuid) });
         if(node_index >= 0) {
             var remove_index = [];
             var link_length = activeLinks.length;
             for(var i = 0; i < link_length; i++) {
                 var d = activeLinks[i];
-                if((d.source.uuid === selected_id || d.target.uuid === selected_id)) {
+                if((selected_id.includes(d.source.uuid) || selected_id.includes(d.target.uuid))) {
                     remove_index.push(i);
                 }
             }
@@ -507,26 +521,21 @@ common.view = (function() {
     }
 
     return {
-        setMap: function(root, underlay,overlay) {
-            var grid_width = Math.ceil(Math.sqrt(root.length));
-            _.each(root, function(v,i) {
-                var root_x,  root_y;
-                
-                var grid_x = i % grid_width;
-                var grid_y = Math.floor(i / grid_width);
-                console.log(grid_x, grid_y);
-                root_x = (container_div.clientWidth/2) + container_div.clientWidth*grid_x;
-                root_y = (container_div.clientHeight/2) + container_div.clientHeight*grid_y;
-                v["x"] = root_x;
-                v["y"] = root_y;
-                v["type"] = "SDN";
-                activeNodes.push(v)
-                
+        setMap: function(root, underlay,overlay, event) {
+            var isExists = activeNodes.find(function(d) { return d.uuid === root.uuid});
+            if(!isExists) {
+                var root_x = Math.round((event.offsetX - outer_transform.x) / outer_transform.k);
+                var root_y = Math.round((event.offsetY - outer_transform.y) / outer_transform.k);
+                root["x"] = root_x;
+                root["y"] = root_y;
+                root["type"] = "SDN";
+                activeNodes.push(root);
+
                 var count = 0;
-                var total_count = Object.keys(underlay[v.uuid]).length;
-                _.each(underlay[v.uuid], function(data, type) {
+                var total_count = Object.keys(underlay).length;
+                _.each(underlay, function(data, type) {
                     _.each(data, function(item, index) {
-                        var area_width = root_x / total_count;
+                        var area_width = (container_div.clientWidth/2) / total_count;
                         var x = root_x - (area_width * count) - (area_width/2)
                         var y = root_y + (((index % 2 === 1) ? -node_size : node_size) * Math.ceil(index/2)*3)
                         item["x"] = x;
@@ -536,15 +545,15 @@ common.view = (function() {
                         if(item.links && item.links.length > 0) {
                             activeLinks = activeLinks.concat(item.links);
                         }
-                    })
+                    });
                     count++;
-                })
+                });
 
                 count = 0;
-                total_count = Object.keys(overlay[v.uuid]).length;
-                _.each(overlay[v.uuid], function(data,type) {
+                total_count = Object.keys(overlay).length;
+                _.each(overlay, function(data, type) {
                     _.each(data, function(item, index) {
-                        var area_width = root_x / total_count;
+                        var area_width = (container_div.clientWidth/2) / total_count;
                         var x = root_x + (area_width * count) + (area_width/2)
                         var y = root_y + (((index % 2 === 1) ? -node_size : node_size) * Math.ceil(index/2)*3)
                         item["x"] = x;
@@ -554,10 +563,10 @@ common.view = (function() {
                         if(item.links && item.links.length > 0) {
                             activeLinks = activeLinks.concat(item.links);
                         }
-                    })
+                    });
                     count++;
                 })
-            });
+            }
             redraw();
         },
         clear: function() {

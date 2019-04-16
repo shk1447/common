@@ -8,13 +8,13 @@ export default {
         })
     },
     getUnderlay: function(params) {
-        var url = "/sample/underlay";
+        var url = "/network/underlay";
         return http.post(url, params).then(function(res) {
             return res;
         })
     },
     getOverlay: function(params) {
-        var url = "/sample/overlay";
+        var url = "/network/overlay";
         return http.post(url, params).then(function(res) {
             return res;
         })

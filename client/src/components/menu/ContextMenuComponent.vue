@@ -17,7 +17,8 @@ export default {
             menu_items : [{id:'add',label:'Add'},
                             {id:'save',label:'Save'},
                             {id:'search',label:'Search'},
-                            {id:'reload',label:'Reload'},
+                            {id:'reload',label:'Reload View'},
+                            {id:'reset',label:'Reset View'},
                             {id:'zoom_reset',label:'Reset Zoom'}],
             activeContextMenu:false,
             top:'0px',
@@ -37,6 +38,9 @@ export default {
                         name : 'createNodeModal',
                         params : {node_info:me.params.node_info, node_types:me.params.node_types, event:me.params.event}
                     });
+                break;
+                case 'reset' :
+                    common.view.clear();
                 break;
                 case 'reload' : 
                     me.$loading({});

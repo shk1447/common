@@ -26,21 +26,29 @@ module.exports = {
 
             res.status(200).send(response.data);
         },
-        "underlay" : async function(req,res,next){
-            var req_url = process.env.external_url + path.underlay.replace("{ctrlUuid}", req.query.uuid);
-            let response = await axios.get(req_url);
-
-            res.status(200).send(response.data);
-        },
-        "overlay" : async function(req,res,next) {
-            var req_url = process.env.external_url + path.overlay.replace("{ctrlUuid}", req.query.uuid);
-            let response = await axios.get(req_url);
-
-            res.status(200).send(response.data);
-        },
         "detail" : async function(req,res,next) {
 
             res.status(200).send();
+        }
+    },
+    post: {
+        "underlay" : async function(req,res,next){
+            var req_url = process.env.underlay_url + path.underlay.replace("{ctrlUuid}", req.body.uuid);
+            try {
+                let response = await axios.get(req_url);
+                res.status(200).send(response.data.objects);
+            } catch (error) {
+                res.status(500).send(error);
+            }
+        },
+        "overlay" : async function(req,res,next) {
+            var req_url = process.env.overlay_url + path.overlay.replace("{ctrlUuid}", req.body.uuid);
+            try {
+                let response = await axios.get(req_url);   
+                res.status(200).send(response.data.objects);
+            } catch (error) {
+                res.status(500).send(error);
+            }
         }
     }
 }

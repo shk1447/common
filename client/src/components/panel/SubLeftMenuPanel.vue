@@ -3,8 +3,8 @@
 <el-tabs class="left_tabs" type="border-card">
     <el-tab-pane>
         <span slot="label" class="tab_title"><i class="el-icon-share"></i>Controller</span>
-        <el-tree class="demo" show-checkbox default-expand-all ref="controller_list"
-             :data="data" :props="defaultProps" node-key="uuid" @check="check">
+        <el-tree class="demo" default-expand-all ref="controller_list"
+             :data="data" :props="defaultProps" node-key="uuid" draggable :allow-drag="allowDrag" :allow-drop="allowDrop" @node-drag-start="onNodeDragStart">
              <!-- draggable :allow-drag="allowDrag" :allow-drop="allowDrop"  -->
             <span class="custom-tree-node" slot-scope="{ node, data }">
                 <span><i :class="data.uuid === 'fluid' ? 'el-icon-goods' : 'el-icon-star-off'"></i>   {{ node.label }}</span>
@@ -43,23 +43,18 @@ export default {
         
     },
     methods: {
-        check(node,nodes) {
-            var me = this;
-            me.$loading({});
-            common.view.clear();
-            var checked_list = nodes.checkedNodes.filter(function(d) { return d.type !== 'folder' });
-            var params = checked_list.map(function(d) { return {uuid : d.uuid, name: d.name}})
-            if(params.length > 0) {
-                api.getUnderlay(params).then(function(underlay) {
-                    api.getOverlay(params).then(function(overlay) {
-                        console.log(underlay, overlay);
-                        common.view.setMap(params,underlay, overlay);
-                        me.$loading({}).close();
-                    })
-                })
-            } else {
-                me.$loading({}).close();
+        onNodeDragStart(node,e) {
+            var transfer_data = {
+                id:node.data.uuid,
+                name:node.data.name
             }
+            e.dataTransfer.setData("node", JSON.stringify(transfer_data));
+        },
+        allowDrop(dragNode, dropNode, type) {
+            return false;
+        },
+        allowDrag(node) {
+            return true;
         }
     },
     beforeCreate(){
