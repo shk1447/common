@@ -17,7 +17,6 @@ export default {
             menu_items : [{id:'add',label:'Add'},
                             {id:'save',label:'Save'},
                             {id:'search',label:'Search'},
-                            {id:'reload',label:'Reload View'},
                             {id:'reset',label:'Reset View'},
                             {id:'zoom_reset',label:'Reset Zoom'}],
             activeContextMenu:false,
@@ -41,17 +40,6 @@ export default {
                 break;
                 case 'reset' :
                     common.view.clear();
-                break;
-                case 'reload' : 
-                    me.$loading({});
-                    api.getTopology().then(function(data) {
-                        common.view.reload(data);
-                        common.events.emit('notify', {message:'Reload Success.', type:'success'})
-                        me.$loading({}).close();
-                    }).catch(function(err) {
-                        common.events.emit('notify', {message:'Reload Failure.', type:'error'})
-                        me.$loading({}).close();
-                    })
                 break;
                 case 'save' :
                     // save current topology

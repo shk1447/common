@@ -7,14 +7,16 @@
     "port": 9999,
     "tcp_port":2000,
     "session_time":30,
+    "controller_url": "http://210.96.184.227:18088",
     "overlay_url":"http://210.96.184.227:18087",
     "underlay_url":"http://210.96.184.227:18086",
     "database": {
       "type": "mysql",
       "mysql": {
-        "host": "127.0.0.1",
+        "host": "210.96.184.227",
+        "port": "43306",
         "user": "root",
-        "password": "soul1087",
+        "password": "Rapi2560!",
         "database": "pribit"
       }
     }

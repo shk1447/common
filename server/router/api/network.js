@@ -21,10 +21,10 @@ var path = {
 module.exports = {
     get: {
         "controller": async function(req,res,next) {
-            var req_url = process.env.external_url + path.controller;
+            var req_url = process.env.controller_url + path.controller;
             let response = await axios.get(req_url);
 
-            res.status(200).send(response.data);
+            res.status(200).send(response.data.objects.CONTROLLER);
         },
         "detail" : async function(req,res,next) {
 

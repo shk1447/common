@@ -15,6 +15,7 @@ process.env.mode = cmd.mode;
 process.env.port = config.port;
 process.env.project = config.project.name;
 process.env.database = config.database.type;
+process.env.controller_url = config.controller_url;
 process.env.overlay_url = config.overlay_url;
 process.env.underlay_url = config.underlay_url;
 process.env.root_path = config.project.path !== "" ? path.resolve(config.project.path, './project/' + process.env.project + '/_build')

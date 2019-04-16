@@ -5,6 +5,7 @@ const randomColor = require('randomcolor');
 require('./d3_extension/keybinding');
 require('./d3_extension/d3-tip.js');
 import api from '../api/api.js';
+import { prototype } from 'stream';
 
 common.view = (function() {
     var width, height, container_div;
@@ -309,7 +310,7 @@ common.view = (function() {
                 repeat();
             }
 
-            if(d.ports && Object.keys(d.ports).length > 0) {
+            if(d.ports && d.ports.length > 0) {
                 d.node = node.append("rect")
                     .attr('rx', node_size/4)
                     .attr('x', -node_size)
@@ -317,19 +318,7 @@ common.view = (function() {
                     .attr("width", node_size*2)
                     .attr("height", node_size*2)
                 d.inner_port = node.append('g').attr('class', 'inner_port');
-                d.inner_port.attr("transform", function(d) { return "translate(" + (node_size * 2) + "," + (-node_size*2) + ")"; });
-
-                d.inner_port.append("rect")
-                .attr('fill', 'white')
-                .attr('rx', node_size/8)
-                .attr('x', -node_size/2)
-                .attr('y', -node_size/2)
-                .attr("width", node_size)
-                .attr("height", node_size)
-                d.inner_port.append("image").attr("xlink:href", "/icons/green_plug.svg")
-                .attr('x', -node_size/4)
-                .attr('y', -node_size/4)
-                .attr("width", node_size/2).attr("height", node_size/2).attr("fill", "red");
+                d.inner_port.attr("transform", function(d) { return "translate(" + (node_size*2) + "," + 0 + ")"; });
             } else {
                 d.node = node.append("circle")
                     .attr("r", node_size)
@@ -364,9 +353,34 @@ common.view = (function() {
             if(selected_id.includes(d.uuid)) {
                 d.node.classed('selected', true)
                 d.node.attr('filter', 'url(#' + activeDropShadow + ')' );
+
+                if(d.inner_port) {
+                    d.node.attr("fill", '#eaedf1');
+                    d.node.transition().duration(500).attr("width", node_size *(d.ports.length + 1) + (node_size*2));
+                    var inner_ports = d.inner_port.selectAll(".inner_port").data(d.ports, function(d) { return d.uuid });
+                    inner_ports.exit().remove();
+                    var inner_ports_enter = inner_ports.enter().insert("svg:g").attr("class", "inner_port");
+                    inner_ports_enter.each(function(p,k) {
+                        var port = d3.select(this);
+                        port.attr("id",d.uuid)
+                        port.append("image")
+                            .attr("xlink:href", "/icons/green_plug.svg")
+                            .attr('x', node_size * (p.idx - 1))
+                            .attr('y', -node_size/2)
+                            .attr("width", node_size/2).attr("height", node_size/2);
+                        port.append('svg:text').attr('x', node_size * (p.idx - 1)).attr('y', node_size/2)
+                        .style('stroke', 'none').style('text-anchor', "start").style('font-size', '.2em').text(p.name);
+                    })
+                }
             } else {
                 d.node.classed('selected', false)
                 d.node.attr('filter', null );
+                if(d.inner_port) {
+                    d.node.attr("fill",function(d) { return node_type[d.type] ? node_type[d.type].color : 'rgb(166, 187, 207)' });
+                    d.node.transition().duration(500).attr("width", node_size*2);
+                    var inner_ports = d.inner_port.selectAll(".inner_port").data([], function(d) { return d.uuid });
+                    inner_ports.exit().remove();
+                }
             }
         });
 
@@ -545,6 +559,11 @@ common.view = (function() {
                         if(item.links && item.links.length > 0) {
                             activeLinks = activeLinks.concat(item.links);
                         }
+                        var ports = [];
+                        _.each(item.ports, function(v,i) {
+                            ports.push(v);
+                        })
+                        item.ports = ports;
                     });
                     count++;
                 });
@@ -563,6 +582,11 @@ common.view = (function() {
                         if(item.links && item.links.length > 0) {
                             activeLinks = activeLinks.concat(item.links);
                         }
+                        var ports = [];
+                        _.each(item.ports, function(v,i) {
+                            ports.push(v);
+                        })
+                        item.ports = ports;
                     });
                     count++;
                 })

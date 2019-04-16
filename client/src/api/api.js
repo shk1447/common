@@ -2,7 +2,7 @@ import http from "../core/utils/http.js";
 
 export default {
     getNetController: function() {
-        var url = "/sample/controller";
+        var url = "/network/controller";
         return http.get(url).then(function(res) {
             return res;
         })
