@@ -349,31 +349,28 @@ common.view = (function() {
             var thisNode = d3.select(this);
             
             thisNode.attr("transform", function(d) { return "translate(" + (d.x) + "," + (d.y) + ")"; });
-
             if(selected_id.includes(d.uuid)) {
                 d.node.classed('selected', true)
                 d.node.attr('filter', 'url(#' + activeDropShadow + ')' );
 
                 if(d.inner_port) {
                     d.node.attr("fill", '#eaedf1');
-                    d.node.transition().duration(500).attr("width", node_size *(d.ports.length + 1) + (node_size*2));
-                    setTimeout(function() {
-                        var inner_ports = d.inner_port.selectAll(".inner_port").data(d.ports, function(d) { return d.uuid });
-                        inner_ports.exit().remove();
-                        var inner_ports_enter = inner_ports.enter().insert("svg:g").attr("class", "inner_port");
-                    
-                        inner_ports_enter.each(function(p,k) {
-                            var port = d3.select(this);
-                            port.attr("id",d.uuid)
-                            port.append("image")
-                                .attr("xlink:href", "/icons/green_plug.svg")
-                                .attr('x', node_size * (p.idx - 1))
-                                .attr('y', -node_size/2)
-                                .attr("width", node_size/2).attr("height", node_size/2);
-                            port.append('svg:text').attr('x', node_size * (p.idx - 1)).attr('y', node_size/2)
-                            .style('stroke', 'none').style('text-anchor', "start").style('font-size', '.2em').text(p.name);
-                        })
-                    },500);
+                    d.node.transition().duration(200).attr("width", node_size *(d.ports.length + 1) + (node_size*2));
+                    var inner_ports = d.inner_port.selectAll(".inner_port").data(d.ports, function(d) { return d.uuid });
+                    inner_ports.exit().remove();
+                    var inner_ports_enter = inner_ports.enter().insert("svg:g").attr("class", "inner_port");
+                
+                    inner_ports_enter.each(function(p,k) {
+                        var port = d3.select(this);
+                        port.attr("id",d.uuid)
+                        port.append("image")
+                            .attr("xlink:href", "/icons/green_plug.svg")
+                            .attr('x', node_size * (p.idx - 1))
+                            .attr('y', -node_size/2)
+                            .attr("width", node_size/2).attr("height", node_size/2);
+                        port.append('svg:text').attr('x', node_size * (p.idx - 1)).attr('y', node_size/2)
+                        .style('stroke', 'none').style('text-anchor', "start").style('font-size', '.2em').text(p.name);
+                    })
                 }
             } else {
                 d.node.classed('selected', false)
@@ -396,10 +393,14 @@ common.view = (function() {
         linkEnter.each(function(d,i) {
             var l = d3.select(this);
             l.append("svg:path").attr("class", "link_background link_path")
-                                .on("click",function(d) {
-                                    selected_id.push(d.sourceUuid+":"+d.targetUuid);
-                                    redraw();
-                                })
+                                // .on("click",function(d) {
+                                //     if(selected_id.includes(d.sourceUuid+":"+d.targetUuid)) {
+                                //         selected_id.splice(selected_id.indexOf(d.sourceUuid+":"+d.targetUuid), 1);
+                                //     } else {
+                                //         selected_id.push(d.sourceUuid+":"+d.targetUuid);
+                                //     }
+                                //     redraw();
+                                // })
             var link = l.append("svg:path").attr('class', 'link_line link_path')
             l.append("svg:path").attr('class', 'link_anim')
             if(!d.source) d.source = activeNodes.find(function(a) { return a.uuid === d.sourceUuid});
