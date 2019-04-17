@@ -40,12 +40,14 @@ export default {
             me.$loading({})
             var transfer_data = e.dataTransfer.getData("node");
             var data = JSON.parse(transfer_data);
-            api.getUnderlay(data).then(function(underlay) {
-                api.getOverlay(data).then(function(overlay) {
-                    console.log(underlay, overlay);
-                    common.view.setMap(data,underlay, overlay, e);
-                    me.$loading({}).close();
+            api.getTopology(data.uuid).then(function(topology) {
+                api.getUnderlay(data).then(function(underlay) {
+                    api.getOverlay(data).then(function(overlay) {
+                        common.view.setMap(data, {underlay:underlay,overlay: overlay,topology:topology}, e);
+                        me.$loading({}).close();
+                    })
                 })
+                
             })
             me.$loading({}).close();
         }

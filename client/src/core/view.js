@@ -357,20 +357,23 @@ common.view = (function() {
                 if(d.inner_port) {
                     d.node.attr("fill", '#eaedf1');
                     d.node.transition().duration(500).attr("width", node_size *(d.ports.length + 1) + (node_size*2));
-                    var inner_ports = d.inner_port.selectAll(".inner_port").data(d.ports, function(d) { return d.uuid });
-                    inner_ports.exit().remove();
-                    var inner_ports_enter = inner_ports.enter().insert("svg:g").attr("class", "inner_port");
-                    inner_ports_enter.each(function(p,k) {
-                        var port = d3.select(this);
-                        port.attr("id",d.uuid)
-                        port.append("image")
-                            .attr("xlink:href", "/icons/green_plug.svg")
-                            .attr('x', node_size * (p.idx - 1))
-                            .attr('y', -node_size/2)
-                            .attr("width", node_size/2).attr("height", node_size/2);
-                        port.append('svg:text').attr('x', node_size * (p.idx - 1)).attr('y', node_size/2)
-                        .style('stroke', 'none').style('text-anchor', "start").style('font-size', '.2em').text(p.name);
-                    })
+                    setTimeout(function() {
+                        var inner_ports = d.inner_port.selectAll(".inner_port").data(d.ports, function(d) { return d.uuid });
+                        inner_ports.exit().remove();
+                        var inner_ports_enter = inner_ports.enter().insert("svg:g").attr("class", "inner_port");
+                    
+                        inner_ports_enter.each(function(p,k) {
+                            var port = d3.select(this);
+                            port.attr("id",d.uuid)
+                            port.append("image")
+                                .attr("xlink:href", "/icons/green_plug.svg")
+                                .attr('x', node_size * (p.idx - 1))
+                                .attr('y', -node_size/2)
+                                .attr("width", node_size/2).attr("height", node_size/2);
+                            port.append('svg:text').attr('x', node_size * (p.idx - 1)).attr('y', node_size/2)
+                            .style('stroke', 'none').style('text-anchor', "start").style('font-size', '.2em').text(p.name);
+                        })
+                    },500);
                 }
             } else {
                 d.node.classed('selected', false)
@@ -378,6 +381,7 @@ common.view = (function() {
                 if(d.inner_port) {
                     d.node.attr("fill",function(d) { return node_type[d.type] ? node_type[d.type].color : 'rgb(166, 187, 207)' });
                     d.node.transition().duration(500).attr("width", node_size*2);
+                    
                     var inner_ports = d.inner_port.selectAll(".inner_port").data([], function(d) { return d.uuid });
                     inner_ports.exit().remove();
                 }
@@ -535,13 +539,17 @@ common.view = (function() {
     }
 
     return {
-        setMap: function(root, underlay,overlay, event) {
+        setMap: function(root, nodes, event) {
+            var topology = nodes.topology;
+            var underlay = nodes.underlay;
+            var overlay = nodes.overlay;
             var isExists = activeNodes.find(function(d) { return d.uuid === root.uuid});
             if(!isExists) {
                 var root_x = Math.round((event.offsetX - outer_transform.x) / outer_transform.k);
                 var root_y = Math.round((event.offsetY - outer_transform.y) / outer_transform.k);
                 root["x"] = root_x;
                 root["y"] = root_y;
+                root["ctrl_uuid"] = root.uuid;
                 root["type"] = "SDN";
                 activeNodes.push(root);
 
@@ -549,12 +557,15 @@ common.view = (function() {
                 var total_count = Object.keys(underlay).length;
                 _.each(underlay, function(data, type) {
                     _.each(data, function(item, index) {
+                        var saved_data = topology[item.uuid];
+                        console.log(saved_data);
                         var area_width = (container_div.clientWidth/2) / total_count;
                         var x = root_x - (area_width * count) - (area_width/2)
                         var y = root_y + (((index % 2 === 1) ? -node_size : node_size) * Math.ceil(index/2)*3)
-                        item["x"] = x;
-                        item["y"] = y;
+                        item["x"] = saved_data ? parseFloat(saved_data.x) : x;
+                        item["y"] = saved_data ? parseFloat(saved_data.y) : y;
                         item["type"] = type;
+                        item["ctrl_uuid"] = root.uuid;
                         activeNodes.push(item);
                         if(item.links && item.links.length > 0) {
                             activeLinks = activeLinks.concat(item.links);
@@ -572,12 +583,14 @@ common.view = (function() {
                 total_count = Object.keys(overlay).length;
                 _.each(overlay, function(data, type) {
                     _.each(data, function(item, index) {
+                        var saved_data = topology[item.uuid];
                         var area_width = (container_div.clientWidth/2) / total_count;
                         var x = root_x + (area_width * count) + (area_width/2)
                         var y = root_y + (((index % 2 === 1) ? -node_size : node_size) * Math.ceil(index/2)*3)
-                        item["x"] = x;
-                        item["y"] = y;
+                        item["x"] = saved_data ? parseFloat(saved_data.x) : x;
+                        item["y"] = saved_data ? parseFloat(saved_data.y) : y;
                         item["type"] = type;
+                        item["ctrl_uuid"] = root.uuid;
                         activeNodes.push(item);
                         if(item.links && item.links.length > 0) {
                             activeLinks = activeLinks.concat(item.links);

@@ -32,8 +32,8 @@ export default {
             return res;
         })
     },
-    getTopology: function(data) {
-        var url = "/topology/search";
+    getTopology: function(ctrl_uuid) {
+        var url = "/topology/search?ctrl_uuid=" + ctrl_uuid;
         return http.get(url).then(function(res) {
             return res;
         })

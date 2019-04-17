@@ -5,20 +5,25 @@ var fsPath = require('fs-path');
 module.exports = {
     get : {
         "search" : function(req,res,next) {
-            var response = {};
-            var file_path = path.resolve(process.env.root_path, './output/topology.json')
-            if(fs.existsSync(file_path)) {
-                var contents = fs.readFileSync(file_path,'utf8');
-                response = JSON.parse(contents);
-            }
-            res.status(200).send(response);
+            khan.model.topology.selectByCtrl(req.query.ctrl_uuid).then((rows) => {
+                var data = {};
+                if(rows.length > 0) {
+                    data = JSON.parse(rows[0].topology);
+                }
+                
+                res.status(200).send(data);
+            }).catch((err) => {
+                res.status(500).send(err);
+            })
         }
     },
     post: {
         "save" : function(req,res,next) {
-            var file_path = path.resolve(process.env.root_path, './output/topology.json')
-            fsPath.writeFileSync(file_path, JSON.stringify(req.body, null, 2), 'utf8');
-            res.status(200).send();
+            khan.model.topology.upsert(req.body.activeNodes).then(() => {
+                res.status(200).send();
+            }).catch((err) => {
+                res.status(500).send(err);
+            })
         }
     }
 }

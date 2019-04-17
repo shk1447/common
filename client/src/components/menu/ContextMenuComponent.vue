@@ -45,17 +45,15 @@ export default {
                     // save current topology
                     var nodes = common.view.getNodes().map(function(d) {
                         return {
-                            x:d.x,y:d.y,name:d.name,uuid:d.uuid,type:d.type,status:d.status
+                            uuid:d.uuid,
+                            ctrl_uuid:d.ctrl_uuid,
+                            type:'node',
+                            props:{
+                                x:d.x,y:d.y,name:d.name,uuid:d.uuid,type:d.type,ctrl_uuid:d.ctrl_uuid
+                            }
                         }
                     });
-                    var links = common.view.getLinks().map(function(d) {
-                        return {
-                            sourceUuid : d.source.uuid,
-                            targetUuid : d.target.uuid,
-                            speed : d.speed
-                        }
-                    })
-                    var params = {activeNodes:nodes, activeLinks:links};
+                    var params = {activeNodes:nodes};
                     api.setTopology(params).then(function(){
                         common.events.emit('notify', {message:'Save Success.', type:'success'})
                     }).catch(function(err) {

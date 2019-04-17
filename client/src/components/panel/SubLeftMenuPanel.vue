@@ -45,7 +45,7 @@ export default {
     methods: {
         onNodeDragStart(node,e) {
             var transfer_data = {
-                id:node.data.uuid,
+                uuid:node.data.uuid,
                 name:node.data.name
             }
             e.dataTransfer.setData("node", JSON.stringify(transfer_data));
