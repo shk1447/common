@@ -265,7 +265,7 @@ common.view = (function() {
             node.w = node_size;
             node.h = node_size;
             
-            if(!d.status) {
+            if(d.status !== "ACTIVE") {
                 var anim_alarm = node.append("circle")
                                 .attr("r", node_size)
                                 .attr("fill", "rgba(255,0,0,0)")
@@ -364,7 +364,7 @@ common.view = (function() {
                         var port = d3.select(this);
                         port.attr("id",d.uuid)
                         port.append("image")
-                            .attr("xlink:href", "/icons/green_plug.svg")
+                            .attr("xlink:href", p.status === "UP" ? "/icons/green_plug.svg" : "/icons/black_plug.svg")
                             .attr('x', node_size * (p.idx - 1))
                             .attr('y', -node_size/2)
                             .attr("width", node_size/2).attr("height", node_size/2);
@@ -551,6 +551,7 @@ common.view = (function() {
                 root["x"] = root_x;
                 root["y"] = root_y;
                 root["ctrl_uuid"] = root.uuid;
+                root["status"] = "ACTIVE";
                 root["type"] = "SDN";
                 activeNodes.push(root);
 
