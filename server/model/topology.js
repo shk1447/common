@@ -118,7 +118,6 @@ Topology.prototype.upsert = function(params) {
     query = query.slice(0, -1) + ") ";
     query += values.slice(0, -1);
     query += upsertQuery.slice(0,-1);
-    console.log(query);
     return khan.database.raw(query);
 }
 
