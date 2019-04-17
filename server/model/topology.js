@@ -73,9 +73,11 @@ function Topology() {
 }
 
 Topology.prototype.selectByCtrl = function(ctrl_uuid) {
-    return khan.database(this.table_name)
-        .select(khan.database.raw("CONCAT('{',GROUP_CONCAT(CONCAT('\"', `uuid`, '\":' , column_json(props))),'}') as `topology`"))
-        .where({ctrl_uuid:ctrl_uuid}).groupBy("ctrl_uuid");
+    return khan.database.raw("SET @@group_concat_max_len = 9999999999;").then(() => {
+        return khan.database(this.table_name)
+            .select(khan.database.raw("CONCAT('{',GROUP_CONCAT(CONCAT('\"', `uuid`, '\":' , column_json(props))),'}') as `topology`"))
+            .where({ctrl_uuid:ctrl_uuid}).groupBy("ctrl_uuid");
+    })
 };
 
 Topology.prototype.upsert = function(params) {
