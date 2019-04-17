@@ -401,15 +401,16 @@ common.view = (function() {
                                 //     }
                                 //     redraw();
                                 // })
-            var link = l.append("svg:path").attr('class', 'link_line link_path')
+            var link = l.append("svg:path").attr('class', 'link_line link_path');
             l.append("svg:path").attr('class', 'link_anim')
             if(!d.source) d.source = activeNodes.find(function(a) { return a.uuid === d.sourceUuid});
             if(!d.target) d.target = activeNodes.find(function(a) { return a.uuid === d.targetUuid});
+            
             l.append('svg:text')
             .attr('class', 'speed')
             .attr('x', (d.source.x + d.target.x)/2)
             .attr('y', (d.source.y + d.target.y)/2)
-            .style('stroke', 'none').text(d.speed);
+            .style('stroke', 'none').text(d.latency + " ns");
         })
         link.exit().remove();
 
@@ -427,7 +428,7 @@ common.view = (function() {
             var thisLink = d3.select(this);
             var id = d.source.uuid + ":" + d.target.uuid;
             var path_data = lineGenerator([[d.source.x, d.source.y],[d.target.x, d.target.y]])
-            thisLink.attr("d", path_data).attr("stroke-width", node_size/4).attr('stroke','#888');
+            thisLink.attr("d", path_data).attr("stroke-width", node_size/4).attr('stroke', color_define.speed[d.speed] ? color_define.speed[d.speed] : '#ff7f0e');
             if(selected_id.includes(id)) {
                 thisLink.attr('stroke', '#ff7f0e');
             }
@@ -436,7 +437,6 @@ common.view = (function() {
                 result.forEach(function(v,i) {
                     v.node.attr('filter', 'url(#' + activeDropShadow + ')' );
                 })
-                thisLink.attr('stroke', color_define.speed[d.speed] ? color_define.speed[d.speed] : '#ff7f0e');
             }
         })
         var anim_links = link_group.selectAll('.link_anim');
@@ -450,14 +450,16 @@ common.view = (function() {
             function repeat() {
                 thisLink.attr('stroke-dashoffset', totalLength + (totalLength/4));
                 thisLink.transition()
-                    .duration(20000/(d.traffic ? d.traffic : Math.round(Math.random()*100)))
+                    .duration(20000/d.latency)
                     .attr("stroke-dashoffset", totalLength/8)
                 .transition()
-                    .duration(20000/(d.traffic ? d.traffic : Math.round(Math.random()*100)))
+                    .duration(20000/d.latency)
                     .attr('stroke-dashoffset', totalLength + (totalLength/4))
                 .on("end", repeat)
             }
-            repeat();
+            if(d.latency) {
+                repeat();
+            }
         })
     }
 
