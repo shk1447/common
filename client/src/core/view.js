@@ -318,7 +318,13 @@ common.view = (function() {
                     .attr("width", node_size*2)
                     .attr("height", node_size*2)
                 d.inner_port = node.append('g').attr('class', 'inner_port');
-                d.inner_port.attr("transform", function(d) { return "translate(" + (node_size*2) + "," + 0 + ")"; });
+                var trans_x = -(node_size*d.ports.length/2);
+                var trans_y = -node_size*3;
+                if(d.ports.length >= 12) {
+                    trans_x = trans_x /2;
+                    trans_y = -node_size*4;
+                }
+                d.inner_port.attr("transform", function(d) { return "translate(" + trans_x + "," + trans_y + ")"; });
             } else {
                 d.node = node.append("circle")
                     .attr("r", node_size)
@@ -355,20 +361,26 @@ common.view = (function() {
 
                 if(d.inner_port) {
                     d.node.attr("fill", '#eaedf1');
-                    d.node.transition().duration(200).attr("width", node_size *(d.ports.length + 1) + (node_size*2));
+                    //d.node.transition().duration(200).attr("width", node_size *(d.ports.length + 1) + (node_size*2));
                     var inner_ports = d.inner_port.selectAll(".inner_port").data(d.ports, function(d) { return d.uuid });
                     inner_ports.exit().remove();
                     var inner_ports_enter = inner_ports.enter().insert("svg:g").attr("class", "inner_port");
-                
+                    var standard_num = 0;
+                    if(d.ports.length >= 12) {
+                        standard_num  = d.ports.length / 2;
+                    }
                     inner_ports_enter.each(function(p,k) {
                         var port = d3.select(this);
+
+                        var port_x = node_size * ((p.idx > standard_num ? (p.idx - standard_num) : p.idx) - 1);
+                        var port_y = p.idx > standard_num ? node_size/2 : -node_size/2;
                         port.attr("id",d.uuid)
                         port.append("image")
                             .attr("xlink:href", p.status === "UP" ? "/icons/green_plug.svg" : "/icons/black_plug.svg")
-                            .attr('x', node_size * (p.idx - 1))
-                            .attr('y', -node_size/2)
+                            .attr('x', port_x)
+                            .attr('y', port_y)
                             .attr("width", node_size/2).attr("height", node_size/2);
-                        port.append('svg:text').attr('x', node_size * (p.idx - 1)).attr('y', node_size/2)
+                        port.append('svg:text').attr('x', port_x).attr('y', port_y + 12)
                         .style('stroke', 'none').style('text-anchor', "start").style('font-size', '.2em').text(p.name);
                     })
                 }
@@ -377,7 +389,7 @@ common.view = (function() {
                 d.node.attr('filter', null );
                 if(d.inner_port) {
                     d.node.attr("fill",function(d) { return node_type[d.type] ? node_type[d.type].color : 'rgb(166, 187, 207)' });
-                    d.node.transition().duration(500).attr("width", node_size*2);
+                    //d.node.transition().duration(500).attr("width", node_size*2);
                     
                     var inner_ports = d.inner_port.selectAll(".inner_port").data([], function(d) { return d.uuid });
                     inner_ports.exit().remove();
