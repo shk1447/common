@@ -82,7 +82,7 @@ common.chart = (function() {
                 if(d.total_state && end_date >= new Date(d.unixtime)) {
                     if(prev_datum.current_state === '하락' && d.current_state === '상승'
                         && prev_datum.support_count <= d.support_count  && d.regist_count < d.support_count
-                        && prev_datum.regist_count > d.regist_count && prev_datum.Volume < d.Volume) {
+                        && prev_datum.regist_count >= d.regist_count && prev_datum.Volume < d.Volume) {
                         trades.push({date:parseDate(d.unixtime), type:'buy', price:d.Low, quantity:1})
                         //supstanceData.push({value:(up_price+down_price)/2, type:'support'});
                         //supstanceData.push({value:(up_price+down_price)/2});

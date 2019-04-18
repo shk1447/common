@@ -19,7 +19,7 @@ common.view = (function() {
 
     var activeNodes = [];
     var activeLinks = [];
-    var selected_id;
+    var selected_id = [];
 
     var types = [];
     var node_type = {};
@@ -63,7 +63,7 @@ common.view = (function() {
             params : {}
         });
         
-        selected_id = "";
+        //selected_id = [];
         redraw();
     }
 
@@ -152,7 +152,11 @@ common.view = (function() {
     function nodeClicked(node, node_info) {
         d3.event.stopPropagation();
         d3.event.preventDefault();
-        selected_id = node_info.id;
+        if(selected_id.includes(node_info.id)) {
+            selected_id.splice(selected_id.indexOf(node_info.id), 1);
+        } else {
+            selected_id.push(node_info.id);
+        }
         redraw();
     }
 
@@ -246,7 +250,7 @@ common.view = (function() {
                 repeat();
             }
 
-            if(d.ports && d.ports.length > 0) {
+            if(d.supstance && d.supstance.length > 0) {
                 d.node = node.append("rect")
                     .attr('rx', node_size/4)
                     .attr('x', -node_size)
@@ -262,9 +266,9 @@ common.view = (function() {
                 .attr("fill",function(d) { 
                     var color = 'rgb(166, 187, 207)';
                     if(d.total_status === "상승") {
-                        color = 'rgb(200, 150, 150, 0.9)';
+                        color = 'rgb(200, 150, 150, 1)';
                     } else if(d.total_status === "하락") {
-                        color = 'rgb(150, 150, 200, 0.9)';
+                        color = 'rgb(150, 150, 200, 1)';
                     }
                     return color;
                 })
@@ -291,12 +295,25 @@ common.view = (function() {
             
             thisNode.attr("transform", function(d) { return "translate(" + (d.x) + "," + (d.y) + ")"; });
 
-            if(d.id === selected_id) {
+            if(selected_id.includes(d.id)) {
                 d.node.classed('selected', true)
                 d.node.attr('filter', 'url(#' + activeDropShadow + ')' );
+                // d.node.transition().duration(250).attr('width', node_size*2*2 ).attr('height', node_size*2*2 ).attr("fill", '#eaedf1')
+                // .on("end", function() {
+
+                // })
             } else {
                 d.node.classed('selected', false)
                 d.node.attr('filter', null );
+                // d.node.transition().duration(250).attr('width', node_size*2*2 ).attr('height', node_size*2).attr("fill",function(d) { 
+                //     var color = 'rgb(166, 187, 207)';
+                //     if(d.total_status === "상승") {
+                //         color = 'rgb(200, 150, 150, 1)';
+                //     } else if(d.total_status === "하락") {
+                //         color = 'rgb(150, 150, 200, 1)';
+                //     }
+                //     return color;
+                // });
             }
         });
 
@@ -307,11 +324,7 @@ common.view = (function() {
 
         linkEnter.each(function(d,i) {
             var l = d3.select(this);
-            l.append("svg:path").attr("class", "link_background link_path")
-                                .on("click",function(d) {
-                                    selected_id = d.source+":"+d.target;
-                                    redraw();
-                                })
+            l.append("svg:path").attr("class", "link_background link_path");
             l.append("svg:path").attr('class', 'link_line link_path')
             l.append("svg:path").attr('class', 'link_anim')
             if(!d.sourceNode) d.sourceNode = activeNodes.find(function(a) { return a.id === d.source});
@@ -339,10 +352,10 @@ common.view = (function() {
             var id = d.sourceNode.id + ":" + d.targetNode.id;
             var path_data = lineGenerator([[d.sourceNode.x, d.sourceNode.y],[d.targetNode.x, d.targetNode.y]])
             thisLink.attr("d", path_data).attr("stroke-width", node_size/4).attr('stroke','#888');
-            if(id === selected_id) {
+            if(selected_id.includes(id)) {
                 thisLink.attr('stroke', '#ff7f0e');
             }
-            if(d.sourceNode.id === selected_id || d.targetNode.id === selected_id) {
+            if(selected_id.includes(d.sourceNode.id) || selected_id.includes(d.targetNode.id)) {
                 var result = activeNodes.filter(function(a) {return a.id === d.sourceNode.id || a.id === d.targetNode.id});
                 result.forEach(function(v,i) {
                     v.node.attr('filter', 'url(#' + activeDropShadow + ')' );
@@ -370,13 +383,13 @@ common.view = (function() {
     }
 
     function deleteItem() {
-        var node_index = activeNodes.findIndex(function(d) {return d.id === selected_id});
+        var node_index = activeNodes.findIndex(function(d) {return selected_id.includes(d.id)});
         if(node_index >= 0) {
             var remove_index = [];
             var link_length = activeLinks.length;
             for(var i = 0; i < link_length; i++) {
                 var d = activeLinks[i];
-                if((d.sourceNode.id === selected_id || d.targetNode.id === selected_id)) {
+                if((selected_id.includes(d.sourceNode.id) || selected_id.includes(d.targetNode.id))) {
                     remove_index.push(i);
                 }
             }
@@ -472,13 +485,21 @@ common.view = (function() {
                         prev_state = d;
                         item["total_status"] = item["total_state"][i];
                     });
-                    item["status"] = status;
                     item["last_state"] = prev_state;
+
+                    if(item.prev_supstance) {
+                        item.prev_supstance = item.prev_supstance.split(',');
+                    } else {
+                        item.prev_supstance = [];
+                    }
 
                     if(item.supstance) {
                         item.supstance = item.supstance.split(',');
-                        item["status"] = item.supstance.length;
+                    } else {
+                        item.supstance = [];
                     }
+
+                    item["status"] = item.supstance.length - item.prev_supstance.length;
                     
                     if(!activeNodes.find(function(d) { return d.id === item.id})) {
                         activeNodes.push(item);
@@ -518,10 +539,19 @@ common.view = (function() {
                     });
                     
                     item["last_state"] = prev_state;
+                    if(item.prev_supstance) {
+                        item.prev_supstance = item.prev_supstance.split(',');
+                    } else {
+                        item.prev_supstance = [];
+                    }
+
                     if(item.supstance) {
                         item.supstance = item.supstance.split(',');
-                        item["status"] = item.supstance.length;
+                    } else {
+                        item.supstance = [];
                     }
+
+                    item["status"] = item.supstance.length - item.prev_supstance.length;
 
                     if(!activeNodes.find(function(d) { return d.id === item.id})) {
                         activeNodes.push(item);
@@ -648,7 +678,7 @@ common.view = (function() {
 
             activeNodes = [];
             activeLinks = [];
-            selected_id;
+            selected_id = [];
 
             node_type = {};
 
