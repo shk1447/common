@@ -81,7 +81,7 @@ CurrentStock.prototype.selectAll = function() {
 };
 
 CurrentStock.prototype.selectJoinFavorite = function(param, email) {
-    return khan.database.select(khan.database.raw("current_stock.category, column_get(current_stock.rawdata, '종목명' as char) as name, favorite.favorite_type, current_stock.unixtime")).from(this.table_name).leftJoin('favorite', 'current_stock.category', 'favorite.category').where(khan.database.raw("column_get(current_stock.rawdata,'종목명' as char) like '%" + param + "%' OR current_stock.category like '%"+param+"%' AND favorite.email = '"+email+"'"));
+    return khan.database.select(khan.database.raw("current_stock.category, column_get(current_stock.rawdata, '종목명' as char) as name, favorite.favorite_type, column_get(current_stock.rawdata, '지지가격대' as char) as supstance, current_stock.unixtime")).from(this.table_name).leftJoin('favorite', 'current_stock.category', 'favorite.category').where(khan.database.raw("column_get(current_stock.rawdata,'종목명' as char) like '%" + param + "%' OR current_stock.category like '%"+param+"%' AND favorite.email = '"+email+"'"));
 }
 
 instance = instance ? instance : new CurrentStock();

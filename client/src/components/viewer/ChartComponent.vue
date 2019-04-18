@@ -140,7 +140,11 @@ export default {
                 common.chart.uninit('chart-space');
                 common.chart.init('chart-space', {signal:me.signal});
                 api.getData(me.selected_item.category).then(function(data) {
-                    common.chart.load(data);
+                    var supstance = []
+                    if(me.selected_item.supstance) {
+                        supstance = me.selected_item.supstance.split(',');
+                    }
+                    common.chart.load(data, null, supstance);
                 })
             },400)
         }

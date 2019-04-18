@@ -8,6 +8,7 @@ const path = require('path');
 const cors = require('cors');
 const express = require('express');
 const bodyParser = require('body-parser');
+const cookieParser = require('cookie-parser');
 const busboy = require("connect-busboy");
 var compression = require('compression');
 var helmet = require('helmet');
@@ -139,7 +140,9 @@ module.exports = function(config) {
     app.use(bodyParser.json({limit:'5mb'}));
     app.use(busboy());
 
+    app.use(cookieParser());
     app.use(session({
+        key: 'sid',
         secret: 'khan',
         cookie: {
             maxAge: 1000 * 60 * config.session_time

@@ -462,18 +462,24 @@ common.view = (function() {
                     var status = 0;
                     var prev_state;
                     item.current_state.forEach(function(d, i) {
-                        if(prev_state) {
-                            if(prev_state === "하락" && d === "상승") {
-                                status++;
-                            } else if(prev_state === "상승" && d === "하락") {
-                                status--;
-                            }
-                        }
+                        // if(prev_state) {
+                        //     if(prev_state === "하락" && d === "상승") {
+                        //         status++;
+                        //     } else if(prev_state === "상승" && d === "하락") {
+                        //         status--;
+                        //     }
+                        // }
                         prev_state = d;
                         item["total_status"] = item["total_state"][i];
                     });
                     item["status"] = status;
                     item["last_state"] = prev_state;
+
+                    if(item.supstance) {
+                        item.supstance = item.supstance.split(',');
+                        item["status"] = item.supstance.length;
+                    }
+                    
                     if(!activeNodes.find(function(d) { return d.id === item.id})) {
                         activeNodes.push(item);
                     }
@@ -500,18 +506,22 @@ common.view = (function() {
                     var status = 0;
                     var prev_state;
                     item.current_state.forEach(function(d, i) {
-                        if(prev_state) {
-                            if(prev_state === "하락" && d === "상승") {
-                                status++;
-                            } else if(prev_state === "상승" && d === "하락") {
-                                status--;
-                            }
-                        }
+                        // if(prev_state) {
+                        //     if(prev_state === "하락" && d === "상승") {
+                        //         status++;
+                        //     } else if(prev_state === "상승" && d === "하락") {
+                        //         status--;
+                        //     }
+                        // }
                         prev_state = d;
                         item["total_status"] = item["total_state"][i];
                     });
-                    item["status"] = status;
+                    
                     item["last_state"] = prev_state;
+                    if(item.supstance) {
+                        item.supstance = item.supstance.split(',');
+                        item["status"] = item.supstance.length;
+                    }
 
                     if(!activeNodes.find(function(d) { return d.id === item.id})) {
                         activeNodes.push(item);

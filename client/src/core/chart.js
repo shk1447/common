@@ -58,32 +58,34 @@ common.chart = (function() {
         // focus.selectAll("g.ichimoku").datum(ichimokuData).call(ichimoku);
     }
 
-    function load(data, end_date) {
+    function load(data, end_date, supstance) {
         var accessor = candlestick.accessor(),
             timestart = Date.now();
 
         supstanceData = [];
+        if(supstance) {
+            console.log(supstance);
+            _.each(supstance, function(v,i) {
+                supstanceData.push({value:parseInt(v), type:'test'});
+            })
+        }
         trades = [];
         var prev_datum;
         var result_money = 0;
         var result_money2 = 0;
         var loss_moeny = 0;
         var result_volume = 0;
-        var result_volume2 = 0;
         var end_date = end_date ? new Date(end_date) : new Date();
         data = data.map(function(d) {
             if(prev_datum) {
                 //console.log(d.support_count, d.regist_count, d.total_state, d.current_state)
                 if(d.total_state && end_date >= new Date(d.unixtime)) {
-                    if((prev_datum.total_state === '횡보' || prev_datum.total_state === '하락') && d.total_state === '상승' && d.current_state === '상승'
-                        && d.regist_count < d.support_count && prev_datum.regist_count >= d.regist_count && prev_datum.Volume < d.Volume) {
+                    if(prev_datum.current_state === '하락' && d.current_state === '상승'
+                        && prev_datum.support_count <= d.support_count  && d.regist_count < d.support_count
+                        && prev_datum.regist_count > d.regist_count && prev_datum.Volume < d.Volume) {
                         trades.push({date:parseDate(d.unixtime), type:'buy', price:d.Low, quantity:1})
                         //supstanceData.push({value:(up_price+down_price)/2, type:'support'});
                         //supstanceData.push({value:(up_price+down_price)/2});
-                        
-                    }
-                    if(((prev_datum.total_state === '횡보' || prev_datum.total_state === '하락') && d.total_state === '상승') || 
-                        (prev_datum.current_state === '하락' && d.current_state === '상승') && prev_datum.Volume < d.Volume) {
                         var up_price = (d.High + d.Close) / 2;
                         var down_price = ((d.Close + d.Low) / 2);
                         var low_price = d.Low;
@@ -92,7 +94,8 @@ common.chart = (function() {
                         loss_moeny += low_price * d.Volume;
                         result_volume += d.Volume;
                     }
-                    if(prev_datum.current_state === '상승' && d.total_state === '하락' && d.current_state === '하락') {
+                    if(prev_datum.current_state === '상승' && d.total_state === '하락' && d.current_state === '하락' 
+                        && prev_datum.regist_count <= d.regist_count) {
                         trades.push({date:parseDate(d.unixtime), type:'sell', price:d.High, quantity:1})
                     }
                 }
