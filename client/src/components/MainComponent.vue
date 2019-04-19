@@ -29,6 +29,7 @@
     
     <create-node-modal ref="createNodeModal"></create-node-modal>
     <detail-node-modal ref="detailNodeModal"></detail-node-modal>
+    <chart-modal ref="chartModal"></chart-modal>
     <context-menu ref="contextMenu"></context-menu>
 </div>
 </template>
@@ -43,6 +44,7 @@ import CreateNodeModal from './modal/CreateNodeModal.vue'
 import DetailNodeModal from './modal/DetailNodeModal.vue'
 import ContextMenu from './menu/ContextMenuComponent.vue'
 import MainMenuPanel from './panel/MainMenuPanel.vue';
+import ChartModal from './modal/ChartModal.vue'
 
 import api from '../api/api.js'
 
@@ -61,7 +63,9 @@ export default {
         "create-node-modal" : CreateNodeModal,
         "detail-node-modal" : DetailNodeModal,
         "context-menu" : ContextMenu,
+        "chart-modal" : ChartModal,
         "main-menu" : MainMenuPanel
+        
     },
     methods: {
         handleLogout() {

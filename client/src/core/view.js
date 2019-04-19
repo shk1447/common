@@ -400,11 +400,20 @@ common.view = (function() {
         var link = link_group.selectAll(".link").data(activeLinks, function(d) { return d.sourceUuid+":"+d.targetUuid });
 
         var linkEnter = link.enter().insert("svg:g")
-            .attr("class", "link");
+            .attr("class", "link").on('click', function(d) {
+                common.events.emit('popup', {
+                    name : 'chartModal',
+                    params : d
+                });
+            })
 
         linkEnter.each(function(d,i) {
             var l = d3.select(this);
-            l.append("svg:path").attr("class", "link_background link_path")
+            if(!d.source) d.source = activeNodes.find(function(a) { return a.uuid === d.sourceUuid});
+            if(!d.target) d.target = activeNodes.find(function(a) { return a.uuid === d.targetUuid});
+            
+            if(d.source && d.target) {
+                l.append("svg:path").attr("class", "link_background link_path")
                                 // .on("click",function(d) {
                                 //     if(selected_id.includes(d.sourceUuid+":"+d.targetUuid)) {
                                 //         selected_id.splice(selected_id.indexOf(d.sourceUuid+":"+d.targetUuid), 1);
@@ -413,16 +422,14 @@ common.view = (function() {
                                 //     }
                                 //     redraw();
                                 // })
-            var link = l.append("svg:path").attr('class', 'link_line link_path');
-            l.append("svg:path").attr('class', 'link_anim')
-            if(!d.source) d.source = activeNodes.find(function(a) { return a.uuid === d.sourceUuid});
-            if(!d.target) d.target = activeNodes.find(function(a) { return a.uuid === d.targetUuid});
-            
-            l.append('svg:text')
-            .attr('class', 'speed')
-            .attr('x', (d.source.x + d.target.x)/2)
-            .attr('y', (d.source.y + d.target.y)/2)
-            .style('stroke', 'none').text(d.latency + " ns");
+                var link = l.append("svg:path").attr('class', 'link_line link_path');
+                l.append("svg:path").attr('class', 'link_anim')
+                l.append('svg:text')
+                .attr('class', 'speed')
+                .attr('x', (d.source.x + d.target.x)/2)
+                .attr('y', (d.source.y + d.target.y)/2)
+                .style('stroke', 'none').text(d.latency + " ns");
+            }
         })
         link.exit().remove();
 
@@ -438,39 +445,44 @@ common.view = (function() {
         var links = link_group.selectAll('.link_path')
         links.each(function(d,i) {
             var thisLink = d3.select(this);
-            var id = d.source.uuid + ":" + d.target.uuid;
-            var path_data = lineGenerator([[d.source.x, d.source.y],[d.target.x, d.target.y]])
-            thisLink.attr("d", path_data).attr("stroke-width", node_size/4).attr('stroke', color_define.speed[d.speed] ? color_define.speed[d.speed] : '#ff7f0e');
-            if(selected_id.includes(id)) {
-                thisLink.attr('stroke', '#ff7f0e');
-            }
-            if(selected_id.includes(d.source.uuid) || selected_id.includes(d.target.uuid)) {
-                var result = activeNodes.filter(function(a) {return a.uuid === d.source.uuid || a.uuid === d.target.uuid});
-                result.forEach(function(v,i) {
-                    v.node.attr('filter', 'url(#' + activeDropShadow + ')' );
-                })
+            if(d.source && d.target) {
+                var id = d.source.uuid + ":" + d.target.uuid;
+                var path_data = lineGenerator([[d.source.x, d.source.y],[d.target.x, d.target.y]])
+                thisLink.attr("d", path_data).attr("stroke-width", node_size/4).attr('stroke', color_define.speed[d.speed] ? color_define.speed[d.speed] : '#ff7f0e');
+                
+                if(selected_id.includes(id)) {
+                    thisLink.attr('stroke', '#ff7f0e');
+                }
+                if(selected_id.includes(d.source.uuid) || selected_id.includes(d.target.uuid)) {
+                    var result = activeNodes.filter(function(a) {return a.uuid === d.source.uuid || a.uuid === d.target.uuid});
+                    result.forEach(function(v,i) {
+                        v.node.attr('filter', 'url(#' + activeDropShadow + ')' );
+                    })
+                }
             }
         })
         var anim_links = link_group.selectAll('.link_anim');
         anim_links.each(function(d,i) {
-            var thisLink = d3.select(this);
-            var path_data = lineGenerator([[d.source.x, d.source.y],[d.target.x, d.target.y]])
-            thisLink.attr("d", path_data).attr("stroke-width", node_size/4)
-                .attr('stroke', 'rgb(221,221,221)');
-            var totalLength = thisLink.node().getTotalLength();
-            thisLink.attr("stroke-dasharray", totalLength/8 + " " + totalLength);
-            function repeat() {
-                thisLink.attr('stroke-dashoffset', totalLength + (totalLength/4));
-                thisLink.transition()
-                    .duration(20000/d.latency)
-                    .attr("stroke-dashoffset", totalLength/8)
-                .transition()
-                    .duration(20000/d.latency)
-                    .attr('stroke-dashoffset', totalLength + (totalLength/4))
-                .on("end", repeat)
-            }
-            if(d.latency) {
-                repeat();
+            if(d.source && d.target) {
+                var thisLink = d3.select(this);
+                var path_data = lineGenerator([[d.source.x, d.source.y],[d.target.x, d.target.y]])
+                thisLink.attr("d", path_data).attr("stroke-width", node_size/4)
+                    .attr('stroke', 'rgb(221,221,221)');
+                var totalLength = thisLink.node().getTotalLength();
+                thisLink.attr("stroke-dasharray", totalLength/8 + " " + totalLength);
+                function repeat() {
+                    thisLink.attr('stroke-dashoffset', totalLength + (totalLength/4));
+                    thisLink.transition()
+                        .duration(20000/d.latency)
+                        .attr("stroke-dashoffset", totalLength/8)
+                    .transition()
+                        .duration(20000/d.latency)
+                        .attr('stroke-dashoffset', totalLength + (totalLength/4))
+                    .on("end", repeat)
+                }
+                if(d.latency) {
+                    repeat();
+                }
             }
         })
     }
@@ -580,6 +592,10 @@ common.view = (function() {
                         var y = root_y + (((index % 2 === 1) ? -node_size : node_size) * Math.ceil(index/2)*3)
                         item["x"] = saved_data ? parseFloat(saved_data.x) : x;
                         item["y"] = saved_data ? parseFloat(saved_data.y) : y;
+                        console.log(item.x, item.y);
+                        if(!item.x) {
+                            console.log(item.uuid);
+                        }
                         item["type"] = type;
                         item["ctrl_uuid"] = root.uuid;
                         activeNodes.push(item);
@@ -607,6 +623,10 @@ common.view = (function() {
                         item["y"] = saved_data ? parseFloat(saved_data.y) : y;
                         item["type"] = type;
                         item["ctrl_uuid"] = root.uuid;
+                        console.log(item.x, item.y);
+                        if(!item.x) {
+                            console.log(item.uuid);
+                        }
                         activeNodes.push(item);
                         if(item.links && item.links.length > 0) {
                             activeLinks = activeLinks.concat(item.links);

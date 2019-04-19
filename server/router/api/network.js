@@ -20,11 +20,21 @@ var path = {
 
 module.exports = {
     get: {
-        "controller": async function(req,res,next) {
+        "controller": function(req,res,next) {
             var req_url = process.env.controller_url + path.controller;
-            let response = await axios.get(req_url);
-
-            res.status(200).send(response.data.objects.CONTROLLER);
+            try {
+                axios.get(req_url,{timeout:1000}).then((response) => {
+                    if(response.data && response.data.objects && response.data.objects.CONTROLLER) {
+                        res.status(200).send(response.data.objects.CONTROLLER);
+                    } else {
+                        res.status(500).send();
+                    }
+                }).catch((error) => {
+                    res.status(500).send(error);
+                })
+            } catch (error) {
+                res.status(500).send(error);
+            }
         },
         "detail" : async function(req,res,next) {
 
@@ -32,20 +42,34 @@ module.exports = {
         }
     },
     post: {
-        "underlay" : async function(req,res,next){
+        "underlay" : function(req,res,next){
             var req_url = process.env.underlay_url + path.underlay.replace("{ctrlUuid}", req.body.uuid);
             try {
-                let response = await axios.get(req_url);
-                res.status(200).send(response.data.objects);
+                axios.get(req_url,{timeout:1000}).then((response) => {
+                    if(response.data && response.data.objects) {
+                        res.status(200).send(response.data.objects);
+                    } else {
+                        res.status(500).send();
+                    }
+                }).catch((error) => {
+                    res.status(500).send(error);
+                })
             } catch (error) {
                 res.status(500).send(error);
             }
         },
-        "overlay" : async function(req,res,next) {
+        "overlay" : function(req,res,next) {
             var req_url = process.env.overlay_url + path.overlay.replace("{ctrlUuid}", req.body.uuid);
             try {
-                let response = await axios.get(req_url);   
-                res.status(200).send(response.data.objects);
+                axios.get(req_url,{timeout:1000}).then((response) => {
+                    if(response.data && response.data.objects) {
+                        res.status(200).send(response.data.objects);
+                    } else {
+                        res.status(500).send();
+                    }
+                }).catch((error) => {
+                    res.status(500).send(error);
+                })
             } catch (error) {
                 res.status(500).send(error);
             }
