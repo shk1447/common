@@ -1,6 +1,7 @@
 const _ = require('lodash');
 
 common.chart = (function() {
+    var isIchimoku = false;
     function canvasContextMenu() {
         common.events.emit('contextmenu', {
             active:true,
@@ -24,12 +25,14 @@ common.chart = (function() {
     }
 
     function brushed() {
-        var s = d3.event.selection || x2.range();
+        if(d3.event) {
+            var s = d3.event.selection || x2.range();
+        }
         var zoomable = x.zoomable(),
             zoomable2 = x2.zoomable();
 
         zoomable.domain(zoomable2.domain());
-        if(d3.event.selection !== null) zoomable.domain(d3.event.selection.map(zoomable.invert));
+        if(d3.event !== null && d3.event.selection !== null) zoomable.domain(d3.event.selection.map(zoomable.invert));
         
         draw();
     }
@@ -49,13 +52,13 @@ common.chart = (function() {
             focus.selectAll("g.tradearrow").datum(trades).call(tradearrow);
         }
 
-        // var ichimokuData = ichimokuIndicator(data);
-        // x.domain(data.map(ichimokuIndicator.accessor().d));
-        // // Calculate the y domain for visible data points (ensure to include Kijun Sen additional data offset)
-        // y.domain(techan.scale.plot.ichimoku(ichimokuData.slice(indicatorPreRoll-ichimokuIndicator.kijunSen())).domain());
-        // // Logic to ensure that at least +KijunSen displacement is applied to display cloud plotted ahead of ohlc
+        var ichimokuData = isIchimoku ? ichimokuIndicator(data.slice.apply(data, x.zoomable().domain())) : [];
+        //x.domain(data.map(ichimokuIndicator.accessor().d));
+        // Calculate the y domain for visible data points (ensure to include Kijun Sen additional data offset)
+        //y.domain(techan.scale.plot.ichimoku(ichimokuData.slice(indicatorPreRoll-ichimokuIndicator.kijunSen())).domain());
+        // Logic to ensure that at least +KijunSen displacement is applied to display cloud plotted ahead of ohlc
         // x.zoomable().clamp(false).domain([indicatorPreRoll, data.length+ichimokuIndicator.kijunSen()]);
-        // focus.selectAll("g.ichimoku").datum(ichimokuData).call(ichimoku);
+        focus.selectAll("g.ichimoku").datum(ichimokuData).call(ichimoku);   
     }
 
     function load(data, end_date, supstance) {
@@ -82,7 +85,7 @@ common.chart = (function() {
                 if(d.total_state && end_date >= new Date(d.unixtime)) {
                     if(prev_datum.current_state === '하락' && d.current_state === '상승'
                         && prev_datum.support_count <= d.support_count  && d.regist_count < d.support_count
-                        && prev_datum.regist_count >= d.regist_count && prev_datum.Volume < d.Volume) {
+                        && prev_datum.regist_count >= d.regist_count) {
                         trades.push({date:parseDate(d.unixtime), type:'buy', price:d.Low, quantity:1})
                         //supstanceData.push({value:(up_price+down_price)/2, type:'support'});
                         //supstanceData.push({value:(up_price+down_price)/2});
@@ -140,9 +143,9 @@ common.chart = (function() {
 
         focus.append('g').attr("class", "crosshair").call(crosshair);
 
-        // focus.append("g")
-        //         .attr("class", "ichimoku")
-        //         .attr("clip-path", "url(#supstanceClip)");
+        focus.append("g")
+                .attr("class", "ichimoku")
+                .attr("clip-path", "url(#supstanceClip)");
 
         draw();
 
@@ -157,6 +160,14 @@ common.chart = (function() {
     }
 
     return {
+        setIchimoku: function () {
+            isIchimoku = !isIchimoku;
+            var zoomable = x.zoomable(),
+            zoomable2 = x2.zoomable();
+
+            zoomable.domain(zoomable2.domain());
+            draw();
+        },
         getSupstances: function() {
             return supstanceData;
         },

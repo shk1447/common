@@ -21,6 +21,7 @@
         <div id="chart-modal-space"></div>
     </div>
     <div class="modal-footer">
+        <el-button size="mini" @click="onSetIchimoku()">일목균형표</el-button>
         <el-button size="mini" @click="onSetAlarm()">SET ALARM</el-button>
         <el-button size="mini" @click="onGotoChart()">GO TO CHART</el-button>
     </div>
@@ -63,6 +64,9 @@ export default {
         show(d) {
             this.param = d;
             this.$modal.show('chart-modal');
+        },
+        onSetIchimoku() {
+            common.chart.setIchimoku();
         },
         onGotoChart() {
             common.events.emit('onHandlePage', {page_name:'chart', params:this.param});
