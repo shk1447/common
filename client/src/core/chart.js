@@ -162,10 +162,10 @@ common.chart = (function() {
     return {
         setIchimoku: function () {
             isIchimoku = !isIchimoku;
-            var zoomable = x.zoomable(),
-            zoomable2 = x2.zoomable();
+            // var zoomable = x.zoomable(),
+            // zoomable2 = x2.zoomable();
 
-            zoomable.domain(zoomable2.domain());
+            // zoomable.domain(zoomable2.domain());
             draw();
         },
         getSupstances: function() {
