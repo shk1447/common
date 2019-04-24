@@ -148,12 +148,16 @@ export default {
         common.socket.connect().then(function(data) {
             console.log('connected');
             common.socket.on('collection.complete', function(data) {
-                // me.autoAnalysis();
+
+                me.$notify({
+                    message:"수집 완료",
+                    type:"info"
+                });
+
                 
                 // setTimeout(function(){
                 //     me.onStartCollection();
                 // },500)
-                
             })
             common.socket.on('collection.execute', function(data) {
                 var data = {"broadcast":true,"target":"collection", "method":"getlist", "parameters":{}};
