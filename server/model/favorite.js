@@ -120,7 +120,7 @@ Favorite.prototype.remove = function(param) {
 }
 
 Favorite.prototype.selectForView = function(param) {
-    var query = "SELECT past_stock.category as `id`, column_get(past_stock.rawdata, '종목명' as char) as `name`, GROUP_CONCAT(column_get(past_stock.rawdata, '전체상태' as char)) as `total_state`, GROUP_CONCAT(column_get(past_stock.rawdata, '현재상태' as char)) as `current_state`, GROUP_CONCAT(column_get(past_stock.rawdata, '지지가격대' as char)) as supstance FROM past_stock, favorite WHERE past_stock.category = favorite.category AND favorite.email = '"+param.email+"' AND unixtime >= '"+param.date+"' GROUP BY past_stock.category";
+    var query = "SELECT past_stock.category as `id`, column_get(past_stock.rawdata, '종목명' as char) as `name`, GROUP_CONCAT(column_get(past_stock.rawdata, '전체상태' as char)) as `total_state`, GROUP_CONCAT(column_get(past_stock.rawdata, '현재상태' as char)) as `current_state`, GROUP_CONCAT(column_get(past_stock.rawdata, '지지가격대' as char) SEPARATOR  '/') as supstance FROM past_stock, favorite WHERE past_stock.category = favorite.category AND favorite.email = '"+param.email+"' AND unixtime >= '"+param.date+"' GROUP BY past_stock.category";
     return khan.database.raw(query).then((rows) => {
         return rows[0];
     })

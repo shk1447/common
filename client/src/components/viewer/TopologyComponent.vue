@@ -148,11 +148,11 @@ export default {
         common.socket.connect().then(function(data) {
             console.log('connected');
             common.socket.on('collection.complete', function(data) {
-                me.autoAnalysis();
+                // me.autoAnalysis();
                 
-                setTimeout(function(){
-                    me.onStartCollection();
-                },500)
+                // setTimeout(function(){
+                //     me.onStartCollection();
+                // },500)
                 
             })
             common.socket.on('collection.execute', function(data) {
@@ -167,7 +167,7 @@ export default {
                 if(data.result.length > 0) {
                     if(data.result[0].method_name === "CurrentStockInformation") {
                         me.init = true;
-                        me.collection_date = typeof data.result[0].options === 'object' ? data.result[0].options.date : 
+                        me.collection_date = typeof data.result[0].options === 'object' ? (data.result[0].options.date.includes("Invalid") ? new Date() : data.result[0].options.date) : 
                         (JSON.parse(data.result[0].options).date.includes("Invalid") ? new Date() :JSON.parse(data.result[0].options).date);
                         me.collection_status = data.result[0].status;
                         me.$refs.sub_menu.refresh();
