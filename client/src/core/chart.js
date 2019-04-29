@@ -53,12 +53,12 @@ common.chart = (function() {
         }
 
         var ichimokuData = isIchimoku ? ichimokuIndicator(data.slice.apply(data, x.zoomable().domain())) : [];
-        //x.domain(data.map(ichimokuIndicator.accessor().d));
+        // x.domain(data.map(ichimokuIndicator.accessor().d));
         // Calculate the y domain for visible data points (ensure to include Kijun Sen additional data offset)
-        //y.domain(techan.scale.plot.ichimoku(ichimokuData.slice(indicatorPreRoll-ichimokuIndicator.kijunSen())).domain());
+        // y.domain(techan.scale.plot.ichimoku(ichimokuData.slice(indicatorPreRoll-ichimokuIndicator.kijunSen())).domain());
         // Logic to ensure that at least +KijunSen displacement is applied to display cloud plotted ahead of ohlc
         // x.zoomable().clamp(false).domain([indicatorPreRoll, data.length+ichimokuIndicator.kijunSen()]);
-        focus.selectAll("g.ichimoku").datum(ichimokuData).call(ichimoku);   
+        focus.selectAll("g.ichimoku").datum(ichimokuData).call(ichimoku);
     }
 
     function load(data, end_date, supstance) {
@@ -159,7 +159,80 @@ common.chart = (function() {
         })
     }
 
+    function analysis(data, end_date, supstance) {
+        var x = techan.scale.financetime().range([0, 1920]);
+        var y = d3.scaleLinear().range([1080, 0]);
+        var candlestick = techan.plot.candlestick().xScale(x).yScale(y);
+        var accessor = candlestick.accessor();
+        var ichimokuIndicator = techan.indicator.ichimoku();
+        var prev_datum;
+        var result_money = 0;
+        var result_money2 = 0;
+        var loss_moeny = 0;
+        var result_volume = 0;
+        var end_date = end_date ? new Date(end_date) : new Date();
+        var parseDate = d3.timeParse("%Y-%m-%dT%H:%M:%S.%LZ");
+        data = data.filter(function(d) {return new Date(d.unixtime) <= end_date}).map(function(d) {
+            if(prev_datum) {
+                //console.log(d.support_count, d.regist_count, d.total_state, d.current_state)
+                if(d.total_state && end_date >= new Date(d.unixtime)) {
+                    if(prev_datum.current_state === '하락' && d.current_state === '상승'
+                        && prev_datum.support_count <= d.support_count  && d.regist_count < d.support_count
+                        && prev_datum.regist_count >= d.regist_count) {
+                        //trades.push({date:parseDate(d.unixtime), type:'buy', price:d.Low, quantity:1})
+                        //supstanceData.push({value:(up_price+down_price)/2, type:'support'});
+                        //supstanceData.push({value:(up_price+down_price)/2});
+                        var up_price = (d.High + d.Close) / 2;
+                        var down_price = ((d.Close + d.Low) / 2);
+                        var low_price = d.Low;
+                        result_money2 += up_price * d.Volume;
+                        result_money += down_price * d.Volume;
+                        loss_moeny += low_price * d.Volume;
+                        result_volume += d.Volume;
+                    }
+                    if(prev_datum.current_state === '상승' && d.total_state === '하락' && d.current_state === '하락' 
+                        && prev_datum.regist_count <= d.regist_count) {
+                        //trades.push({date:parseDate(d.unixtime), type:'sell', price:d.High, quantity:1})
+                    }
+                }
+            }
+            prev_datum = d;
+            
+            return {
+                date: parseDate(d.unixtime),
+                open: d.Open === 0 ? d.Close : +d.Open,
+                high: d.Open === 0 ? d.Close : +d.High,
+                low: d.Open === 0 ? d.Close : +d.Low,
+                close: d.Open === 0 ? d.Close : +d.Close,
+                volume: d.Open === 0 ? d.Close : +d.Volume
+            };
+        }).sort(function(a, b) { return d3.ascending(accessor.d(a), accessor.d(b)); });
+
+        var ret_data = {
+            "support":null,
+            "regist":null,
+            "loss":null,
+            "spanA":null,
+            "spanB":null,
+            "low":data[data.length - 1].low,
+            "close":data[data.length - 1].close,
+            "open":data[data.length - 1].open
+        };
+        ret_data.support = result_money / result_volume;
+        ret_data.regist = result_money2 / result_volume;
+        ret_data.loss = loss_moeny / result_volume;
+        
+        var ichimoku_data = ichimokuIndicator(data);
+        var last_ichimoku = ichimoku_data[ichimoku_data.length - 25];
+
+        ret_data.spanA = last_ichimoku.senkouSpanA;
+        ret_data.spanB = last_ichimoku.senkouSpanB;
+
+        return ret_data;
+    }
+
     return {
+        analysis: analysis,
         setIchimoku: function () {
             isIchimoku = !isIchimoku;
             // var zoomable = x.zoomable(),

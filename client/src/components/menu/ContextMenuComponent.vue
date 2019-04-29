@@ -8,17 +8,18 @@
 
 <script>
 import api from '../../api/api.js'
+import _ from 'lodash';
 export default {
     props: {
         actionMenu: { type : Function }
     },
     data () {
         return {
-            menu_items : [{id:'add',label:'Add'},
-                            {id:'save',label:'Save'},
-                            {id:'search',label:'Search'},
+            menu_items : [
+                            {id:'auto',label:'Analysis'},
                             {id:'reset',label:'Reset'},
-                            {id:'zoom_reset',label:'Reset Zoom'}],
+                            {id:'zoom_reset',label:'Reset Zoom'}
+                        ],
             activeContextMenu:false,
             top:'0px',
             left:'0px',
@@ -32,43 +33,34 @@ export default {
         handleClickMenu(item) {
             var me = this;
             switch(item.id) {
-                case 'add' :
-                    common.events.emit('popup', {
-                        name : 'createNodeModal',
-                        params : {node_info:me.params.node_info, node_types:me.params.node_types, event:me.params.event}
-                    });
-                break;
                 case 'reset' : 
                     common.view.clear();
-                break;
-                case 'save' :
-                    // save current topology
-                    var nodes = common.view.getNodes().map(function(d) {
-                        return {
-                            x:d.x,y:d.y,name:d.name,uuid:d.uuid,type:d.type,status:d.status
-                        }
-                    });
-                    var links = common.view.getLinks().map(function(d) {
-                        return {
-                            sourceUuid : d.source.uuid,
-                            targetUuid : d.target.uuid,
-                            speed : d.speed
-                        }
-                    })
-                    var params = {activeNodes:nodes, activeLinks:links};
-                    api.setTopology(params).then(function(){
-                        common.events.emit('notify', {message:'Save Success.', type:'success'})
-                    }).catch(function(err) {
-                        common.events.emit('notify', {message:'Save Failure.', type:'error'})
-                    })
-                    common.events.emit('save')
-                    console.log('save');
                 break;
                 case 'zoom_reset' :
                     common.view.zoom_reset();
                 break;
                 case 'search' :
                     common.events.emit('message', {type:'warning' , message:'Not implemented.'})
+                break;
+                case 'auto' :
+                    var nodes = common.view.getNodes();
+                    _.each(nodes, function(d,i) {
+                        if(!d.type) {
+                            api.getData(d.id).then(function(data) {
+                                var analysis_data = common.chart.analysis(data, d.unixtime, d.supstance);
+                                // if(analysis_data.spanA > analysis_data.spanB && analysis_data.low > analysis_data.spanB && analysis_data.low <= analysis_data.spanA && analysis_data.close >= analysis_data.loss && analysis_data.low <= analysis_data.regist) {
+                                //     console.log(d.name, ' : ' ,d.price / analysis_data.spanB);
+                                // }
+                                if(analysis_data.close > analysis_data.spanB && analysis_data.open > analysis_data.spanB
+                                    && ((analysis_data.regist >= analysis_data.spanA && analysis_data.loss <= analysis_data.spanA) || 
+                                    (analysis_data.regist >= analysis_data.spanB && analysis_data.loss <= analysis_data.spanB))) {
+                                    console.log(d.name, ' : ' ,d.price / analysis_data.spanB);
+                                    // console.log(d.name, ' : ' ,analysis_data.spanB);
+                                    
+                                }
+                            })
+                        }
+                    })
                 break;
             }
             me.activeContextMenu = false;
