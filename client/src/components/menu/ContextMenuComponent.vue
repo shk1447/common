@@ -44,8 +44,11 @@ export default {
                 break;
                 case 'auto' :
                     var nodes = common.view.getNodes();
+                    var count = 0;
+                    var alarm_items = {};
                     _.each(nodes, function(d,i) {
                         if(!d.type) {
+                            count++;
                             api.getData(d.id).then(function(data) {
                                 var analysis_data = common.chart.analysis(data, d.unixtime, d.supstance);
                                 // if(analysis_data.spanA > analysis_data.spanB && analysis_data.low > analysis_data.spanB && analysis_data.low <= analysis_data.spanA && analysis_data.close >= analysis_data.loss && analysis_data.low <= analysis_data.regist) {
@@ -54,9 +57,13 @@ export default {
                                 if(analysis_data.close > analysis_data.spanB && analysis_data.open > analysis_data.spanB
                                     && ((analysis_data.regist >= analysis_data.spanA && analysis_data.loss <= analysis_data.spanA) || 
                                     (analysis_data.regist >= analysis_data.spanB && analysis_data.loss <= analysis_data.spanB))) {
-                                    console.log(d.name, ' : ' ,d.price / analysis_data.spanB);
+                                    console.log(d.name, ' : ' ,d.price / analysis_data.loss);
                                     // console.log(d.name, ' : ' ,analysis_data.spanB);
-                                    
+                                    alarm_items[d.id] = (Math.abs(analysis_data.spanA - analysis_data.spanB) + d.price) / analysis_data.loss;
+                                }
+                                count--;
+                                if(count === 0) {
+                                    common.view.setAlarm(alarm_items);
                                 }
                             })
                         }

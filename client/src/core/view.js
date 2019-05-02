@@ -461,6 +461,14 @@ common.view = (function() {
     }
 
     return {
+        setAlarm:function(items) {
+            _.each(activeNodes, function(node, i) {
+                if(items[node.id]) {
+                    node["y"] = node["y"] * items[node.id];
+                }
+            })
+            redraw();
+        },
         setFavorite:function(root,favorites,event) {
             var isExists = activeNodes.find(function(d) { return d.id === root.id});
             if(!isExists) {

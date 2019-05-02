@@ -225,8 +225,10 @@ common.chart = (function() {
         var ichimoku_data = ichimokuIndicator(data);
         var last_ichimoku = ichimoku_data[ichimoku_data.length - 25];
 
-        ret_data.spanA = last_ichimoku.senkouSpanA;
-        ret_data.spanB = last_ichimoku.senkouSpanB;
+        if(last_ichimoku) {
+            ret_data.spanA = last_ichimoku.senkouSpanA ? last_ichimoku.senkouSpanA : null;
+            ret_data.spanB = last_ichimoku.senkouSpanB ? last_ichimoku.senkouSpanB : null;
+        }
 
         return ret_data;
     }
