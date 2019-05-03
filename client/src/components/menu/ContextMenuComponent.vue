@@ -63,9 +63,9 @@ export default {
                                 //     alarm_items[d.id] = (Math.abs(analysis_data.spanA - analysis_data.spanB) + d.price) / analysis_data.spanB;
                                 //     //alarm_items[d.id] = (analysis_data.spanB - analysis_data.spanA + d.price) / analysis_data.loss;
                                 // }
-                                var avgPrice = (analysis_data.close + analysis_data.open)/2;
-                                if(analysis_data.regist > avgPrice && analysis_data.loss < avgPrice) {
-                                    alarm_items[d.id] = avgPrice / analysis_data.loss;
+                                var avgPrice = (analysis_data.close + analysis_data.low)/2;
+                                if(analysis_data.regist > avgPrice && analysis_data.loss < avgPrice && analysis_data.spanA >= analysis_data.spanB) {
+                                    alarm_items[d.id] = 1.1;
                                 }
                                 count--;
                                 if(count === 0) {
