@@ -54,12 +54,18 @@ export default {
                                 // if(analysis_data.spanA > analysis_data.spanB && analysis_data.low > analysis_data.spanB && analysis_data.low <= analysis_data.spanA && analysis_data.close >= analysis_data.loss && analysis_data.low <= analysis_data.regist) {
                                 //     console.log(d.name, ' : ' ,d.price / analysis_data.spanB);
                                 // }
-                                if(analysis_data.close > analysis_data.spanB && analysis_data.open > analysis_data.spanB
-                                    && ((analysis_data.regist >= analysis_data.spanA && analysis_data.loss <= analysis_data.spanA) || 
-                                    (analysis_data.regist >= analysis_data.spanB && analysis_data.loss <= analysis_data.spanB))) {
-                                    console.log(d.name, ' : ' ,d.price / analysis_data.loss);
-                                    // console.log(d.name, ' : ' ,analysis_data.spanB);
-                                    alarm_items[d.id] = (Math.abs(analysis_data.spanA - analysis_data.spanB) + d.price) / analysis_data.loss;
+                                // if(analysis_data.close > analysis_data.spanB && analysis_data.open >= analysis_data.spanB
+                                // && (analysis_data.high - analysis_data.close) <= (analysis_data.close - analysis_data.low)
+                                // && ((analysis_data.regist >= analysis_data.spanA && analysis_data.loss <= analysis_data.spanA) || 
+                                //     (analysis_data.regist >= analysis_data.spanB && analysis_data.loss <= analysis_data.spanB))) {
+                                //     console.log(d.name, ' : ' ,d.price / analysis_data.loss);
+                                //     // console.log(d.name, ' : ' ,analysis_data.spanB);
+                                //     alarm_items[d.id] = (Math.abs(analysis_data.spanA - analysis_data.spanB) + d.price) / analysis_data.spanB;
+                                //     //alarm_items[d.id] = (analysis_data.spanB - analysis_data.spanA + d.price) / analysis_data.loss;
+                                // }
+                                var avgPrice = (analysis_data.close + analysis_data.open)/2;
+                                if(analysis_data.regist > avgPrice && analysis_data.loss < avgPrice) {
+                                    alarm_items[d.id] = avgPrice / analysis_data.loss;
                                 }
                                 count--;
                                 if(count === 0) {

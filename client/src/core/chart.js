@@ -216,7 +216,9 @@ common.chart = (function() {
             "spanB":null,
             "low":data[data.length - 1].low,
             "close":data[data.length - 1].close,
-            "open":data[data.length - 1].open
+            "prev_close":data[data.length - 2].close,
+            "open":data[data.length - 1].open,
+            "high":data[data.length - 1].high
         };
         ret_data.support = result_money / result_volume;
         ret_data.regist = result_money2 / result_volume;
