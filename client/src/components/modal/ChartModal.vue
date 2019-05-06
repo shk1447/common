@@ -192,6 +192,12 @@ export default {
         stroke-dasharray: 2, 2;
     }
 
+    .scope-supstance.high path {
+        stroke: darkred;
+        stroke-width: 2.5;
+        stroke-dasharray: 2, 2;
+    }
+
     .scope-supstance.support path {
         stroke: green;
         stroke-width: 0.8;

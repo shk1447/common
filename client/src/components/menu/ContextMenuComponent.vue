@@ -64,7 +64,7 @@ export default {
                                 //     //alarm_items[d.id] = (analysis_data.spanB - analysis_data.spanA + d.price) / analysis_data.loss;
                                 // }
                                 var avgPrice = (analysis_data.close + analysis_data.low)/2;
-                                if(analysis_data.regist > avgPrice && analysis_data.loss < avgPrice && analysis_data.spanA >= analysis_data.spanB) {
+                                if(analysis_data.regist > avgPrice && analysis_data.loss < avgPrice) {
                                     alarm_items[d.id] = 1.1;
                                 }
                                 count--;

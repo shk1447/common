@@ -77,7 +77,9 @@ common.chart = (function() {
         var result_money = 0;
         var result_money2 = 0;
         var loss_moeny = 0;
+        var regist_money = 0;
         var result_volume = 0;
+        var regist_volume = 0;
         var end_date = end_date ? new Date(end_date) : new Date();
         data = data.map(function(d) {
             if(prev_datum) {
@@ -89,6 +91,17 @@ common.chart = (function() {
                         trades.push({date:parseDate(d.unixtime), type:'buy', price:d.Low, quantity:1})
                         //supstanceData.push({value:(up_price+down_price)/2, type:'support'});
                         //supstanceData.push({value:(up_price+down_price)/2});
+                    }
+                    if(prev_datum.current_state === '상승' && d.total_state === '하락' && d.current_state === '하락' 
+                        && prev_datum.regist_count <= d.regist_count) {
+                        trades.push({date:parseDate(d.unixtime), type:'sell', price:d.High, quantity:1})
+                    }
+                    if((prev_datum.current_state === '상승' && d.current_state === '하락') || (prev_datum.total_state === '상승' && d.total_state === '하락')) {
+                        var up_price = (d.High + d.Close) / 2;
+                        regist_money += up_price * d.Volume;
+                        regist_volume += d.Volume;
+                    }
+                    if((prev_datum.current_state === '하락' && d.current_state === '상승') || (prev_datum.total_state === '하락' && d.total_state === '상승')) {
                         var up_price = (d.High + d.Close) / 2;
                         var down_price = ((d.Close + d.Low) / 2);
                         var low_price = d.Low;
@@ -96,10 +109,6 @@ common.chart = (function() {
                         result_money += down_price * d.Volume;
                         loss_moeny += low_price * d.Volume;
                         result_volume += d.Volume;
-                    }
-                    if(prev_datum.current_state === '상승' && d.total_state === '하락' && d.current_state === '하락' 
-                        && prev_datum.regist_count <= d.regist_count) {
-                        trades.push({date:parseDate(d.unixtime), type:'sell', price:d.High, quantity:1})
                     }
                 }
             }
@@ -117,6 +126,8 @@ common.chart = (function() {
         supstanceData.push({value:result_money / result_volume, type:'support'})
         supstanceData.push({value:result_money2 / result_volume, type:'regist'})
         supstanceData.push({value:loss_moeny / result_volume, type:'loss'})
+
+        supstanceData.push({value:regist_money / regist_volume, type:'high'})
         
 
         x.domain(data.map(accessor.d));
@@ -182,6 +193,13 @@ common.chart = (function() {
                         //trades.push({date:parseDate(d.unixtime), type:'buy', price:d.Low, quantity:1})
                         //supstanceData.push({value:(up_price+down_price)/2, type:'support'});
                         //supstanceData.push({value:(up_price+down_price)/2});
+                        
+                    }
+                    if(prev_datum.current_state === '상승' && d.total_state === '하락' && d.current_state === '하락' 
+                        && prev_datum.regist_count <= d.regist_count) {
+                        //trades.push({date:parseDate(d.unixtime), type:'sell', price:d.High, quantity:1})
+                    }
+                    if((prev_datum.current_state === '하락' && d.current_state === '상승') || (prev_datum.total_state === '하락' && d.total_state === '상승')) {
                         var up_price = (d.High + d.Close) / 2;
                         var down_price = ((d.Close + d.Low) / 2);
                         var low_price = d.Low;
@@ -190,10 +208,7 @@ common.chart = (function() {
                         loss_moeny += low_price * d.Volume;
                         result_volume += d.Volume;
                     }
-                    if(prev_datum.current_state === '상승' && d.total_state === '하락' && d.current_state === '하락' 
-                        && prev_datum.regist_count <= d.regist_count) {
-                        //trades.push({date:parseDate(d.unixtime), type:'sell', price:d.High, quantity:1})
-                    }
+                    
                 }
             }
             prev_datum = d;
