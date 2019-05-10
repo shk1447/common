@@ -55,8 +55,8 @@ export default {
             return res;
         })
     },
-    getData: function(id) {
-        var url = "/stock/data?id=" + id;
+    getData: function(id, end_date) {
+        var url = "/stock/data?id=" + id + "&to_date=" + end_date;
         return http.get(url).then(function(res) {
             return res;
         })

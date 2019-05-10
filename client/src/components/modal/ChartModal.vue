@@ -30,6 +30,7 @@
 
 <script>
 
+import moment from 'moment';
 import api from '../../api/api.js'
 
 export default {
@@ -78,7 +79,7 @@ export default {
         openedModal() {
             var me = this;
             common.chart.init('chart-modal-space',{signal:true});
-            api.getData(this.param.id).then(function(data) {
+            api.getData(this.param.id, moment().add(1, 'day').format("YYYY-MM-DD")).then(function(data) {
                 common.chart.load(data, me.param.unixtime, me.param.supstance);
             })
         },

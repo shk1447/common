@@ -28,7 +28,7 @@ module.exports = {
             })
         },
         "data" : function(req,res,next) {
-            khan.model.past_stock.selectData(req.query.id).then((data) => {
+            khan.model.past_stock.selectData(req.query.id, req.query.to_date).then((data) => {
                 res.status(200).send(data);
             }).catch((err) => {
                 res.status(500).send(err);

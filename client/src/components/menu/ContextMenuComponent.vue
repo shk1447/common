@@ -9,6 +9,7 @@
 <script>
 import api from '../../api/api.js'
 import _ from 'lodash';
+import moment from 'moment';
 export default {
     props: {
         actionMenu: { type : Function }
@@ -49,7 +50,7 @@ export default {
                     _.each(nodes, function(d,i) {
                         if(!d.type) {
                             count++;
-                            api.getData(d.id).then(function(data) {
+                            api.getData(d.id, moment().add(1, 'day').format("YYYY-MM-DD")).then(function(data) {
                                 var analysis_data = common.chart.analysis(data, d.unixtime, d.supstance);
                                 // if(analysis_data.spanA > analysis_data.spanB && analysis_data.low > analysis_data.spanB && analysis_data.low <= analysis_data.spanA && analysis_data.close >= analysis_data.loss && analysis_data.low <= analysis_data.regist) {
                                 //     console.log(d.name, ' : ' ,d.price / analysis_data.spanB);

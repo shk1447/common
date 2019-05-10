@@ -15,6 +15,14 @@
         </div>
         <div style="flex:1 1 100%; "></div>
         <div class="tool right">
+            <el-date-picker class="picker-custom"
+            v-model="end_date"
+            type="date"
+            @change="onChangeDate"
+            placeholder="주가 분석날짜 선택">
+            </el-date-picker>
+        </div>
+        <div class="tool right">
             <span style="font-size:1.2em;" @click="onSetIchimoku">
                 일목균형표
             </span>
@@ -52,7 +60,8 @@
 
 <script>
 
-import api from '../../api/api.js'
+import moment from 'moment';
+import api from '../../api/api.js';
 import { setTimeout } from 'timers';
 
 export default {
@@ -66,13 +75,17 @@ export default {
             },
             signal:true,
             alarm:false,
-            favorite:false
+            favorite:false,
+            end_date:new Date()
         }
     },
     components:{
         
     },
     methods: {
+        onChangeDate() {
+            this.refresh();
+        },
         onSetIchimoku() {
             if(this.selected_item.category) {
                 common.chart.setIchimoku();
@@ -149,7 +162,8 @@ export default {
             setTimeout(function() {
                 common.chart.uninit('chart-space');
                 common.chart.init('chart-space', {signal:me.signal});
-                api.getData(me.selected_item.category).then(function(data) {
+                var to_date = moment(me.end_date).add(1, 'day').format("YYYY-MM-DD")
+                api.getData(me.selected_item.category,to_date).then(function(data) {
                     var supstance = []
                     if(me.selected_item.supstance) {
                         supstance = me.selected_item.supstance.split(',');

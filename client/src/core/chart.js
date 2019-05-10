@@ -82,6 +82,7 @@ common.chart = (function() {
         var regist_volume = 0;
         var end_date = end_date ? new Date(end_date) : new Date();
         data = data.map(function(d) {
+            console.log(JSON.parse(d.props));
             if(prev_datum) {
                 //console.log(d.support_count, d.regist_count, d.total_state, d.current_state)
                 if(d.total_state && end_date >= new Date(d.unixtime)) {
@@ -98,17 +99,17 @@ common.chart = (function() {
                     }
                     if((prev_datum.current_state === '상승' && d.current_state === '하락') || (prev_datum.total_state === '상승' && d.total_state === '하락')) {
                         var up_price = (d.High + d.Close) / 2;
-                        regist_money += up_price * d.Volume;
-                        regist_volume += d.Volume;
+                        regist_money += up_price;
+                        regist_volume += 1;
                     }
                     if((prev_datum.current_state === '하락' && d.current_state === '상승') || (prev_datum.total_state === '하락' && d.total_state === '상승')) {
                         var up_price = (d.High + d.Close) / 2;
                         var down_price = ((d.Close + d.Low) / 2);
                         var low_price = d.Low;
-                        result_money2 += up_price * d.Volume;
-                        result_money += down_price * d.Volume;
-                        loss_moeny += low_price * d.Volume;
-                        result_volume += d.Volume;
+                        result_money2 += up_price;
+                        result_money += down_price;
+                        loss_moeny += low_price;
+                        result_volume += 1;
                     }
                 }
             }
@@ -203,10 +204,10 @@ common.chart = (function() {
                         var up_price = (d.High + d.Close) / 2;
                         var down_price = ((d.Close + d.Low) / 2);
                         var low_price = d.Low;
-                        result_money2 += up_price * d.Volume;
-                        result_money += down_price * d.Volume;
-                        loss_moeny += low_price * d.Volume;
-                        result_volume += d.Volume;
+                        result_money2 += up_price;
+                        result_money += down_price;
+                        loss_moeny += low_price;
+                        result_volume += 1;
                     }
                     
                 }
