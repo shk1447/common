@@ -110,7 +110,7 @@ PastStock.prototype.selectRecommend = function(params) {
 }
 
 PastStock.prototype.selectData = function(category, todate) {
-    var query = "SELECT column_get(rawdata, '시가' as double) as `Open`, column_get(rawdata, '고가' as double) as `High`, column_get(rawdata, '저가' as double) as `Low`, column_get(rawdata, '종가' as double) as `Close`,column_get(rawdata, '거래량' as double) as `Volume`,column_get(rawdata, '전체상태' as char) as total_state,     column_get(rawdata, '현재상태' as char) as current_state,    column_get(rawdata, '저항갯수' as double) as regist_count,    column_get(rawdata, '지지갯수' as double) as support_count, column_json(rawdata) as `props`, unixtime FROM past_stock WHERE category = '"+category+"' AND unixtime <= '" + todate + "' ORDER BY unixtime";
+    var query = "SELECT column_get(rawdata, '시가' as double) as `Open`, column_get(rawdata, '고가' as double) as `High`, column_get(rawdata, '저가' as double) as `Low`, column_get(rawdata, '종가' as double) as `Close`,column_get(rawdata, '거래량' as double) as `Volume`,column_get(rawdata, '전체상태' as char) as total_state,     column_get(rawdata, '현재상태' as char) as current_state,    column_get(rawdata, '저항갯수' as double) as regist_count,    column_get(rawdata, '지지갯수' as double) as support_count, cast(column_json(rawdata) as CHAR) as `props`, unixtime FROM past_stock WHERE category = '"+category+"' AND unixtime <= '" + todate + "' ORDER BY unixtime";
 
     return khan.database.raw(query).then((rows) => {
         return rows[0];

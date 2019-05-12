@@ -168,7 +168,7 @@ export default {
                     if(me.selected_item.supstance) {
                         supstance = me.selected_item.supstance.split(',');
                     }
-                    common.chart.load(data, null, supstance);
+                    common.chart.load(data, me.end_date, supstance);
                 })
             },400)
         }

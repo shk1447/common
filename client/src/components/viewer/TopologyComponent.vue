@@ -154,7 +154,7 @@ export default {
                     type:"info"
                 });
 
-                
+                // me.autoAnalysis();
                 // setTimeout(function(){
                 //     me.onStartCollection();
                 // },500)
