@@ -98,48 +98,37 @@ common.chart = (function() {
                 if(d.total_state && moment(end_date).add(1,'day') >= new Date(d.unixtime)) {
                     if(prev_datum.current_state === '하락' && d.current_state === '상승'
                         && prev_datum.support_count <= d.support_count  && d.regist_count < d.support_count
-                        && prev_datum.regist_count >= d.regist_count && parseInt(props["최근갯수"]) < 3) {
-                        var resistCount = 0;
-                        var supportCount = 0;
-                        _.each(props, function(v, k) {
-                            if(k.includes("support")) {
-                                supportCount++;
-                            } else if(k.includes("resistance")) {
-                                resistCount++;
-                            }
-                        })
-                        if(supportCount > resistCount) {
-                            trades.push({date:parseDate(d.unixtime), type:'buy', price:d.Low, quantity:1})
-                            // var up_price = (d.High + d.Close) / 2;
-                            // var down_price = ((d.Close + d.Low) / 2);
-                            // var low_price = d.Low;
-                            // result_money2 += up_price * d.Volume;
-                            // result_money += down_price * d.Volume;
-                            // loss_moeny += low_price * d.Volume;
-                            // result_volume += d.Volume;
-                        }
+                        && prev_datum.regist_count > d.regist_count && parseInt(props["최근갯수"]) < 2) {
+                        // var resistCount = 0;
+                        // var supportCount = 0;
+                        // _.each(props, function(v, k) {
+                        //     if(k.includes("support")) {
+                        //         supportCount++;
+                        //     } else if(k.includes("resistance")) {
+                        //         resistCount++;
+                        //     }
+                        // })
+                        // if(supportCount >= resistCount) {
+                        //     trades.push({date:parseDate(d.unixtime), type:'buy', price:d.Low, quantity:1})
+                        // }
+                        trades.push({date:parseDate(d.unixtime), type:'buy', price:d.Low, quantity:1})
                         console.log(moment(d.unixtime).format("YYYY-MM-DD"));
                         console.log(props);
-                        //supstanceData.push({value:(up_price+down_price)/2, type:'support'});
-                        //supstanceData.push({value:(up_price+down_price)/2});
                     }
                     if(prev_datum.current_state === '상승' && d.total_state === '하락' && d.current_state === '하락' 
                         && prev_datum.regist_count <= d.regist_count) {
                         trades.push({date:parseDate(d.unixtime), type:'sell', price:d.High, quantity:1})
                     }
-                    if((prev_datum.current_state === '상승' && d.current_state === '하락') || (prev_datum.total_state === '상승' && d.total_state === '하락')) {
+                    if((prev_datum.current_state === '상승' && d.current_state === '하락')) {
                         // var up_price = (d.High + d.Close) / 2;
-                        // regist_money += up_price;
-                        // regist_volume += 1;
+                        // regist_money += up_price * d.Volume;
+                        // regist_volume += d.Volume;
                     }
-                    if((prev_datum.current_state === '하락' && d.current_state === '상승') || (prev_datum.total_state === '하락' && d.total_state === '상승')) {
-                        // var up_price = (d.High + d.Close) / 2;
-                        // var down_price = ((d.Close + d.Low) / 2);
-                        // var low_price = d.Low;
-                        // result_money2 += up_price;
-                        // result_money += down_price;
-                        // loss_moeny += low_price;
-                        // result_volume += 1;
+
+                    if((prev_datum.current_state === '하락' && d.current_state === '상승')) {
+                        // var down_price = (d.Low + d.Close) / 2;
+                        // result_money += down_price * d.Volume;
+                        // result_volume += d.Volume;
                     }
                 }
             }
@@ -156,7 +145,7 @@ common.chart = (function() {
         }).sort(function(a, b) { return d3.ascending(accessor.d(a), accessor.d(b)); });
         // supstanceData.push({value:result_money / result_volume, type:'support'})
         // supstanceData.push({value:result_money2 / result_volume, type:'regist'})
-        // supstanceData.push({value:loss_moeny / result_volume, type:'loss'})
+        // supstanceData.push({value:result_money / result_volume, type:'loss'})
 
         // supstanceData.push({value:regist_money / regist_volume, type:'high'})
         

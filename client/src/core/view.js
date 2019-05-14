@@ -561,17 +561,17 @@ common.view = (function() {
 
                     item["status"] = item.supstance.length - item.prev_supstance.length;
 
-                    var props = JSON.parse(item.props);
-                    var resistCount = 0;
-                    var supportCount = 0;
-                    _.each(props, function(v, k) {
-                        if(k.includes("support")) {
-                            supportCount++;
-                        } else if(k.includes("resistance")) {
-                            resistCount++;
-                        }
-                    })
-                    if(supportCount > resistCount) {
+                    // var props = JSON.parse(item.props);
+                    // var resistCount = 0;
+                    // var supportCount = 0;
+                    // _.each(props, function(v, k) {
+                    //     if(k.includes("support")) {
+                    //         supportCount++;
+                    //     } else if(k.includes("resistance")) {
+                    //         resistCount++;
+                    //     }
+                    // })
+                    // if(supportCount > resistCount) {
                         if(!activeNodes.find(function(d) { return d.id === item.id})) {
                             activeNodes.push(item);
                         }
@@ -580,7 +580,7 @@ common.view = (function() {
                             target:item.id,
                             volume_percent:item.volume_percent
                         })
-                    }
+                    // }
                 })
                 redraw();
             } else {

@@ -189,25 +189,25 @@ export default {
 
     .supstance path {
         stroke: black;
-        stroke-width: 0.8;
+        stroke-width: 1.1;
         stroke-dasharray: 2, 2;
     }
 
     .scope-supstance.high path {
-        stroke: darkred;
+        stroke: darkblue;
         stroke-width: 2.5;
         stroke-dasharray: 2, 2;
     }
 
     .scope-supstance.support path {
-        stroke: green;
-        stroke-width: 0.8;
+        stroke: red;
+        stroke-width: 1;
         stroke-dasharray: 2, 2;
     }
 
     .scope-supstance.regist path {
         stroke: blue;
-        stroke-width: 0.8;
+        stroke-width: 1;
         stroke-dasharray: 2, 2;
     }
 
@@ -218,8 +218,8 @@ export default {
     }
 
     .scope-supstance.loss path {
-        stroke: red;
-        stroke-width: 2;
+        stroke: darkred;
+        stroke-width: 2.5;
         stroke-dasharray: 3, 3;
     }
 
