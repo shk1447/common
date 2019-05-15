@@ -98,25 +98,25 @@ common.chart = (function() {
                 if(d.total_state && moment(end_date).add(1,'day') >= new Date(d.unixtime)) {
                     if(prev_datum.current_state === '하락' && d.current_state === '상승'
                         && prev_datum.support_count <= d.support_count  && d.regist_count < d.support_count
-                        && prev_datum.regist_count > d.regist_count && parseInt(props["최근갯수"]) < 2) {
-                        // var resistCount = 0;
-                        // var supportCount = 0;
-                        // _.each(props, function(v, k) {
-                        //     if(k.includes("support")) {
-                        //         supportCount++;
-                        //     } else if(k.includes("resistance")) {
-                        //         resistCount++;
-                        //     }
-                        // })
-                        // if(supportCount >= resistCount) {
-                        //     trades.push({date:parseDate(d.unixtime), type:'buy', price:d.Low, quantity:1})
-                        // }
-                        trades.push({date:parseDate(d.unixtime), type:'buy', price:d.Low, quantity:1})
+                        && prev_datum.regist_count > d.regist_count && parseInt(props["최근갯수"]) < 3) {
+                        var resistCount = 0;
+                        var supportCount = 0;
+                        _.each(props, function(v, k) {
+                            if(k.includes("support")) {
+                                supportCount++;
+                            } else if(k.includes("resistance")) {
+                                resistCount++;
+                            }
+                        })
+                        if(supportCount > resistCount) {
+                            trades.push({date:parseDate(d.unixtime), type:'buy', price:d.Low, quantity:1})
+                        }
+                        //trades.push({date:parseDate(d.unixtime), type:'buy', price:d.Low, quantity:1})
                         console.log(moment(d.unixtime).format("YYYY-MM-DD"));
                         console.log(props);
                     }
                     if(prev_datum.current_state === '상승' && d.total_state === '하락' && d.current_state === '하락' 
-                        && prev_datum.regist_count <= d.regist_count) {
+                        && prev_datum.regist_count < d.regist_count && prev_datum.support_count >= d.support_count) {
                         trades.push({date:parseDate(d.unixtime), type:'sell', price:d.High, quantity:1})
                     }
                     if((prev_datum.current_state === '상승' && d.current_state === '하락')) {
